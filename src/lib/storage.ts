@@ -1,5 +1,14 @@
 "use client";
 
+export interface GuestStat {
+    game_name: string;
+    played: number;
+    won: number;
+    best_score: number;
+    current_streak: number;
+    max_streak: number;
+}
+
 const STORAGE_KEYS = {
     GUEST_STATS: "kelime_guest_stats",
     SESSION_ID: "kelime_session_id",
@@ -24,8 +33,8 @@ export const storage = {
     },
 
     // Yardımcı metodlar
-    getGuestStats: () => storage.get<unknown[]>(STORAGE_KEYS.GUEST_STATS, []),
-    setGuestStats: (stats: unknown[]) => storage.set(STORAGE_KEYS.GUEST_STATS, stats),
+    getGuestStats: () => storage.get<GuestStat[]>(STORAGE_KEYS.GUEST_STATS, []),
+    setGuestStats: (stats: GuestStat[]) => storage.set(STORAGE_KEYS.GUEST_STATS, stats),
 
     getSessionId: () => {
         let id = storage.get<string | null>(STORAGE_KEYS.SESSION_ID, null);

@@ -2,15 +2,27 @@
 
 @theme {
   /* Colors */
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-text-main: #E5E7EB;
-  --color-text-secondary: #94A3B8;
-  --color-primary: #22D3EE;
+  --color-bg: #0F172A;          /* Ana sayfa arka planı */
+  --color-surface: #1E293B;     /* Kart yüzeyi */
+  --color-surface-dark: #0F172A; /* Çok koyu yüzey (boş hücre bg) */
+  --color-surface-mid: #334155; /* Orta ton yüzey (filled hücre, absent klavye) */
+  --color-surface-hover: #475569; /* Hover durumu */
+  --color-surface-accent: #4B5563; /* Accent yüzey (ENTER/DEL tuşları) */
+  --color-surface-accent-hover: #6B7280; /* ENTER/DEL hover */
 
-  --color-correct: #22C55E;
-  --color-wrong: #EF4444;
-  --color-present: #F9D89C;
+  --color-text-main: #E5E7EB;   /* Ana metin */
+  --color-text-secondary: #94A3B8; /* İkincil metin */
+  --color-text-muted: #64748B;  /* Soluk metin (absent harf) */
+  --color-text-on-state: #FFFFFF; /* Doğru/yanlış/mevcut üstündeki metin */
+
+  --color-primary: #22D3EE;     /* Ana vurgu (turkuaz) */
+
+  --color-correct: #22C55E;     /* Doğru harf (yeşil) */
+  --color-correct-hover: #4ADE80;
+  --color-present: #EAB308;     /* Mevcut harf (sarı) — oyun tokenı */
+  --color-present-hover: #FACC15;
+  --color-absent: #334155;      /* Yok harf (koyu gri) */
+  --color-wrong: #EF4444;       /* Hata/yanlış (kırmızı) */
 
   /* Typography */
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;

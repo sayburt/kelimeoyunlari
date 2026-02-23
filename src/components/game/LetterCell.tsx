@@ -12,19 +12,19 @@ export function LetterCell({ letter, state = 'empty' }: LetterCellProps) {
 
     switch (state) {
         case 'empty':
-            stateClasses = 'bg-slate-900 border-slate-700 text-transparent';
+            stateClasses = 'bg-surface-dark border-surface-mid text-transparent';
             break;
         case 'filled':
-            stateClasses = 'bg-slate-800 border-slate-500 text-gray-200';
+            stateClasses = 'bg-surface border-surface-hover text-text-main';
             break;
         case 'correct':
-            stateClasses = 'bg-green-500 border-green-500 text-white';
+            stateClasses = 'bg-correct border-correct text-text-on-state';
             break;
         case 'present':
-            stateClasses = 'bg-yellow-500 border-yellow-500 text-white';
+            stateClasses = 'bg-present border-present text-text-on-state';
             break;
         case 'absent':
-            stateClasses = 'bg-slate-700 border-slate-700 text-slate-300';
+            stateClasses = 'bg-absent border-absent text-text-secondary';
             break;
     }
 

@@ -28,7 +28,7 @@ export function GameKeyboard({
             'flex items-center justify-center font-bold rounded-lg cursor-pointer transition-colors duration-150 select-none px-2 py-4 sm:p-4 text-xs sm:text-sm';
 
         if (key === 'ENTER' || key === 'DEL') {
-            baseClasses += ' bg-slate-600 hover:bg-slate-500 text-white min-w-[3.5rem]';
+            baseClasses += ' bg-surface-accent hover:bg-surface-accent-hover text-text-on-state min-w-[3.5rem]';
             return baseClasses;
         }
 
@@ -36,21 +36,22 @@ export function GameKeyboard({
 
         switch (state) {
             case 'correct':
-                baseClasses += ' bg-green-500 hover:bg-green-400 text-white';
+                baseClasses += ' bg-correct hover:bg-correct-hover text-text-on-state';
                 break;
             case 'present':
-                baseClasses += ' bg-yellow-500 hover:bg-yellow-400 text-white';
+                baseClasses += ' bg-present hover:bg-present-hover text-text-on-state';
                 break;
             case 'absent':
-                baseClasses += ' bg-slate-800 hover:bg-slate-700 text-slate-500';
+                baseClasses += ' bg-absent hover:bg-surface-hover text-text-muted';
                 break;
             default:
-                baseClasses += ' bg-slate-700 hover:bg-slate-600 text-gray-200';
+                baseClasses += ' bg-surface-mid hover:bg-surface-hover text-text-main';
                 break;
         }
 
         return baseClasses;
     };
+
 
     const handleKeyClick = (key: string) => {
         if (key === 'ENTER') {

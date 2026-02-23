@@ -20,14 +20,6 @@ export default function Navbar() {
             </Link>
 
             <div className="flex items-center gap-6">
-                <Link
-                    href="/games"
-                    className={`text-sm font-bold transition-colors ${pathname.startsWith("/games") ? "text-primary" : "text-text-main hover:text-primary"
-                        }`}
-                >
-                    Oyunlar
-                </Link>
-
                 {isAuthenticated ? (
                     <div className="flex items-center gap-4">
                         <Link

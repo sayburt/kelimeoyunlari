@@ -1,6 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
 import { wordService, Word } from '@/services/wordService';
+import { scoreService } from '@/services/scoreService';
 import { LetterState } from '@/components/game/LetterCell';
+import { evaluateGuess } from '@/services/gameService';
 
 export interface GuessResult {
     guess: string;
@@ -63,34 +65,6 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
         setError(null);
     }, [status]);
 
-    const evaluateGuess = (guess: string, target: string): LetterState[] => {
-        const guessArr = guess.split('');
-        const targetArr = target.split('');
-        const states: LetterState[] = new Array(guess.length).fill('absent');
-
-        // Önce doğrudan doğru olan harfleri (yeşil) bul
-        for (let i = 0; i < guessArr.length; i++) {
-            if (guessArr[i] === targetArr[i]) {
-                states[i] = 'correct';
-                targetArr[i] = '*'; // Kullanılmış olarak işaretle
-                guessArr[i] = '*';  // Değerlendirilmiş olarak işaretle
-            }
-        }
-
-        // Sonra yanlış yerde ama olan harfleri (sarı) bul
-        for (let i = 0; i < guessArr.length; i++) {
-            if (guessArr[i] !== '*') {
-                const targetIndex = targetArr.indexOf(guessArr[i]);
-                if (targetIndex !== -1) {
-                    states[i] = 'present';
-                    targetArr[targetIndex] = '*'; // Kullanılmış olarak işaretle
-                }
-            }
-        }
-
-        return states;
-    };
-
     const handleEnter = useCallback(async () => {
         if (status !== 'playing' || isProcessingRef.current) return;
         if (currentGuess.length !== wordLength) {
@@ -120,29 +94,33 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
             setCurrentGuess('');
             setError(null);
 
-            // Klavye durumunu güncelle
-            const newKeyboardState = { ...keyboardState };
-            for (let i = 0; i < currentGuess.length; i++) {
-                const letter = currentGuess[i];
-                const state = states[i];
-                const currentState = newKeyboardState[letter];
+            // Klavye durumunu güncelle — fonksiyonel updater ile keyboardState bağımlılığı kalkar
+            setKeyboardState(prev => {
+                const next = { ...prev };
+                for (let i = 0; i < currentGuess.length; i++) {
+                    const letter = currentGuess[i];
+                    const state = states[i];
+                    const currentState = next[letter];
 
-                // Durumu daha "iyi" bir state ile güncelle (Kötüye doğru gitmemesi için)
-                if (state === 'correct') {
-                    newKeyboardState[letter] = 'correct';
-                } else if (state === 'present' && currentState !== 'correct') {
-                    newKeyboardState[letter] = 'present';
-                } else if (state === 'absent' && currentState !== 'correct' && currentState !== 'present') {
-                    newKeyboardState[letter] = 'absent';
+                    // Durumu daha "iyi" bir state ile güncelle (Kötüye doğru gitmemesi için)
+                    if (state === 'correct') {
+                        next[letter] = 'correct';
+                    } else if (state === 'present' && currentState !== 'correct') {
+                        next[letter] = 'present';
+                    } else if (state === 'absent' && currentState !== 'correct' && currentState !== 'present') {
+                        next[letter] = 'absent';
+                    }
                 }
-            }
-            setKeyboardState(newKeyboardState);
+                return next;
+            });
 
             // Kazanma / Kaybetme durumlarını kontrol et
             if (currentGuess === target) {
                 setStatus('won');
+                scoreService.saveGameResult('wordle', true, newGuesses.length).catch(console.error);
             } else if (newGuesses.length >= maxGuesses) {
                 setStatus('lost');
+                scoreService.saveGameResult('wordle', false, newGuesses.length).catch(console.error);
             }
         } catch (err) {
             console.error('Kelime kontrol hatası:', err);
@@ -150,7 +128,8 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
         } finally {
             isProcessingRef.current = false;
         }
-    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, keyboardState]);
+    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses]);
+
 
     return {
         status,

@@ -41,13 +41,11 @@ Bu fazda oyunların ortak altyapısı yazılacak ve planlanan ilk kelime oyunlar
   - Ortak oyun Header'ı (Ses açma/kapama, yardım vb.)
 - [x] **2.2. Oyun Mantığı (Global State)**
   - `hooks/useGame.ts` hook'unun oluşturulması (Oyun durum yönetimi, tahmin mantığı vb.).
-- [ ] **2.3. Oyun 1: Wordle (Kelime Tahmin)**
+- [x] **2.3. Oyun 1: Wordle (Kelime Tahmin)**
   - Normal "Wordle" klonunun geliştirilmesi (Mevcut `kelime-data.json` üzerinden).
   - Oyun bitiş, kazanma/kaybetme animasyonları.
-- [ ] **2.4. Oyun İstatistiklerinin Kaydedilmesi**
+- [x] **2.4. Oyun İstatistiklerinin Kaydedilmesi**
   - Oyun bittikten sonra sonuçların `services/scoreService.ts` üzerinden LocalStorage veya Supabase'e kaydedilmesi.
-- [ ] **2.5. Oyun 2: Adam Asmaca (Hangman) veya Benzeri**
-  - İkinci farklı bir oyun türünün entegre edilmesi.
 
 ---
 
