@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Trophy, Frown } from 'lucide-react';
+import { RotateCcw, Trophy, Frown, Share2 } from 'lucide-react';
 import { ConfettiEffect } from './ConfettiEffect';
 
 export interface GameEndModalProps {
@@ -15,6 +15,7 @@ export interface GameEndModalProps {
         anlam?: string | null;
     } | null;
     onRestart: () => void;
+    onShare?: () => void;
 }
 
 export function GameEndModal({
@@ -24,6 +25,7 @@ export function GameEndModal({
     maxGuesses,
     targetWord,
     onRestart,
+    onShare,
 }: GameEndModalProps) {
     // Confetti Effect
     return (
@@ -132,6 +134,18 @@ export function GameEndModal({
                                 <RotateCcw size={18} />
                                 Tekrar Oyna
                             </motion.button>
+
+                            {onShare && (
+                                <motion.button
+                                    whileHover={{ scale: 1.05 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    onClick={onShare}
+                                    className="mt-3 w-full py-3 rounded-xl font-bold text-text-main bg-surface hover:bg-surface-mid transition-all border border-surface-mid flex items-center justify-center gap-2"
+                                >
+                                    <Share2 size={18} />
+                                    Sonucu Paylaş
+                                </motion.button>
+                            )}
                         </motion.div>
                     </motion.div>
                 )}

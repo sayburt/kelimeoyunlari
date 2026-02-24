@@ -5,10 +5,27 @@ import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AvatarMenu } from "@/components/ui/AvatarMenu";
+import { shareContent } from "@/utils/shareUtils";
+import { useState } from "react";
+import { Share2 } from "lucide-react";
 
 export default function Navbar() {
     const { isAuthenticated } = useAuth();
     const pathname = usePathname();
+    const [isCopied, setIsCopied] = useState(false);
+
+    const handleShare = async () => {
+        const result = await shareContent({
+            title: 'Kelime Oyunları',
+            text: 'En eğlenceli kelime oyunları burada! Hemen denemelisin.',
+            url: window.location.origin,
+        });
+
+        if (result.success && result.type === 'copy') {
+            setIsCopied(true);
+            setTimeout(() => setIsCopied(false), 2000);
+        }
+    };
 
     // Auth sayfalarında Navbar'ı gizleyebiliriz veya farklı gösterebiliriz
     const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
@@ -37,6 +54,19 @@ export default function Navbar() {
                     >
                         Nasıl Oynanır?
                     </Link>
+                    <button
+                        onClick={handleShare}
+                        className="text-sm font-bold text-text-main hover:text-primary transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+                    >
+                        {isCopied ? (
+                            <span className="text-green-500 animate-in fade-in zoom-in duration-300">Kopyalandı!</span>
+                        ) : (
+                            <>
+                                <Share2 size={14} />
+                                Siteyi Paylaş
+                            </>
+                        )}
+                    </button>
                 </div>
                 {isAuthenticated ? (
                     <div className="flex items-center gap-4">

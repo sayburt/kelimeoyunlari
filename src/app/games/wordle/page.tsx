@@ -13,6 +13,7 @@ import { GameInstructions } from '@/components/game/GameInstructions';
 import { SettingsModal } from '@/components/game/SettingsModal';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { formatTime } from '@/utils/timeUtils';
+import { shareContent } from '@/utils/shareUtils';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
@@ -27,6 +28,7 @@ export default function WordlePage() {
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
 
     const isPaused = showInfoModal || showStatsModal || showSettingsModal || showModal;
 
@@ -110,6 +112,37 @@ export default function WordlePage() {
         startNewGame(WORD_LENGTH, MAX_GUESSES);
     };
 
+    // Paylaşma fonksiyonları
+    const handleShare = async () => {
+        const result = await shareContent({
+            title: 'Kelime Oyunları - Wordle',
+            text: 'Kelime Oyunları\'nda Wordle oyna! Bakalım bu kelimeyi bulabilecek misin?',
+            url: window.location.href,
+        });
+
+        if (result.success && result.type === 'copy') {
+            setToastMessage('Bağlantı kopyalandı!');
+            setTimeout(() => setToastMessage(null), 3000);
+        }
+    };
+
+    const handleResultShare = async () => {
+        const resultText = status === 'won'
+            ? `Wordle'ı ${guesses.length}/${maxGuesses} denemede buldum! 🏆`
+            : `Wordle'da şansım bu sefer yaver gitmedi. Bir dahaki sefere artık! 🧩`;
+
+        const result = await shareContent({
+            title: 'Wordle Sonucum',
+            text: resultText,
+            url: window.location.href,
+        });
+
+        if (result.success && result.type === 'copy') {
+            setToastMessage('Sonuç kopyalandı!');
+            setTimeout(() => setToastMessage(null), 3000);
+        }
+    };
+
     // Yükleniyor durumu
     if (status === 'loading' || status === 'idle') {
         return (
@@ -119,6 +152,7 @@ export default function WordlePage() {
                     onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
+                    onShare={handleShare}
                     timerText={formatTime(elapsedTime)}
                 />
                 <div className="flex-1 flex items-center justify-center">
@@ -141,11 +175,12 @@ export default function WordlePage() {
                     onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
+                    onShare={handleShare}
                     timerText={formatTime(elapsedTime)}
                 />
 
-                {/* Hata Toast */}
-                <ErrorToast message={error} />
+                {/* Hata ve Bilgi Toast */}
+                <ErrorToast message={error || toastMessage || ''} />
 
                 {/* Oyun Tahtası */}
                 <div className="flex-1 flex items-center justify-center px-4 py-2">
@@ -188,6 +223,7 @@ export default function WordlePage() {
                 maxGuesses={maxGuesses}
                 targetWord={targetWord}
                 onRestart={handleRestart}
+                onShare={handleResultShare}
             />
 
             {/* TODO: Placeholder Modallar - Gelecekte kendi bileşenleri ile değiştirilecek */}
