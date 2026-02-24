@@ -84,7 +84,7 @@ export function WordleBoard({
         rows.push(
             <motion.div
                 key={rowIdx}
-                className="flex gap-1.5 sm:gap-2 justify-center"
+                className="flex gap-1 min-[380px]:gap-1.5 sm:gap-2 justify-center"
                 animate={
                     shakeRow && rowIdx === currentRow
                         ? { x: [0, -8, 8, -8, 8, -4, 4, 0] }
@@ -98,7 +98,7 @@ export function WordleBoard({
     }
 
     return (
-        <div className="flex flex-col gap-1.5 sm:gap-2">
+        <div className="flex flex-col gap-1 min-[380px]:gap-1.5 sm:gap-2">
             {rows}
         </div>
     );

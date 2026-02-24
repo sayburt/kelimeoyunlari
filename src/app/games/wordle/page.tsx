@@ -196,7 +196,7 @@ export default function WordlePage() {
                 </div>
 
                 {/* Klavye */}
-                <div className="px-2 pb-4 sm:pb-6 shrink-0">
+                <div className="px-1 sm:px-2 pb-4 sm:pb-6 shrink-0">
                     <GameKeyboard
                         onKeyPress={handleKeyPress}
                         onEnter={handleEnter}
