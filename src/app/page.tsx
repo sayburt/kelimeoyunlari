@@ -49,7 +49,7 @@ export default function Home() {
           animate="visible"
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-stretch"
         >
-          {GAMES.map((game) => (
+          {GAMES.filter(game => !game.comingSoon).map((game) => (
             <motion.div key={game.id} variants={itemVariants} className="flex w-full h-full">
               <GameCard
                 title={game.title}

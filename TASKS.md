@@ -4,16 +4,28 @@ Bu dosya projenin adım adım nasıl geliştirileceğini tanımlar. Geliştirme 
 
 ---
 
-## 🎮 FAZ 5: Oyun Deneyimi (Kaldığı Yerden Devam Etme)
+## 🎮 FAZ 5: Gelişmiş Oyun Mekanikleri ve Puanlama
 
-Kullanıcının yarıda bıraktığı oyunları kaybetmemesini sağlayacak süreklilik sistemi.
+Oyun deneyimini daha profesyonel, rekabetçi ve eğlenceli hale getirecek temel özelliklerin entegrasyonu.
 
-- [ ] **5.1. Oyun State Persistence (Kalıcılık)**
-  - Mevcut tahminlerin, oyun durumunun ve sürenin `useGame` hook'u üzerinden anlık takibi.
-- [ ] **5.2. Veri Kayıt Stratejisi**
-  - Misafirler için LocalStorage, üyeler için Supabase realtime/table kaydı (`veri-yonetimi`).
-- [ ] **5.3. Otomatik Yükleme Mekanizması**
-  - Oyun sayfası açıldığında yarım kalan bir session olup olmadığının kontrolü ve state'in restore edilmesi.
+- [x] **5.1. Saat ve Zaman Yönetimi**
+  - [x] Oyun sırasında geçen süreyi milisaniye hassasiyetinde takip eden bir timer sisteminin `useGame` hook'una eklenmesi.
+  - [x] Zamanın duraklatılması (modal açıkken) ve oyun sonunda sürenin dondurulması.
+  - [x] UI Refinement: Formatı saniye düzeyine çekme ve mobil uyumlu tasarımı iyileştirme.
+- [ ] **5.2. Joker (İpucu) Sistemi**
+  - Her oyun için belirli sayıda "Joker" hakkı tanımlanması.
+  - Wordle için: "Rastgele bir doğru harfi aç" veya "Kullanılmayan iki harfi klavyeden ele" fonksiyonlarının yazılması.
+  - Joker kullanımının puanlama üzerindeki negatif etkisinin belirlenmesi.
+- [ ] **5.3. Gerçek Puanlama Sistemi Entegrasyonu**
+  - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki formüllerin (`Taban + Deneme + Zaman x GW`) kodlanması.
+  - `scoreService.ts` dosyasının sadece galibiyet değil, hesaplanan bu kompleks puanı da kaydedecek şekilde güncellenmesi.
+- [ ] **5.4. Rozet (Achievement) ve Eşik Sistemi**
+  - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki prestijli puan eşiklerinin (`1M`, `2.5M` vb.) kontrol mekanizmasının yazılması.
+  - Eşik aşıldığında kullanıcıya anlık bildirim (toast/celebration) gösterilmesi ve rozetin `badges` tablosuna işlenmesi.
+- [ ] **5.5. Oyun State Persistence (Kalıcılık)**
+  - Mevcut tahminlerin, aktif sürenin ve kullanılan jokerlerin `localStorage` / `Supabase` üzerinden anlık takibi.
+
+---
 
 ---
 

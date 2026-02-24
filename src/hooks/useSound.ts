@@ -1,4 +1,5 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
+import { useGameSettings } from '@/context/GameSettingsContext';
 
 let globalAudioCtx: AudioContext | null = null;
 
@@ -15,23 +16,7 @@ function getGlobalAudioContext() {
 }
 
 export function useSound() {
-    const [isSoundEnabled, setIsSoundEnabled] = useState(true);
-
-    useEffect(() => {
-        const stored = localStorage.getItem('soundEnabled');
-        if (stored !== null) {
-            // eslint-disable-next-line react-hooks/set-state-in-effect
-            setIsSoundEnabled(stored === 'true');
-        }
-    }, []);
-
-    const toggleSound = useCallback(() => {
-        setIsSoundEnabled(prev => {
-            const next = !prev;
-            localStorage.setItem('soundEnabled', String(next));
-            return next;
-        });
-    }, []);
+    const { isSoundEnabled, toggleSound } = useGameSettings();
 
     const playTone = useCallback((frequency: number, type: OscillatorType, duration: number, volume: number = 0.1) => {
         if (!isSoundEnabled) return;

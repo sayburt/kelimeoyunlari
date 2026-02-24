@@ -27,6 +27,13 @@ const BADGE_LABELS: Record<string, { label: string; icon: React.ReactNode }> = {
     games_10: { label: '10 Oyun Oynandı', icon: <Gamepad2 size={20} /> },
     games_50: { label: '50 Oyun Oynandı', icon: <Target size={20} /> },
     perfect_score: { label: 'Mükemmel Skor', icon: <Award size={20} /> },
+    // Puan Rozetleri
+    points_1k: { label: 'Binlik Kulübü', icon: <Trophy size={20} className="text-yellow-600" /> },
+    points_10k: { label: 'Acemi Dilci', icon: <Target size={20} className="text-blue-500" /> },
+    points_50k: { label: 'Kelime Avcısı', icon: <Zap size={20} className="text-purple-500" /> },
+    points_100k: { label: 'Puan Ustası', icon: <Trophy size={20} className="text-yellow-400" /> },
+    points_250k: { label: 'Kelime Efsanesi', icon: <Flame size={20} className="text-orange-500" /> },
+    points_500k: { label: 'Ölümsüz Dilbilimci', icon: <Award size={20} className="text-red-500" /> },
 };
 
 // Oyun adı mapping

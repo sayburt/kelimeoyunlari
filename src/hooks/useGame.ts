@@ -4,6 +4,8 @@ import { scoreService } from '@/services/scoreService';
 import { LetterState } from '@/components/game/LetterCell';
 import { evaluateGuess } from '@/services/gameService';
 import { useSound } from '@/hooks/useSound';
+import { useGameSettings } from '@/context/GameSettingsContext';
+import { useTimer } from '@/hooks/useTimer';
 
 export interface GuessResult {
     guess: string;
@@ -12,7 +14,19 @@ export interface GuessResult {
 
 export type GameStatus = 'idle' | 'loading' | 'playing' | 'won' | 'lost';
 
-export function useGame(initialWordLength: number = 5, initialMaxGuesses: number = 6) {
+export interface UseGameOptions {
+    initialWordLength?: number;
+    initialMaxGuesses?: number;
+    isPaused?: boolean;
+}
+
+export function useGame(options: UseGameOptions = {}) {
+    const {
+        initialWordLength = 5,
+        initialMaxGuesses = 6,
+        isPaused = false
+    } = options;
+    const { difficulty } = useGameSettings();
     const [status, setStatus] = useState<GameStatus>('idle');
     const [targetWord, setTargetWord] = useState<Word | null>(null);
     const [guesses, setGuesses] = useState<GuessResult[]>([]);
@@ -21,18 +35,24 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
     const [error, setError] = useState<string | null>(null);
     const [wordLength, setWordLength] = useState(initialWordLength);
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
+
+    const { elapsedTime, resetTimer } = useTimer(status === 'playing', isPaused);
+
     const { playKeyPress, playDelete, playEnter, playError, playWin, playLose, isSoundEnabled, toggleSound } = useSound();
 
     // İşlem devam ederken yeni harf girişini veya enter tuşunu engellemek için
     const isProcessingRef = useRef(false);
 
-    const startNewGame = useCallback(async (length: number = wordLength, max: number = maxGuesses) => {
+    const startNewGame = useCallback(async (length: number = initialWordLength, max: number = initialMaxGuesses) => {
         setStatus('loading');
         setError(null);
         setWordLength(length);
         setMaxGuesses(max);
         try {
-            const word = await wordService.getRandomWord({ length });
+            const word = await wordService.getRandomWord({
+                length,
+                difficulty: difficulty
+            });
             if (!word) {
                 setStatus('idle');
                 setError('Seçilen kriterlere uygun kelime bulunamadı.');
@@ -42,13 +62,14 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
             setGuesses([]);
             setCurrentGuess('');
             setKeyboardState({});
+            resetTimer();
             setStatus('playing');
         } catch (err) {
             console.error('Kelime yüklenirken hata:', err);
             setStatus('idle');
             setError('Kelime yüklenirken bir hata oluştu.');
         }
-    }, [wordLength, maxGuesses]);
+    }, [difficulty, initialWordLength, initialMaxGuesses, resetTimer]);
 
     const handleKeyPress = useCallback((key: string) => {
         if (status !== 'playing' || isProcessingRef.current) return;
@@ -154,6 +175,7 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
         wordLength,
         isSoundEnabled,
         toggleSound,
+        elapsedTime,
         startNewGame,
         handleKeyPress,
         handleDelete,

@@ -81,7 +81,7 @@ export default async function GameHowToPage({ params }: Props) {
                                 <span className="w-8 h-1 bg-primary rounded-full" />
                                 ADIM ADIM KURALLAR
                             </h2>
-                            <ul className="space-y-4">
+                            <ul className="space-y-4 mb-12">
                                 {game.instructions.rules.map((rule, idx) => (
                                     <li key={idx} className="flex items-start gap-4 text-text-muted text-lg">
                                         <span className="flex-shrink-0 w-8 h-8 rounded-full bg-surface font-black text-primary flex items-center justify-center text-sm border border-surface-active">
@@ -91,7 +91,43 @@ export default async function GameHowToPage({ params }: Props) {
                                     </li>
                                 ))}
                             </ul>
+
+                            {game.instructions.examples && game.instructions.examples.length > 0 && (
+                                <div className="space-y-8 mt-16 p-8 rounded-3xl bg-surface/5 border border-surface/10">
+                                    <h3 className="text-xl font-black text-text-main mb-8 tracking-tight">ÖRNEK TAHMİNLER</h3>
+                                    <div className="space-y-10">
+                                        {game.instructions.examples.map((example, idx) => (
+                                            <div key={idx} className="space-y-4">
+                                                <div className="flex gap-2">
+                                                    {example.word.split('').map((char, charIdx) => {
+                                                        const color = example.colors[charIdx];
+                                                        let bgClass = 'bg-surface border-surface-active';
+                                                        if (color === 'correct') bgClass = 'bg-correct border-correct text-white';
+                                                        else if (color === 'present') bgClass = 'bg-present border-present text-white';
+                                                        else if (color === 'absent') bgClass = 'bg-absent border-absent text-white';
+
+                                                        return (
+                                                            <div
+                                                                key={charIdx}
+                                                                className={`w-12 h-12 flex items-center justify-center rounded-xl font-black text-xl border-2 transition-transform hover:scale-105 ${bgClass}`}
+                                                            >
+                                                                {char}
+                                                            </div>
+                                                        );
+                                                    })}
+                                                </div>
+                                                <p className="text-text-muted font-medium bg-surface/20 p-4 rounded-2xl border border-surface/10">
+                                                    <span className="text-primary font-black mr-2">➜</span>
+                                                    {example.description}
+                                                </p>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
                         </section>
+
+
                     </div>
 
                     {/* Sidebar / Tips */}

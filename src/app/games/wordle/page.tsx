@@ -10,6 +10,9 @@ import { GameEndModal } from '@/components/game/GameEndModal';
 import { ErrorToast } from '@/components/game/ErrorToast';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
+import { SettingsModal } from '@/components/game/SettingsModal';
+import { useGameSettings } from '@/context/GameSettingsContext';
+import { formatTime } from '@/utils/timeUtils';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
@@ -20,6 +23,13 @@ const TURKISH_LETTERS = new Set(
 );
 
 export default function WordlePage() {
+    const [showInfoModal, setShowInfoModal] = useState(false);
+    const [showStatsModal, setShowStatsModal] = useState(false);
+    const [showSettingsModal, setShowSettingsModal] = useState(false);
+    const [showModal, setShowModal] = useState(false);
+
+    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showModal;
+
     const {
         status,
         targetWord,
@@ -30,25 +40,25 @@ export default function WordlePage() {
         error,
         maxGuesses,
         wordLength,
-        isSoundEnabled,
-        toggleSound,
+        elapsedTime,
         startNewGame,
         handleKeyPress,
         handleDelete,
         handleEnter,
-    } = useGame(WORD_LENGTH, MAX_GUESSES);
+    } = useGame({
+        initialWordLength: WORD_LENGTH,
+        initialMaxGuesses: MAX_GUESSES,
+        isPaused
+    });
 
     const [shakeRow, setShakeRow] = useState(false);
-    const [showModal, setShowModal] = useState(false);
-    // TODO: Gerçek modal bileşenleri yapıldığında bu stateler onlara bağlanacak
-    const [showInfoModal, setShowInfoModal] = useState(false);
-    const [showStatsModal, setShowStatsModal] = useState(false);
-    const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-    // Oyunu başlat
+    const { difficulty } = useGameSettings();
+
+    // Oyunu başlat veya zorluk değiştiğinde yeniden başlat
     useEffect(() => {
         startNewGame(WORD_LENGTH, MAX_GUESSES);
-    }, [startNewGame]);
+    }, [startNewGame, difficulty]);
 
     // Kazanma/kaybetme durumunda modal aç
     useEffect(() => {
@@ -93,6 +103,7 @@ export default function WordlePage() {
         return () => window.removeEventListener('keydown', handlePhysicalKeyboard);
     }, [handlePhysicalKeyboard]);
 
+
     // Yeni oyun başlat
     const handleRestart = () => {
         setShowModal(false);
@@ -108,8 +119,7 @@ export default function WordlePage() {
                     onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
-                    soundEnabled={isSoundEnabled}
-                    onToggleSound={toggleSound}
+                    timerText={formatTime(elapsedTime)}
                 />
                 <div className="flex-1 flex items-center justify-center">
                     <motion.div
@@ -131,8 +141,7 @@ export default function WordlePage() {
                     onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
-                    soundEnabled={isSoundEnabled}
-                    onToggleSound={toggleSound}
+                    timerText={formatTime(elapsedTime)}
                 />
 
                 {/* Hata Toast */}
@@ -182,13 +191,35 @@ export default function WordlePage() {
             />
 
             {/* TODO: Placeholder Modallar - Gelecekte kendi bileşenleri ile değiştirilecek */}
+            {/* Bilgi Modalı */}
             {showInfoModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-surface p-6 rounded-xl max-w-sm w-full border border-surface-hover shadow-2xl">
-                        <h3 className="text-xl font-bold mb-4">Nasıl Oynanır?</h3>
-                        <p className="text-text-secondary mb-6">Detaylı oyun kuralları ve bilgi ekranı buraya gelecek.</p>
-                        <button onClick={() => setShowInfoModal(false)} className="w-full bg-primary text-black font-bold py-2 rounded-lg">Kapat</button>
-                    </div>
+                <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        className="bg-surface p-8 rounded-3xl max-w-lg w-full border border-surface-hover shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto custom-scrollbar"
+                    >
+                        <div className="flex justify-between items-center mb-8">
+                            <h3 className="text-3xl font-black text-text-main tracking-tighter">NASIL <span className="text-primary italic">OYNANIR?</span></h3>
+                            <button
+                                onClick={() => setShowInfoModal(false)}
+                                className="w-10 h-10 flex items-center justify-center rounded-xl bg-surface-hover text-text-muted hover:text-primary transition-colors"
+                            >
+                                <span className="text-2xl">×</span>
+                            </button>
+                        </div>
+
+                        <GameInstructions
+                            instructions={GAMES.find(g => g.id === 'wordle')!.instructions}
+                        />
+
+                        <button
+                            onClick={() => setShowInfoModal(false)}
+                            className="w-full mt-10 bg-primary text-bg font-black py-4 rounded-2xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
+                        >
+                            ANLADIM, BAŞLA!
+                        </button>
+                    </motion.div>
                 </div>
             )}
 
@@ -202,15 +233,11 @@ export default function WordlePage() {
                 </div>
             )}
 
-            {showSettingsModal && (
-                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-                    <div className="bg-surface p-6 rounded-xl max-w-sm w-full border border-surface-hover shadow-2xl">
-                        <h3 className="text-xl font-bold mb-4">Ayarlar</h3>
-                        <p className="text-text-secondary mb-6">Tema, ses, renk körü modu gibi ayarlar buraya gelecek.</p>
-                        <button onClick={() => setShowSettingsModal(false)} className="w-full bg-primary text-black font-bold py-2 rounded-lg">Kapat</button>
-                    </div>
-                </div>
-            )}
+            {/* Ayarlar Modalı */}
+            <SettingsModal
+                isOpen={showSettingsModal}
+                onClose={() => setShowSettingsModal(false)}
+            />
         </div>
     );
 }

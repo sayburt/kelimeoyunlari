@@ -24,6 +24,13 @@ export default function Navbar() {
             <div className="flex items-center gap-6">
                 <div className="hidden md:flex items-center gap-6 mr-4">
                     <Link
+                        href="/"
+                        className={`text-sm font-bold transition-colors hover:text-primary ${pathname === "/" ? "text-primary" : "text-text-main"
+                            }`}
+                    >
+                        Ana Sayfa
+                    </Link>
+                    <Link
                         href="/nasil-oynanir"
                         className={`text-sm font-bold transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"
                             }`}

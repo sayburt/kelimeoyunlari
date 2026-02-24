@@ -49,7 +49,25 @@ Temel altyapıyı baştan kodlamamak ve proje geneli tutarlılığı korumak ama
 *   **Veritabanı / Kütüphane:** Kelime bankasının yönetimi, her zaman projenin root veya data dizinlerinde yer alan veriler üzerinden (örneğin `kelime-data.json`), aracı yardımcı fonksiyonlarla (Services) gerçekleştirilmelidir.
 *   **Yerel Depolama (Storage):** Oyuna dair yerel kayıt geçmişleri ve ilerlemeler (Guest Stats vs.), modüler `storage.ts` servisi ile kaydedilmeli/çağrılmalıdır.
 
-## 6. Yetenek (Skill) Koordinasyonu
+## 7. Rehber Sayfaları (Nasıl Oynanır? Sayfaları)
+Oyun rehber sayfaları (`src/app/nasil-oynanir/[id]/page.tsx`), hem eğitici hem de SEO odaklı olmalı ve şu standart yapıyı takip etmelidir:
+
+*   **Dinamik Grid Yapısı:** Sayfa ana içeriği `2/3` (Sol - Bilgi) ve `1/3` (Sağ - Sidebar) oranında bölünmüş bir grid kullanmalıdır:
+    *   **Sol Sütun (İçerik):** 
+        *   **Tarihçe:** Oyunun kökenlerini anlatan metin bloğu.
+        *   **Adım Adım Kurallar:** `rules` dizisinden beslenen, numaralandırılmış liste yapısı.
+        *   **Görsel Örnekler:** CSS ile çizilmiş, oyunun mantığını (ör: Wordle renkleri) anlatan interaktif kutucuklar ve açıklamaları.
+    *   **Sağ Sütun (Sidebar):**
+        *   **CTA Kartı:** Oyuncuyu hemen oyuna yönlendiren "HEMEN OYNA" butonu içeren vurgulu kart.
+        *   **Pro İpuçları:** `proTips` dizisinden beslenen, yıldız/ikon destekli taktik metinleri.
+*   **Hero Alanı Tasarımı:**
+    *   Oyunun `thumbnail` görseli arka planda blur (`blur-sm`) ve opaklığı azaltılmış (`opacity-20`) şekilde kullanılmalıdır.
+    *   Başlık (`H1`) büyük ve kalın (`font-black`) olmalı, oyun ismi tamamen büyük harf ile yazılmalıdır.
+*   **SEO Standartları:**
+    *   Metadata `title` yapısı: "[Oyun Adı] Nasıl Oynanır? Kurallar ve Taktikler | Kelime Oyunları" formatında olmalıdır.
+    *   Sayfa içindeki başlıklar (`H2`) merkezi vurgu çizgisi (vurgu renginde yuvarlak/çizgi) ile desteklenmelidir.
+
+## 8. Yetenek (Skill) Koordinasyonu
 Bu belge oyunların UI/UX standartlarını belirler. Oyun bazlı diğer teknik detaylar için:
 - **Kapsamlı SEO ve Sitemap Süreçleri:** `seo-uzmani` yeteneği.
 - **Renk ve Animasyon Detayları:** `tasarim-sistemi` yeteneği.
