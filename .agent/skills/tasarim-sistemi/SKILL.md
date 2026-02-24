@@ -28,3 +28,8 @@ Kullanıcı tercihine veya sistem ayarına bağlı olarak **Light** ve **Dark** 
 - Oyun ekranlarında dikey scroll olmaz (`overflow-hidden`).
 - Butonlar mobil erişilebilirlik için minimum **48px** yüksekliğindedir.
 - Animasyonlar Framer Motion (Web) veya Reanimated (Mobil) ile yapılır, 180-250ms arasındadır.
+
+## 5. Yetenek (Skill) Koordinasyonu
+Bu tasarım sistemi projenin görsel kurallarını belirler. Geliştirme yaparken:
+- Oyun arayüzüne özel kullanıcı deneyimi (UX) yerleşimleri ve "Nasıl Oynanır?" görselleri için `oyun-standartlari` yeteneğine bakınız.
+- Projede renk kodları veya metinler (özellikle oyun içi açıklamalar) değiştiğinde, oyun talimatlarının ana kaynağı olan `veri-yonetimi` yeteneğindeki **Oyun İçerikleri (Games Data)** kuralına uygun hareket ediniz.

@@ -8,6 +8,8 @@ import { GameKeyboard } from '@/components/game/GameKeyboard';
 import { WordleBoard } from '@/components/game/WordleBoard';
 import { GameEndModal } from '@/components/game/GameEndModal';
 import { ErrorToast } from '@/components/game/ErrorToast';
+import { GAMES } from '@/data/games';
+import { GameInstructions } from '@/components/game/GameInstructions';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
@@ -160,58 +162,13 @@ export default function WordlePage() {
                 </div>
             </div>
 
+
             {/* SEO & Nasıl Oynanır Bölümü */}
             <section className="w-full max-w-2xl mx-auto px-6 py-12 md:py-16 border-t border-surface/50">
-                <h2 className="text-2xl font-bold mb-6 text-primary">Wordle Nasıl Oynanır?</h2>
-
-                <div className="space-y-4 text-sm sm:text-base text-text-main/90">
-                    <p>
-                        Amacınız 5 harfli gizli kelimeyi 6 denemede bulmaktır. Her tahmin geçerli 5 harfli bir kelime olmalıdır.
-                        Tahmininizi yazdıktan sonra göndermek için <strong>Enter</strong> tuşuna basın.
-                    </p>
-                    <p>
-                        Her tahminden sonra, harflerin rengi tahmininizin gizli kelimeye ne kadar yakın olduğunu göstermek için değişecektir:
-                    </p>
-
-                    <div className="my-6 space-y-6">
-                        <div>
-                            <div className="flex gap-1 mb-2">
-                                <span className="w-10 h-10 flex items-center justify-center bg-correct text-white font-bold rounded-lg shrink-0">K</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">A</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">L</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">E</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">M</span>
-                            </div>
-                            <p><strong>K</strong> harfi kelimede var ve <strong>doğru yerde</strong>.</p>
-                        </div>
-
-                        <div>
-                            <div className="flex gap-1 mb-2">
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">S</span>
-                                <span className="w-10 h-10 flex items-center justify-center bg-present text-white font-bold rounded-lg shrink-0">I</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">N</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">A</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">V</span>
-                            </div>
-                            <p><strong>I</strong> harfi kelimede var ama <strong>yanlış yerde</strong>.</p>
-                        </div>
-
-                        <div>
-                            <div className="flex gap-1 mb-2">
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">B</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">A</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">Ş</span>
-                                <span className="w-10 h-10 flex items-center justify-center bg-absent text-white font-bold rounded-lg shrink-0">A</span>
-                                <span className="w-10 h-10 flex items-center justify-center border-2 border-surface-mid font-bold rounded-lg shrink-0">K</span>
-                            </div>
-                            <p><strong>A</strong> harfi kelimede <strong>hiç yok</strong>.</p>
-                        </div>
-                    </div>
-
-                    <p className="mt-8 pt-6 border-t border-surface-hover/30 text-text-muted">
-                        Kelime dağarcığınızı test edin ve zihninizi canlı tutun!
-                    </p>
-                </div>
+                <GameInstructions
+                    instructions={GAMES.find(g => g.id === 'wordle')!.instructions}
+                    title="Wordle"
+                />
             </section>
 
             {/* Kazanma / Kaybetme Modal */}

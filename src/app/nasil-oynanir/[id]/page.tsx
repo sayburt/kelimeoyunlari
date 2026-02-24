@@ -1,0 +1,129 @@
+import { GAMES } from "@/data/games";
+import { notFound } from "next/navigation";
+import Image from "next/image";
+import Link from "next/link";
+import { Metadata } from "next";
+
+interface Props {
+    params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+    const { id } = await params;
+    const game = GAMES.find((g) => g.id === id);
+    if (!game) return { title: "Oyun Bulunamadı" };
+
+    return {
+        title: `${game.title} Nasıl Oynanır? Kurallar ve Taktikler | Kelime Oyunları`,
+        description: `${game.title} oyunu hakkında her şey: Tarihçesi, kuralları ve kazanma taktikleri. Hemen öğren ve oynamaya baş!`,
+        openGraph: {
+            images: [{ url: game.thumbnail }],
+        },
+    };
+}
+
+export default async function GameHowToPage({ params }: Props) {
+    const { id } = await params;
+    const game = GAMES.find((g) => g.id === id);
+
+    if (!game) {
+        notFound();
+    }
+
+    return (
+        <main className="min-h-screen bg-bg">
+            {/* Hero Section */}
+            <header className="relative h-[50vh] min-h-[400px] w-full bg-surface/20 flex items-end overflow-hidden">
+                <Image
+                    src={game.thumbnail}
+                    alt={game.title}
+                    fill
+                    className="object-cover opacity-20 blur-sm scale-110"
+                    priority
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-bg via-bg/80 to-transparent" />
+
+                <div className="relative z-10 max-w-4xl mx-auto w-full px-6 pb-12">
+                    <Link
+                        href="/nasil-oynanir"
+                        className="text-primary text-sm font-black mb-4 inline-block hover:underline"
+                    >
+                        ← GERİ DÖN
+                    </Link>
+                    <h1 className="text-5xl md:text-7xl font-black text-text-main tracking-tighter mb-4">
+                        {game.title.toUpperCase()}
+                    </h1>
+                    <p className="text-xl text-text-muted max-w-2xl font-medium tracking-tight">
+                        {game.description}
+                    </p>
+                </div>
+            </header>
+
+            {/* Content Section */}
+            <article className="max-w-4xl mx-auto px-6 py-16">
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    {/* Main Text */}
+                    <div className="lg:col-span-2 space-y-12">
+                        {/* History */}
+                        <section>
+                            <h2 className="text-2xl font-black text-text-main mb-6 flex items-center gap-3">
+                                <span className="w-8 h-1 bg-primary rounded-full" />
+                                TARİHÇE
+                            </h2>
+                            <p className="text-text-muted leading-relaxed text-lg">
+                                {game.blogContent?.history || "Bu oyunun tarihçesi çok yakında eklenecektir."}
+                            </p>
+                        </section>
+
+                        {/* How to Play Detail */}
+                        <section>
+                            <h2 className="text-2xl font-black text-text-main mb-6 flex items-center gap-3">
+                                <span className="w-8 h-1 bg-primary rounded-full" />
+                                ADIM ADIM KURALLAR
+                            </h2>
+                            <ul className="space-y-4">
+                                {game.instructions.rules.map((rule, idx) => (
+                                    <li key={idx} className="flex items-start gap-4 text-text-muted text-lg">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-surface font-black text-primary flex items-center justify-center text-sm border border-surface-active">
+                                            {idx + 1}
+                                        </span>
+                                        <span className="mt-1">{rule}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    </div>
+
+                    {/* Sidebar / Tips */}
+                    <aside className="space-y-8">
+                        {/* CTA Card */}
+                        <div className="p-8 rounded-3xl bg-primary text-bg shadow-xl shadow-primary/20 relative overflow-hidden group">
+                            <div className="relative z-10 text-center">
+                                <h3 className="text-2xl font-black mb-4">HAZIR MISIN?</h3>
+                                <Link
+                                    href={game.href}
+                                    className="block w-full py-4 bg-bg text-text-main rounded-2xl font-black text-lg hover:scale-105 transition-transform"
+                                >
+                                    HEMEN OYNA
+                                </Link>
+                            </div>
+                            <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-32 h-32 bg-bg/10 rounded-full blur-2xl group-hover:scale-150 transition-transform duration-700" />
+                        </div>
+
+                        {/* Pro Tips */}
+                        <div className="p-8 rounded-3xl bg-surface/10 border border-surface/20">
+                            <h3 className="text-xl font-black text-primary mb-6 italic">PRO İPUÇLARI</h3>
+                            <ul className="space-y-6">
+                                {(game.blogContent?.proTips || ["Taktikler yakında burada olacak!"]).map((tip, idx) => (
+                                    <li key={idx} className="text-sm text-text-muted leading-relaxed font-medium">
+                                        ✨ {tip}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </aside>
+                </div>
+            </article>
+        </main>
+    );
+}

@@ -1,11 +1,12 @@
 import React from 'react';
 import Image from 'next/image';
-import { Heart, Bookmark, Users } from 'lucide-react';
+import { Heart, Bookmark, Users, Info } from 'lucide-react';
 
 export interface GameCardProps {
     title: string;
     description: string;
     onClick?: () => void;
+    onInfo?: () => void;
     comingSoon?: boolean;
     thumbnail?: string;
     playCount?: number;
@@ -16,6 +17,7 @@ export function GameCard({
     title,
     description,
     onClick,
+    onInfo,
     comingSoon = false,
     thumbnail,
     playCount = 0,
@@ -76,6 +78,18 @@ export function GameCard({
                             title="Beğen"
                         >
                             <Heart size={16} />
+                        </button>
+                        <button
+                            className="p-1.5 rounded-md hover:bg-surface-mid/50 hover:text-primary transition-colors text-text-secondary disabled:opacity-50"
+                            disabled={comingSoon}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onInfo?.();
+                            }}
+                            aria-label="Nasıl Oynanır"
+                            title="Nasıl Oynanır"
+                        >
+                            <Info size={16} />
                         </button>
                         <button
                             className="p-1.5 rounded-md hover:bg-surface-mid/50 hover:text-primary transition-colors text-text-secondary disabled:opacity-50"

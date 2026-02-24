@@ -123,3 +123,13 @@ Projenin canlı URL'i `https://www.kelimeoyunlari.tr` olmakzadır. Meta etiketle
 Yeni bir sayfa ekledikten sonra:
 1. Kaynak kodlarına (`<head>`) bakarak `title`, `description`, `application-name`, `og:title`, `twitter:card` vb. etiketlerin eklendiğinden emin olun.
 2. Canonical linklerin doğru adresi işaret ettiğini kontrol edin.
+
+## 6. Sitemap ve Robots.txt
+Arama motorlarının siteyi doğru tarayabilmesi için `src/app/sitemap.ts` ve `src/app/robots.ts` dosyalarının projede bulunması ve güncel tutulması zorunludur.
+- Yeni bir sayfa (Örn: Yeni bir oyun sayfası `/games/yenioyun`) eklendiğinde, statik veya dinamik olarak bu rotanın `sitemap.ts` içerisine eklenmesi (veya otomatik taranması) sağlanmalıdır.
+- Test ortamlarında (preview) ya da gizlenmesi gereken API ve admin rotalarında (`robots.ts` üzerinden) `Disallow` tanımı yapılmalıdır.
+
+## 7. Yetenek (Skill) Koordinasyonu
+SEO kuralları uygulanırken aşağıdaki belgeler de dikkate alınmalıdır:
+- **Oyun İçi Metadata ve Şemalar:** `oyun-standartlari` yeteneğindeki Layout, game card (og.png/card.webp) yönergelerine bakınız.
+- **Proje Mimarisi:** Temel dosya konumları, genel yapı bilgisi için `proje-kurallari` yeteneği ile uyumlu olunmalıdır.

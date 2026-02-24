@@ -1,49 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GameCard } from '@/components/game/GameCard';
-import { motion } from 'framer-motion';
-
-const GAMES = [
-  {
-    id: 'wordle',
-    title: 'Wordle',
-    description: '5 harfli gizli kelimeyi 6 denemede bul!',
-    href: '/games/wordle',
-    comingSoon: false,
-    thumbnail: '/games/wordle/card.webp',
-    playCount: 15420,
-    likeCount: 4200,
-  },
-  {
-    id: 'anagram',
-    title: 'Anagram',
-    description: 'Karışık harflerden anlamlı kelime oluştur.',
-    href: '/games/anagram',
-    comingSoon: true,
-    playCount: 0,
-    likeCount: 0,
-  },
-  {
-    id: 'hangman',
-    title: 'Adam Asmaca',
-    description: 'Harfleri tahmin ederek kelimeyi kurtarabilir misin?',
-    href: '/games/hangman',
-    comingSoon: true,
-    playCount: 0,
-    likeCount: 0,
-  },
-  {
-    id: 'quiz',
-    title: 'Kelime Bilgi',
-    description: 'Anlamından kelimeyi tahmin et.',
-    href: '/games/quiz',
-    comingSoon: true,
-    playCount: 0,
-    likeCount: 0,
-  },
-];
+import { GameInstructions } from '@/components/game/GameInstructions';
+import { motion, AnimatePresence } from 'framer-motion';
+import { GAMES, Game } from '@/data/games';
+import { X } from 'lucide-react';
 
 const containerVariants = {
   hidden: {},
@@ -59,6 +22,7 @@ const itemVariants = {
 
 export default function Home() {
   const router = useRouter();
+  const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   return (
     <div className="min-h-screen bg-bg px-4 py-12 sm:py-20 flex flex-col">
@@ -92,6 +56,7 @@ export default function Home() {
                 description={game.description}
                 comingSoon={game.comingSoon}
                 onClick={() => router.push(game.href)}
+                onInfo={() => setSelectedGame(game)}
                 thumbnail={game.thumbnail}
                 playCount={game.playCount}
                 likeCount={game.likeCount}
@@ -100,6 +65,64 @@ export default function Home() {
           ))}
         </motion.div>
       </div>
+
+      {/* Nasıl Oynanır Modal */}
+      <AnimatePresence>
+        {selectedGame && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setSelectedGame(null)}
+              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface border border-surface-mid shadow-2xl rounded-2xl p-6 sm:p-8"
+            >
+              <button
+                onClick={() => setSelectedGame(null)}
+                className="absolute top-4 right-4 p-2 rounded-full hover:bg-surface-mid/50 text-text-muted transition-colors"
+                aria-label="Kapat"
+              >
+                <X size={20} />
+              </button>
+
+              <div className="mb-8">
+                <h3 className="text-3xl font-black text-text-main mb-2">{selectedGame.title}</h3>
+                <p className="text-text-secondary">{selectedGame.description}</p>
+              </div>
+
+              <GameInstructions
+                instructions={selectedGame.instructions}
+                title={selectedGame.title}
+              />
+
+              <div className="mt-8 pt-6 border-t border-surface-mid/50 flex flex-col sm:flex-row gap-4">
+                <button
+                  onClick={() => {
+                    setSelectedGame(null);
+                    router.push(selectedGame.href);
+                  }}
+                  disabled={selectedGame.comingSoon}
+                  className="flex-1 bg-primary text-black font-bold py-3 px-6 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {selectedGame.comingSoon ? 'Yakında' : 'Şimdi Oyna'}
+                </button>
+                <button
+                  onClick={() => setSelectedGame(null)}
+                  className="flex-1 bg-surface-mid text-text-main font-bold py-3 px-6 rounded-xl hover:bg-surface-hover transition-colors"
+                >
+                  Kapat
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

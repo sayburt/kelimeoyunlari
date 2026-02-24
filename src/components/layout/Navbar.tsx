@@ -22,6 +22,15 @@ export default function Navbar() {
             </Link>
 
             <div className="flex items-center gap-6">
+                <div className="hidden md:flex items-center gap-6 mr-4">
+                    <Link
+                        href="/nasil-oynanir"
+                        className={`text-sm font-bold transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"
+                            }`}
+                    >
+                        Nasıl Oynanır?
+                    </Link>
+                </div>
                 {isAuthenticated ? (
                     <div className="flex items-center gap-4">
                         <ThemeToggle />

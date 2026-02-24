@@ -34,3 +34,10 @@ src/
 2. UI genel bir bileşen mi? (Navbar, Modal vb.) → Shadcn + `components/ui/`
 3. UI oyuna özel mi? (Board, Hücre vb.) → Custom Tailwind + `components/game/`
 4. Yeni bir özellik ekleniyor mu? → Mutlaka PRD ile uyumu kontrol et.
+
+## 5. İlgili Dokümanlar ve Yetenek (Skill) Koordinasyonu
+Bu doküman ana mimariyi belirler. Geliştirmenin alt uzmanlık alanları için aşağıdaki `skill` dokümanlarına **mutlaka** başvurulmalıdır:
+- **SEO Standartları ve Sitemap:** `seo-uzmani`
+- **Oyun Arayüzü, Deneyimi ve Kartları:** `oyun-standartlari`
+- **Renk, Tipografi ve Şablonlar:** `tasarim-sistemi`
+- **Veritabanı (Supabase) ve Yerel Kayıtlar:** `veri-yonetimi`

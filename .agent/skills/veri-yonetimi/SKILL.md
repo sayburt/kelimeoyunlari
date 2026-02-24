@@ -22,3 +22,11 @@ description: Kelime verisi ve kullanıcı verisi (Supabase/LocalStorage) yöneti
 ## 4. RLS Kuralları
 Supabase tarafında her tabloda RLS aktif olmalı; kullanıcılar sadece kendi verilerine (`auth.uid() = user_id`) erişebilmelidir. AI bu politikaları tablo oluştururken otomatik uygular.
 
+## 5. Oyun İçerikleri (Games Data)
+- **Kapsam:** Oyunların başlıkları, açıklamaları, oynanış istatistikleri ve en önemlisi **"Nasıl Oynanır?" (instructions)** nesneleri tek bir merkezden yönetilir.
+- **Konum:** `src/data/games.ts`
+- **İlişki:** Oyun sayfalarında (SEO metinleri) ve ana sayfadaki bilgi ikonlarında bu veri tüketilir. Bir oyunun metinleri güncellenecekse UI üzerinden değil `games.ts` üzerinden güncellenmelidir.
+
+## 6. Yetenek (Skill) Koordinasyonu
+- **"Nasıl Oynanır?" Bileşen Bağlantısı:** Verinin UI tarafında nasıl render edileceği ve SEO yapısı için `oyun-standartlari` yeteneğinin "Nasıl Oynanır?" bölümüne bakınız.
+- **Tasarım Standartları:** Supabase'den veya lokalden dönen hata mesajları, uyarılar ve renkler için `tasarim-sistemi` referans alınmalıdır.

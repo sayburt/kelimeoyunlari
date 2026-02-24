@@ -28,11 +28,13 @@ Ana sayfadaki grid sisteminde sergilenmek üzere her oyunun standart görselleri
 *   **Kart Görseli (Thumbnail):** Her oyunun `public/games/oyun-adi/` klasörü altında `card.webp` adında, 16:9 formatına uygun, performans için `.webp` formatında optimize edilmiş bir Thumbnail'ı olmalıdır.
 *   **Grid Verisi:** `page.tsx` içerisindeki oyunlar dizisinde (GAMES), oyun objesine resim olarak `thumbnail: '/games/oyun-adi/card.webp'` yolu verilmelidir.
 
-## 3. "Nasıl Oynanır?" Bölümü
-Oyun sayfasının en altına (oyun UI'ının hemen bittiği bloğun altına), SEO'yu besleyen ve oyuncuya pratik bilgi veren standart bir içerik bölümü eklenmelidir.
+## 3. "Nasıl Oynanır?" Bölümü ve Merkezi Veri
+Oyun talimatları tek bir merkezden (`src/data/games.ts`) yönetilmeli ve görsel destekli olmalıdır.
 
-*   **Başlık:** Eklendiği sayfa başlığı uygun bir H2 etiketiyle işaretlenmelidir (Örn: `<h2 className="text-2xl font-bold mb-6 text-primary">OyunAdı Nasıl Oynanır?</h2>`).
-*   **Görsel ve Tematik Anlatım:** Oyun kuralları açıklanırken; doğru, yanlış veya oyunda olan ama farklı konumda bulunan hücrelerin temsillerinde mevcut projenin tema renkleri (klasmanına göre `bg-correct`, `bg-present`, `bg-absent`, `border-surface-mid` vb.) kullanılarak canlı ve görsel destekli bir örnek dizisi oluşturulmalıdır.
+*   **Merkezi Veri Yapısı:** Her oyun `GAMES` dizisinde `instructions` objesine sahip olmalıdır. Bu obje; `basic` açıklama, `rules` (liste) ve görsel örnekler için `examples` içermelidir.
+*   **Görsel Örnekler:** `examples` dizisi; kelimeyi, harf renklerini (`correct`, `present`, `absent`) ve hangi harfin neyi temsil ettiğini açıklayan metni barındırmalıdır.
+*   **Ortak Bileşen:** Sayfa altındaki "Nasıl Oynanır" bölümü için `<GameInstructions />` bileşeni kullanılmalıdır. Bu bileşen hem oyun sayfasında hem de ana sayfadaki bilgi modalında aynı veriyi görselleştirir.
+*   **SEO Uyumu:** Oyun sayfasının altında kullanılan bu bileşen, oyunla ilgili anahtar kelimeleri içermeli ve `H2` başlığı ile desteklenmelidir.
 
 ## 4. Ortak Bileşenler (Components)
 Temel altyapıyı baştan kodlamamak ve proje geneli tutarlılığı korumak amaçlı "Ortak Oyun Bileşenleri" benimsenmelidir. Özel bir ihtiyaç varsa bu bileşenler modüler olacak (prop alacak) şekilde zenginleştirilir.
@@ -46,6 +48,12 @@ Temel altyapıyı baştan kodlamamak ve proje geneli tutarlılığı korumak ama
 *   **Custom Hook:** Durum yönetimi (State Management) temiz ve test edilebilir tutulması prensibi doğrultusunda, sayfa bileşeninden (page.tsx) bağımsız olarak `useGame.ts` (ya da örneğin `useWordHunt.ts` vb.) formunda bir React Hook içinde yürütülmelidir.
 *   **Veritabanı / Kütüphane:** Kelime bankasının yönetimi, her zaman projenin root veya data dizinlerinde yer alan veriler üzerinden (örneğin `kelime-data.json`), aracı yardımcı fonksiyonlarla (Services) gerçekleştirilmelidir.
 *   **Yerel Depolama (Storage):** Oyuna dair yerel kayıt geçmişleri ve ilerlemeler (Guest Stats vs.), modüler `storage.ts` servisi ile kaydedilmeli/çağrılmalıdır.
+
+## 6. Yetenek (Skill) Koordinasyonu
+Bu belge oyunların UI/UX standartlarını belirler. Oyun bazlı diğer teknik detaylar için:
+- **Kapsamlı SEO ve Sitemap Süreçleri:** `seo-uzmani` yeteneği.
+- **Renk ve Animasyon Detayları:** `tasarim-sistemi` yeteneği.
+- **Kelime Bankası Altyapısı:** `veri-yonetimi` yeteneğine bakınız.
 
 ---
 *Not: Bu standartlar belgesi Kelime Oyunları projesi geliştirildikçe, yeni en iyi pratikler (best practices) keşfedildikçe güncellenmelidir ve herhangi bir LLM AI asistanına rehberlik etmesi amacıyla .agent/skills içerisinde tutulmaktadır.*
