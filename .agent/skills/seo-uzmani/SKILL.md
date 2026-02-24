@@ -1,0 +1,125 @@
+---
+description: Kelime Oyunları projesi için SEO (Arama Motoru Optimizasyonu) kuralları ve standartları. Bir sayfa eklenirken veya güncellenirken uygulanması zorunlu olan Meta ve OpenGraph etiket standartlarını içerir.
+---
+
+# SEO Uzmanı Skill
+
+Bu yetenek, **Kelime Oyunları** projesi için hazırlanan web sayfalarının arama motoru optimizasyonunun (SEO) doğru, eksiksiz ve Next.js (App Router) standartlarına uygun olmasını sağlar.
+
+Bir sayfada geliştirme yaparken veya yeni bir sayfa (özellikle yeni bir oyun) eklerken aşağıdaki kurallara **kesinlikle** uyulmalıdır.
+
+## 1. Next.js Metadata API Kullanımı
+
+Sayfaların arama motorlarında doğru indekslenmesi için Next.js'in statik veya dinamik `Metadata` API'si kullanılmalıdır.
+
+- Eğer sayfa bir **Server Component** ise, meta etiketler doğrudan sayfa içinde (`page.tsx`) `export const metadata: Metadata` şeklinde tanımlanabilir.
+- Eğer sayfa bir **Client Component** (`'use client'`) ise, meta etiketleri `page.tsx` içinde dışa aktarmak uyarı/hata verir. Bu durumda, o sayfanın bulunduğu dizine özel bir `layout.tsx` eklenmeli ve meta verileri orada tanımlanmalıdır.
+
+### Örnek Global (Kök) Metadata (`layout.tsx`)
+
+```typescript
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://www.kelimeoyunlari.tr"),
+  title: {
+    template: "%s | Kelime Oyunları",
+    default: "Kelime Oyunları",
+  },
+  description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+  openGraph: {
+    title: "Kelime Oyunları",
+    description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+    url: "https://www.kelimeoyunlari.tr",
+    siteName: "Kelime Oyunları",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Kelime Oyunları OG Resmi",
+      }
+    ],
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kelime Oyunları",
+    description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+    images: ["/og-image.png"],
+  },
+  alternates: {
+    canonical: "https://www.kelimeoyunlari.tr",
+  }
+};
+```
+
+### Örnek Oyun Sayfası Metadata (`games/[oyun-adi]/layout.tsx`)
+
+Oyun sayfaları genellikle client component olduğu için, dizinlerinde bir `layout.tsx` oluşturup aşağıdaki formatı kullanın:
+
+```typescript
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Wordle",
+  description: "5 harfli gizli kelimeyi 6 denemede bul! Eğlenceli Türkçe Wordle oyunu.",
+  openGraph: {
+    title: "Wordle - Kelime Oyunları",
+    description: "5 harfli gizli kelimeyi 6 denemede bul! Eğlenceli Türkçe Wordle oyunu.",
+    url: "https://www.kelimeoyunlari.tr/games/wordle",
+    images: [
+      {
+        url: "/games/wordle/card.webp", 
+        width: 800,
+        height: 600,
+        alt: "Wordle Oyunu",
+      }
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wordle - Kelime Oyunları",
+    description: "5 harfli gizli kelimeyi 6 denemede bul! Eğlenceli Türkçe Wordle oyunu.",
+    images: ["/games/wordle/card.webp"],
+  },
+  alternates: {
+    canonical: "https://www.kelimeoyunlari.tr/games/wordle",
+  },
+};
+
+export default function WordleLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return <>{children}</>;
+}
+```
+
+## 2. Sosyal Medya OG ve Kart Görselleri
+- Ana sayfa veya genel paylaşım için `1200x630` px ölçülerinde bir `og-image.png` kullanılmalıdır.
+- Oyun sayfaları için (`wordle`, `anagram` vb.) standart oyun kartı görselimiz (`/games/[oyun-adi]/card.webp` vb.) OG görseli olarak kullanılabilir. Aksi belirtilmemişse oyun dizinindeki görseli kullanın.
+
+## 3. Dinamik Route'lar için `generateMetadata`
+Kullanıcı profil sayfaları veya skor tabloları gibi dinamik URL'ye sahip sayfalarda `generateMetadata` fonksiyonunu kullanın:
+
+```typescript
+import { Metadata } from 'next';
+
+export async function generateMetadata({ params }): Promise<Metadata> {
+  // Parametreye göre dinamik SEO oluştur
+  return {
+    title: `Profil - ${params.username}`,
+  };
+}
+```
+
+## 4. URL ve Domain Yapısı
+Projenin canlı URL'i `https://www.kelimeoyunlari.tr` olmakzadır. Meta etiketlerde (ör: `canonical`, `og:url` vb.) daima bu domain baz alınmalıdır. Ortama özgü tanımlamalar için `metadataBase` bir kere kök `layout.tsx` içinde ayarlandığında diğer sayfalarda (eğer linkler `/` ile başlıyorsa) otomatik olarak üzerine eklenecektir.
+
+## 5. Test ve Doğrulama
+Yeni bir sayfa ekledikten sonra:
+1. Kaynak kodlarına (`<head>`) bakarak `title`, `description`, `application-name`, `og:title`, `twitter:card` vb. etiketlerin eklendiğinden emin olun.
+2. Canonical linklerin doğru adresi işaret ettiğini kontrol edin.

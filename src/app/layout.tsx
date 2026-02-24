@@ -11,8 +11,60 @@ const nunito = Nunito({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.kelimeoyunlari.tr"),
-  title: "Kelime Oyunları",
+  title: {
+    template: "%s | Kelime Oyunları",
+    default: "Kelime Oyunları",
+  },
   description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+  applicationName: "Kelime Oyunları",
+  authors: [{ name: "Kelime Oyunları Takımı" }],
+  generator: "Next.js",
+  keywords: ["kelime", "oyun", "türkçe", "wordle", "adam asmaca", "anagram", "bulmaca", "zeka", "kelime oyunu"],
+  referrer: "origin-when-cross-origin",
+  creator: "Kelime Oyunları",
+  publisher: "Kelime Oyunları",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  openGraph: {
+    title: "Kelime Oyunları",
+    description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+    url: "https://www.kelimeoyunlari.tr",
+    siteName: "Kelime Oyunları",
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Kelime Oyunları OG Resmi",
+      }
+    ],
+    locale: "tr_TR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Kelime Oyunları",
+    description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+    creator: "@kelimeoyunlari",
+    images: ["/og.png"],
+  },
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({

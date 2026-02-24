@@ -24,7 +24,10 @@ export const metadata: Metadata = {
         title: 'Wordle Oyna | Kelime Oyunları',
         description: 'Wordle oyununu nasıl oynayacağınızı öğrenin. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
         images: ['/games/wordle/og.png'],
-    }
+    },
+    alternates: {
+        canonical: '/games/wordle',
+    },
 };
 
 

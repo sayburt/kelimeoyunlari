@@ -173,7 +173,7 @@ Tüm veri işlemleri `services/` klasörü altındaki fonksiyonlar üzerinden ya
 ## 8. Tasarım Sistemi
 
 ### Tema
-Tek statik tema. Dark/light seçici yoktur. Koyu degrade arka plan üzerinde açık yüzey kartları kullanılır.
+Kullanıcı deneyimini artırmak için dinamik tema desteği sunulur. Karanlık (Dark) ve Aydınlık (Light) mod seçeneği mevcuttur. Sistem temasına göre otomatik geçiş veya kullanıcı tercihi saklanır.
 
 ### Renkler
 | | |
@@ -214,6 +214,6 @@ Tek statik tema. Dark/light seçici yoktur. Koyu degrade arka plan üzerinde aç
 | Landing | Projeyi tanıtan giriş sayfası |
 | Oyun Listesi | Tüm oyunların kart görünümü |
 | Oyun Ekranı | Seçilen oyunun board'u |
-| Profil | Kullanıcı istatistikleri ve rozetler (giriş gerekli) |
-| Ayarlar | Ses tercihi, hesap bilgileri |
+| Profil | Kullanıcı istatistikleri, rozetler ve üye paneli |
+| Ayarlar | Tema seçimi (Dark/Light), Ses tercihi, Hesap bilgileri |
 | Gizlilik / KVKK | Google Ads ve Supabase veri kullanım politikası |
