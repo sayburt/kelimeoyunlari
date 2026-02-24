@@ -27,6 +27,7 @@ function decodeWord(encoded: string): string {
 export const challengeService = {
     /**
      * Yeni bir meydan okuma oluşturur.
+     * Oluşturan kullanıcının `challenge_stats.sent_count`'unu artırır.
      * @returns Oluşturulan challenge'ın ID'si
      */
     async createChallenge(
@@ -56,6 +57,12 @@ export const challengeService = {
             console.error('Challenge oluşturma hatası:', error);
             return null;
         }
+
+        // sent_count istatistiğini güncelle
+        await supabase.rpc('increment_challenge_sent', {
+            p_user_id: user.id,
+            p_game_name: gameName,
+        });
 
         return data.id;
     },
@@ -95,12 +102,15 @@ export const challengeService = {
 
     /**
      * Oyun sonucunu challenge kaydına işler.
+     * Oynayan kullanıcının `challenge_stats`'ını da günceller.
      */
     async updateChallengeResult(
         challengeId: string,
         score: number,
         attempts: number,
-        playedBy?: string
+        playedBy?: string,
+        gameName?: string,
+        won?: boolean
     ): Promise<boolean> {
         const updateData: Record<string, unknown> = {
             result_score: score,
@@ -120,6 +130,16 @@ export const challengeService = {
         if (error) {
             console.error('Challenge sonuç güncelleme hatası:', error);
             return false;
+        }
+
+        // challenge_stats güncelle (sadece giriş yapmış kullanıcılar için)
+        if (playedBy && gameName !== undefined) {
+            await supabase.rpc('update_challenge_stat', {
+                p_user_id: playedBy,
+                p_game_name: gameName,
+                p_won: won ?? false,
+                p_score: score,
+            });
         }
 
         return true;

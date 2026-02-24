@@ -10,6 +10,16 @@ export interface GameStat {
     max_streak: number;
 }
 
+export interface ChallengeStat {
+    game_name: string;
+    sent_count: number;
+    received_count: number;
+    won_count: number;
+    best_score: number;
+    avg_score: number;
+    last_played_at: string | null;
+}
+
 export interface Badge {
     badge_key: string;
     earned_at: string;
@@ -19,6 +29,7 @@ export interface ProfileData {
     username: string | null;
     createdAt: string | null;
     stats: GameStat[];
+    challengeStats: ChallengeStat[];
     badges: Badge[];
     totalPlayed: number;
     totalWon: number;
@@ -67,6 +78,7 @@ export const profileService = {
             username: null,
             createdAt: null,
             stats,
+            challengeStats: [],
             badges: [],
             ...aggregates,
             isGuest: true,
@@ -75,10 +87,11 @@ export const profileService = {
 
     async getAuthenticatedProfile(userId: string): Promise<ProfileData> {
         try {
-            // Profil, istatistikler ve rozetleri paralel çek
-            const [profileRes, statsRes, badgesRes] = await Promise.all([
+            // Profil, istatistikler, challenge istatistikleri ve rozetleri paralel çek
+            const [profileRes, statsRes, challengeStatsRes, badgesRes] = await Promise.all([
                 supabase.from("profiles").select("username, created_at").eq("id", userId).single(),
                 supabase.from("game_stats").select("game_name, played, won, best_score, current_streak, max_streak").eq("user_id", userId),
+                supabase.from("challenge_stats").select("game_name, sent_count, received_count, won_count, best_score, total_score, last_played_at").eq("user_id", userId),
                 supabase.from("badges").select("badge_key, earned_at").eq("user_id", userId),
             ]);
 
@@ -92,6 +105,18 @@ export const profileService = {
                 max_streak: s.max_streak ?? 0,
             }));
 
+            const rawChallengeStats: ChallengeStat[] = (challengeStatsRes.data ?? []).map((s) => ({
+                game_name: s.game_name,
+                sent_count: s.sent_count ?? 0,
+                received_count: s.received_count ?? 0,
+                won_count: s.won_count ?? 0,
+                best_score: s.best_score ?? 0,
+                avg_score: s.received_count > 0
+                    ? Math.round((s.total_score ?? 0) / s.received_count)
+                    : 0,
+                last_played_at: s.last_played_at ?? null,
+            }));
+
             const badges: Badge[] = (badgesRes.data ?? []).map((b) => ({
                 badge_key: b.badge_key,
                 earned_at: b.earned_at ?? "",
@@ -103,6 +128,7 @@ export const profileService = {
                 username: profile?.username ?? null,
                 createdAt: profile?.created_at ?? null,
                 stats: rawStats,
+                challengeStats: rawChallengeStats,
                 badges,
                 ...aggregates,
                 isGuest: false,
