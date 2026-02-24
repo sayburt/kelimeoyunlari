@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { wordService, Word } from '@/services/wordService';
 import { scoreService } from '@/services/scoreService';
 import { LetterState } from '@/components/game/LetterCell';
@@ -6,6 +6,17 @@ import { evaluateGuess } from '@/services/gameService';
 import { useSound } from '@/hooks/useSound';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { useTimer } from '@/hooks/useTimer';
+import { storage } from '@/lib/storage';
+
+export interface PersistedGameState {
+    status: GameStatus;
+    targetWord: Word | null;
+    guesses: GuessResult[];
+    keyboardState: Record<string, LetterState>;
+    joker: JokerState;
+    elapsedTime: number;
+    lastUpdated: number;
+}
 
 export interface GuessResult {
     guess: string;
@@ -42,8 +53,38 @@ export function useGame(options: UseGameOptions = {}) {
     const [wordLength, setWordLength] = useState(initialWordLength);
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
     const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
+    const [score, setScore] = useState<number>(0);
 
-    const { elapsedTime, resetTimer } = useTimer(status === 'playing', isPaused);
+    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
+
+    // Persisted durumu yükle
+    useEffect(() => {
+        const savedState = storage.getGameState<PersistedGameState>('wordle');
+        if (savedState && savedState.status === 'playing') {
+            setStatus(savedState.status);
+            setTargetWord(savedState.targetWord);
+            setGuesses(savedState.guesses);
+            setKeyboardState(savedState.keyboardState);
+            setJoker(savedState.joker);
+            setElapsedTime(savedState.elapsedTime);
+        }
+    }, [setElapsedTime]);
+
+    // Durumu kaydet
+    useEffect(() => {
+        if (status === 'playing' && targetWord) {
+            const stateToSave: PersistedGameState = {
+                status,
+                targetWord,
+                guesses,
+                keyboardState,
+                joker,
+                elapsedTime,
+                lastUpdated: Date.now()
+            };
+            storage.setGameState('wordle', stateToSave);
+        }
+    }, [status, targetWord, guesses, keyboardState, joker, elapsedTime]);
 
     const { playKeyPress, playDelete, playEnter, playError, playWin, playLose, isSoundEnabled, toggleSound } = useSound();
 
@@ -70,7 +111,9 @@ export function useGame(options: UseGameOptions = {}) {
             setCurrentGuess('');
             setKeyboardState({});
             setJoker({ used: false, count: 0, max: 1 });
+            setScore(0);
             resetTimer();
+            storage.clearGameState('wordle'); // Yeni oyun başlarken eski state'i temizle
             setStatus('playing');
         } catch (err) {
             console.error('Kelime yüklenirken hata:', err);
@@ -159,7 +202,8 @@ export function useGame(options: UseGameOptions = {}) {
 
                 // Puan hesapla
                 const seconds = Math.floor(elapsedTime / 1000);
-                const calculatedScore = scoreService.calculateWordleScore(newGuesses.length, seconds, difficulty);
+                const calculatedScore = scoreService.calculateWordleScore(newGuesses.length, seconds, difficulty, joker.count);
+                setScore(calculatedScore);
 
                 scoreService.saveGameResult('wordle', true, newGuesses.length, {
                     jokersUsed: joker.used ? 1 : 0,
@@ -173,13 +217,18 @@ export function useGame(options: UseGameOptions = {}) {
                     calculatedScore: 0
                 }).catch(console.error);
             }
+
+            // Oyun bittiyse state'i temizle
+            if (currentGuess === target || newGuesses.length >= maxGuesses) {
+                storage.clearGameState('wordle');
+            }
         } catch (err) {
             console.error('Kelime kontrol hatası:', err);
             setError('Kelime kontrol edilirken bir hata oluştu.');
         } finally {
             isProcessingRef.current = false;
         }
-    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose, joker.used, difficulty, elapsedTime]);
+    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose, joker.used, joker.count, difficulty, elapsedTime]);
 
     const useJoker = useCallback(() => {
         if (status !== 'playing' || joker.used || !targetWord) return;
@@ -229,6 +278,7 @@ export function useGame(options: UseGameOptions = {}) {
         toggleSound,
         elapsedTime,
         joker,
+        score,
         startNewGame,
         handleKeyPress,
         handleDelete,

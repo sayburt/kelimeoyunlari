@@ -14,6 +14,7 @@ const STORAGE_KEYS = {
     GUEST_STATS: "kelime_guest_stats",
     SESSION_ID: "kelime_session_id",
     SETTINGS: "kelime_settings",
+    GAME_STATE: "kelime_game_state",
 };
 
 export const storage = {
@@ -52,5 +53,22 @@ export const storage = {
     clearGuestData: () => {
         storage.remove(STORAGE_KEYS.GUEST_STATS);
         storage.remove(STORAGE_KEYS.SESSION_ID);
+    },
+
+    getGameState: <T>(gameName: string): T | null => {
+        const states = storage.get<Record<string, unknown>>(STORAGE_KEYS.GAME_STATE, {});
+        return (states[gameName] as T) || null;
+    },
+
+    setGameState: <T>(gameName: string, state: T): void => {
+        const states = storage.get<Record<string, unknown>>(STORAGE_KEYS.GAME_STATE, {});
+        states[gameName] = state;
+        storage.set(STORAGE_KEYS.GAME_STATE, states);
+    },
+
+    clearGameState: (gameName: string): void => {
+        const states = storage.get<Record<string, unknown>>(STORAGE_KEYS.GAME_STATE, {});
+        delete states[gameName];
+        storage.set(STORAGE_KEYS.GAME_STATE, states);
     }
 };

@@ -44,6 +44,7 @@ export default function WordlePage() {
         wordLength,
         elapsedTime,
         joker,
+        score,
         startNewGame,
         handleKeyPress,
         handleDelete,
@@ -230,6 +231,7 @@ export default function WordlePage() {
                 targetWord={targetWord}
                 onRestart={handleRestart}
                 onShare={handleResultShare}
+                score={score}
             />
 
             {/* TODO: Placeholder Modallar - Gelecekte kendi bileşenleri ile değiştirilecek */}

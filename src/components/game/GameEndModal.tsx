@@ -16,6 +16,7 @@ export interface GameEndModalProps {
     } | null;
     onRestart: () => void;
     onShare?: () => void;
+    score?: number;
 }
 
 export function GameEndModal({
@@ -26,6 +27,7 @@ export function GameEndModal({
     targetWord,
     onRestart,
     onShare,
+    score = 0,
 }: GameEndModalProps) {
     // Confetti Effect
     return (
@@ -84,26 +86,50 @@ export function GameEndModal({
                                 {status === 'won' ? 'Tebrikler!' : 'Oyun Bitti'}
                             </h2>
 
-                            {/* Message */}
-                            {status === 'won' ? (
-                                <p className="text-slate-300 mb-2">
-                                    Kelimeyi <span className="font-bold text-white">{guessesCount}</span> denemede buldun!
-                                </p>
-                            ) : (
-                                <div className="mb-2">
-                                    <p className="text-slate-400 text-sm mb-1">
-                                        Doğru kelime:
-                                    </p>
-                                    <p className="text-2xl font-black text-white tracking-widest">
-                                        {targetWord?.kelime?.toLocaleUpperCase('tr-TR')}
-                                    </p>
-                                    {targetWord?.anlam && (
-                                        <p className="text-sm text-slate-400 mt-2 italic">
-                                            &ldquo;{targetWord.anlam}&rdquo;
+                            {/* Message & Word Info */}
+                            <div className="mb-2">
+                                {status === 'won' ? (
+                                    <>
+                                        <p className="text-slate-300 mb-4">
+                                            Kelimeyi <span className="font-bold text-white">{guessesCount}</span> denemede buldun!
                                         </p>
-                                    )}
-                                </div>
-                            )}
+                                        <div className="bg-slate-800/50 rounded-2xl p-4 mb-4 border border-slate-700/50">
+                                            <p className="text-slate-400 text-xs mb-1 uppercase tracking-widest font-bold">
+                                                Bilinen Kelime
+                                            </p>
+                                            <p className="text-2xl font-black text-white tracking-widest mb-1">
+                                                {targetWord?.kelime?.toLocaleUpperCase('tr-TR')}
+                                            </p>
+                                            {targetWord?.anlam && (
+                                                <p className="text-sm text-slate-400 italic leading-snug">
+                                                    &ldquo;{targetWord.anlam}&rdquo;
+                                                </p>
+                                            )}
+                                        </div>
+
+                                        <div className="flex flex-col items-center justify-center py-2">
+                                            <p className="text-slate-400 text-sm font-medium mb-1">Kazanılan Puan</p>
+                                            <div className="text-4xl font-black text-yellow-400 drop-shadow-[0_0_10px_rgba(250,204,21,0.3)]">
+                                                +{score.toLocaleString('tr-TR')}
+                                            </div>
+                                        </div>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p className="text-slate-400 text-sm mb-1">
+                                            Doğru kelime:
+                                        </p>
+                                        <p className="text-2xl font-black text-white tracking-widest">
+                                            {targetWord?.kelime?.toLocaleUpperCase('tr-TR')}
+                                        </p>
+                                        {targetWord?.anlam && (
+                                            <p className="text-sm text-slate-400 mt-2 italic">
+                                                &ldquo;{targetWord.anlam}&rdquo;
+                                            </p>
+                                        )}
+                                    </>
+                                )}
+                            </div>
 
                             {/* Stars for win */}
                             {status === 'won' && (

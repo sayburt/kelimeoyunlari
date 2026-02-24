@@ -17,8 +17,10 @@ description: Kelime verisi ve kullanıcı verisi (Supabase/LocalStorage) yöneti
 
 ## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
 - **Tüm Supabase işlemleri (yeni tablo oluşturma, RLS politikaları yazma, Auth ayarları, kolon ekleme vb.) YALNIZCA AI (Asistan) tarafından Supabase MCP aracı kullanılarak yapılmalıdır.**
-- **ASLA** kullanıcıya manuel SQL çalıştırma veya dashboard üzerinde işlem yapma talimatı verilemez. AI, gerekli tüm SQL migration'larını kendi `apply_migration` aracı ile doğrudan projeye uygular.
-- Eğer çalışma yetki hatası (privilege error) veriyorsa, önce Proje ID'sinin doğruluğu kontrol edilmeli, ardından MCP üzerinden tekrar denenmelidir.
+- **Migration Takibi:** Yapılan her veritabanı değişikliği (DDL) için `supabase/migrations` klasörü altında anlamlı bir isimlendirme ile (örn: `0001_create_new_feature_table.sql`) bir dosya oluşturulmalıdır.
+- **Uygulama:** AI, önce SQL dosyasını oluşturur, ardından bu SQL içeriğini `apply_migration` aracı ile doğrudan projeye uygular.
+- **Branch Yönetimi:** Eğer bir branch silinecekse, o branch ile gelen migrasyon dosyalarındaki işlemlerin tersi (DROP) SQL ile uygulanmalı ve veritabanı eski haline getirilmelidir.
+- **ASLA** kullanıcıya manuel SQL çalıştırma veya dashboard üzerinde işlem yapma talimatı verilemez.
 
 ## 4. RLS Kuralları
 Supabase tarafında her tabloda RLS aktif olmalı; kullanıcılar sadece kendi verilerine (`auth.uid() = user_id`) erişebilmelidir. AI bu politikaları tablo oluştururken otomatik uygular.
