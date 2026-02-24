@@ -21,8 +21,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="tr">
-      <body className={`${nunito.variable} font-sans`}>
+    <html lang="tr" suppressHydrationWarning>
+      <body className={`${nunito.variable} font-sans`} suppressHydrationWarning>
         <Navbar />
         <main>{children}</main>
         <Footer />

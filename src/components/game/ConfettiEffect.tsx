@@ -56,7 +56,7 @@ export function ConfettiEffect({ isVisible }: ConfettiEffectProps) {
     return (
         <AnimatePresence>
             {isVisible && (
-                <>
+                <motion.div key="confetti-container" className="fixed inset-0 pointer-events-none z-40">
                     {confettiParticles.map((particle) => (
                         <motion.div
                             key={particle.id}
@@ -86,7 +86,7 @@ export function ConfettiEffect({ isVisible }: ConfettiEffectProps) {
                             }}
                         />
                     ))}
-                </>
+                </motion.div>
             )}
         </AnimatePresence>
     );

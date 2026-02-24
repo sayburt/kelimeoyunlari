@@ -12,6 +12,7 @@ export interface WordleBoardProps {
     wordLength: number;
     maxGuesses: number;
     shakeRow: boolean;
+    status?: string;
 }
 
 export function WordleBoard({
@@ -21,6 +22,7 @@ export function WordleBoard({
     wordLength,
     maxGuesses,
     shakeRow,
+    status,
 }: WordleBoardProps) {
     const rows = [];
 
@@ -43,24 +45,34 @@ export function WordleBoard({
 
             const isRevealed = rowIdx < guesses.length;
             const delay = colIdx * 0.15;
+            const isWinningRow = status === 'won' && rowIdx === guesses.length - 1;
 
             cells.push(
                 <motion.div
                     key={`${rowIdx}-${colIdx}`}
                     initial={false}
                     animate={
-                        isRevealed
+                        isWinningRow
                             ? {
                                 rotateX: [0, 90, 0],
+                                y: [0, -15, 0],
                                 transition: {
-                                    duration: 0.5,
-                                    delay,
-                                    times: [0, 0.5, 1],
-                                },
+                                    rotateX: { duration: 0.5, delay, times: [0, 0.5, 1] },
+                                    y: { duration: 0.4, delay: delay + 0.4, times: [0, 0.5, 1], ease: "easeOut" }
+                                }
                             }
-                            : letter && rowIdx === currentRow
-                                ? { scale: [1, 1.12, 1], transition: { duration: 0.1 } }
-                                : {}
+                            : isRevealed
+                                ? {
+                                    rotateX: [0, 90, 0],
+                                    transition: {
+                                        duration: 0.5,
+                                        delay,
+                                        times: [0, 0.5, 1],
+                                    },
+                                }
+                                : letter && rowIdx === currentRow
+                                    ? { scale: [1, 1.12, 1], transition: { duration: 0.1 } }
+                                    : {}
                     }
                     style={{ perspective: 600 }}
                 >

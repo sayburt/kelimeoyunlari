@@ -53,13 +53,13 @@ Bu fazda oyunların ortak altyapısı yazılacak ve planlanan ilk kelime oyunlar
 
 Kullanıcının gelişimini görebileceği sayfalar ve genel iyileştirmeler.
 
-- [ ] **3.1. Profil ve İstatistik Sayfası**
+- [x] **3.1. Profil ve İstatistik Sayfası**
   - Kullanıcının toplam oynadığı oyunlar, kazandığı oyunlar, streak durumları ve kazandığı rozetlerin gösterilmesi.
-- [ ] **3.2. Ses Sistemi (Sound Effect)**
+- [x] **3.2. Ses Sistemi (Sound Effect)**
   - `hooks/useSound.ts` hook'u ile oyundaki başarı/hata seslerinin uygulanması.
-- [ ] **3.3. Animasyon İyileştirmeleri**
+- [x] **3.3. Animasyon İyileştirmeleri**
   - Framer Motion kullanılarak geçişlerin, başarı veya yanlış harf girdiği (shake) animasyonların eklenmesi.
-- [ ] **3.4. Üretim (Production) Hazırlığı**
+- [x] **3.4. Üretim (Production) Hazırlığı**
   - Performans kontrolleri, kullanılmayan dosyaların temizlenmesi ve son hata kontrolleri.
 
 ---

@@ -39,6 +39,13 @@ export default function Navbar() {
                 ) : (
                     <div className="flex items-center gap-3">
                         <Link
+                            href="/profile"
+                            className={`text-sm font-bold transition-colors ${pathname === "/profile" ? "text-primary" : "text-text-main hover:text-primary"
+                                }`}
+                        >
+                            İstatistiklerim
+                        </Link>
+                        <Link
                             href="/login"
                             className="text-sm font-bold text-text-main hover:text-primary transition-colors"
                         >

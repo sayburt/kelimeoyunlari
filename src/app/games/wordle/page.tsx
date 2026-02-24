@@ -28,6 +28,8 @@ export default function WordlePage() {
         error,
         maxGuesses,
         wordLength,
+        isSoundEnabled,
+        toggleSound,
         startNewGame,
         handleKeyPress,
         handleDelete,
@@ -95,7 +97,12 @@ export default function WordlePage() {
     if (status === 'loading' || status === 'idle') {
         return (
             <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
-                <GameHeader title="Wordle" backHref="/" />
+                <GameHeader
+                    title="Wordle"
+                    backHref="/"
+                    soundEnabled={isSoundEnabled}
+                    onToggleSound={toggleSound}
+                />
                 <div className="flex-1 flex items-center justify-center">
                     <motion.div
                         animate={{ rotate: 360 }}
@@ -109,7 +116,12 @@ export default function WordlePage() {
 
     return (
         <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
-            <GameHeader title="Wordle" backHref="/" />
+            <GameHeader
+                title="Wordle"
+                backHref="/"
+                soundEnabled={isSoundEnabled}
+                onToggleSound={toggleSound}
+            />
 
             {/* Hata Toast */}
             <ErrorToast message={error} />
@@ -123,6 +135,7 @@ export default function WordlePage() {
                     wordLength={wordLength}
                     maxGuesses={maxGuesses}
                     shakeRow={shakeRow}
+                    status={status}
                 />
             </div>
 

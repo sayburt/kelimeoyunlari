@@ -32,10 +32,11 @@ export function GameEndModal({
             <AnimatePresence>
                 {isOpen && (status === 'won' || status === 'lost') && (
                     <motion.div
+                        key="game-end-modal"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
                         onClick={onRestart}
                     >
                         <motion.div
@@ -56,7 +57,11 @@ export function GameEndModal({
                             <motion.div
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1, rotate: [0, -10, 10, 0] }}
-                                transition={{ delay: 0.2, type: 'spring', stiffness: 400 }}
+                                transition={{
+                                    delay: 0.2,
+                                    scale: { type: 'spring', stiffness: 400 },
+                                    rotate: { type: 'tween', duration: 0.4, ease: 'easeInOut' }
+                                }}
                                 className={`w-20 h-20 mx-auto rounded-full flex items-center justify-center mb-6 ${status === 'won'
                                     ? 'bg-green-500/20 text-green-400'
                                     : 'bg-red-500/20 text-red-400'

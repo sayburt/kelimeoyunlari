@@ -3,6 +3,7 @@ import { wordService, Word } from '@/services/wordService';
 import { scoreService } from '@/services/scoreService';
 import { LetterState } from '@/components/game/LetterCell';
 import { evaluateGuess } from '@/services/gameService';
+import { useSound } from '@/hooks/useSound';
 
 export interface GuessResult {
     guess: string;
@@ -20,6 +21,7 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
     const [error, setError] = useState<string | null>(null);
     const [wordLength, setWordLength] = useState(initialWordLength);
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
+    const { playKeyPress, playDelete, playEnter, playError, playWin, playLose, isSoundEnabled, toggleSound } = useSound();
 
     // İşlem devam ederken yeni harf girişini veya enter tuşunu engellemek için
     const isProcessingRef = useRef(false);
@@ -51,31 +53,38 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
     const handleKeyPress = useCallback((key: string) => {
         if (status !== 'playing' || isProcessingRef.current) return;
 
+        playKeyPress();
+
         setCurrentGuess(prev => {
             if (prev.length >= wordLength) return prev;
             return prev + key.toLocaleUpperCase('tr-TR');
         });
         setError(null);
-    }, [status, wordLength]);
+    }, [status, wordLength, playKeyPress]);
 
     const handleDelete = useCallback(() => {
         if (status !== 'playing' || isProcessingRef.current) return;
 
+        playDelete();
+
         setCurrentGuess(prev => prev.slice(0, -1));
         setError(null);
-    }, [status]);
+    }, [status, playDelete]);
 
     const handleEnter = useCallback(async () => {
         if (status !== 'playing' || isProcessingRef.current) return;
         if (currentGuess.length !== wordLength) {
+            playError();
             setError('Yetersiz harf!');
             return;
         }
 
+        playEnter();
         isProcessingRef.current = true;
         try {
             const isValid = await wordService.isValidWord(currentGuess);
             if (!isValid) {
+                playError();
                 setError('Kelime sözlükte bulunamadı!');
                 isProcessingRef.current = false;
                 return;
@@ -116,9 +125,11 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
 
             // Kazanma / Kaybetme durumlarını kontrol et
             if (currentGuess === target) {
+                playWin();
                 setStatus('won');
                 scoreService.saveGameResult('wordle', true, newGuesses.length).catch(console.error);
             } else if (newGuesses.length >= maxGuesses) {
+                playLose();
                 setStatus('lost');
                 scoreService.saveGameResult('wordle', false, newGuesses.length).catch(console.error);
             }
@@ -128,7 +139,7 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
         } finally {
             isProcessingRef.current = false;
         }
-    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses]);
+    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose]);
 
 
     return {
@@ -141,6 +152,8 @@ export function useGame(initialWordLength: number = 5, initialMaxGuesses: number
         error,
         maxGuesses,
         wordLength,
+        isSoundEnabled,
+        toggleSound,
         startNewGame,
         handleKeyPress,
         handleDelete,
