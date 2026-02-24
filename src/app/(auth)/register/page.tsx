@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
 import { AuthFormWrapper } from "@/components/auth/AuthFormWrapper";
 import { AuthInput } from "@/components/auth/AuthInput";
-export default function RegisterPage() {
+
+function RegisterForm() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get('redirect');
 
     const handleRegister = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -34,10 +38,8 @@ export default function RegisterPage() {
             setError(error.message);
             setLoading(false);
         } else {
-            // Kayıt başarılı, onay bekleyebilir veya direk login'e yönlendirebilir
-            // Varsayılan ayarlarda onay maili gerekebilir, burayı basit tutuyoruz.
             alert("Kayıt başarılı! Lütfen giriş yapın.");
-            router.push("/login");
+            router.push(redirect ? `/login?redirect=${encodeURIComponent(redirect)}` : "/login");
         }
     };
 
@@ -84,5 +86,13 @@ export default function RegisterPage() {
                 placeholder="••••••••"
             />
         </AuthFormWrapper>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <Suspense>
+            <RegisterForm />
+        </Suspense>
     );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useState, useRef } from 'react';
+import React, { useEffect, useCallback, useState, useRef, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/hooks/useGame';
 import { GameHeader } from '@/components/game/GameHeader';
@@ -12,12 +12,14 @@ import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { SettingsModal } from '@/components/game/SettingsModal';
 import { ResumeGameModal } from '@/components/game/ResumeGameModal';
+import { ChallengeModal } from '@/components/game/ChallengeModal';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { useAuth } from '@/hooks/useAuth';
 import { savedGameService } from '@/services/savedGameService';
+import { challengeService } from '@/services/challengeService';
 import { formatTime } from '@/utils/timeUtils';
 import { shareContent } from '@/utils/shareUtils';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
@@ -28,12 +30,15 @@ const TURKISH_LETTERS = new Set(
     'ABCÇDEFGĞHIİJKLMNOÖPRSŞTUÜVYZabcçdefgğhıijklmnoöprsştuüvyz'.split('')
 );
 
-export default function WordlePage() {
+function WordlePageContent() {
+    const searchParams = useSearchParams();
+    const challengeId = searchParams.get('challengeId');
     const [showInfoModal, setShowInfoModal] = useState(false);
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [showResumeModal, setShowResumeModal] = useState(false);
+    const [showChallengeModal, setShowChallengeModal] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [savedElapsedTime, setSavedElapsedTime] = useState(0);
     const [savedGuessesCount, setSavedGuessesCount] = useState(0);
@@ -43,7 +48,7 @@ export default function WordlePage() {
     // Bulut kayıtlı state'i geçici olarak sakla
     const savedCloudStateRef = useRef<{ state: import('@/services/savedGameService').SavedGameState; elapsedTime: number } | null>(null);
 
-    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showModal || showResumeModal;
+    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showModal || showResumeModal || showChallengeModal;
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
@@ -61,6 +66,8 @@ export default function WordlePage() {
         elapsedTime,
         joker,
         score,
+        isChallengeMode,
+        activeChallengeId,
         startNewGame,
         handleKeyPress,
         handleDelete,
@@ -72,7 +79,8 @@ export default function WordlePage() {
     } = useGame({
         initialWordLength: WORD_LENGTH,
         initialMaxGuesses: MAX_GUESSES,
-        isPaused
+        isPaused,
+        challengeId,
     });
 
     const [shakeRow, setShakeRow] = useState(false);
@@ -125,9 +133,18 @@ export default function WordlePage() {
                 deleteCloudSave(GAME_NAME).catch(console.error);
             }
 
+            // Challenge modunda sonucu kaydet
+            if (isChallengeMode && activeChallengeId) {
+                challengeService.updateChallengeResult(
+                    activeChallengeId,
+                    score,
+                    guesses.length
+                ).catch(console.error);
+            }
+
             return () => clearTimeout(timer);
         }
-    }, [status, isAuthenticated, deleteCloudSave]);
+    }, [status, isAuthenticated, deleteCloudSave, isChallengeMode, activeChallengeId, score, guesses.length]);
 
     // Hata durumunda shake animasyonu
     useEffect(() => {
@@ -143,7 +160,7 @@ export default function WordlePage() {
     // Fiziksel klavye desteği
     const handlePhysicalKeyboard = useCallback(
         (e: KeyboardEvent) => {
-            if (status !== 'playing') return;
+            if (status !== 'playing' || isPaused) return;
 
             if (e.key === 'Enter') {
                 e.preventDefault();
@@ -156,7 +173,7 @@ export default function WordlePage() {
                 handleKeyPress(e.key);
             }
         },
-        [status, handleEnter, handleDelete, handleKeyPress]
+        [status, handleEnter, handleDelete, handleKeyPress, isPaused]
     );
 
     useEffect(() => {
@@ -244,7 +261,9 @@ export default function WordlePage() {
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
                     onSave={handleSaveGame}
+                    onChallenge={() => setShowChallengeModal(true)}
                     isLoggedIn={isAuthenticated}
+                    isChallengeMode={isChallengeMode}
                     gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
@@ -272,12 +291,23 @@ export default function WordlePage() {
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
                     onSave={handleSaveGame}
+                    onChallenge={() => setShowChallengeModal(true)}
                     isLoggedIn={isAuthenticated}
+                    isChallengeMode={isChallengeMode}
                     gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
+
+                {/* Challenge Modu Banner */}
+                {isChallengeMode && (
+                    <div className="mx-4 mt-1 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-center">
+                        <p className="text-primary text-sm font-bold flex items-center justify-center gap-2">
+                            ⚔️ Bir meydan okuma oynuyorsunuz!
+                        </p>
+                    </div>
+                )}
 
                 {/* Hata ve Bilgi Toast */}
                 <ErrorToast message={error || toastMessage || ''} />
@@ -384,6 +414,83 @@ export default function WordlePage() {
                 isOpen={showSettingsModal}
                 onClose={() => setShowSettingsModal(false)}
             />
+
+            {/* Meydan Okuma Modalı */}
+            <ChallengeModal
+                isOpen={showChallengeModal}
+                onClose={() => setShowChallengeModal(false)}
+                gameName={GAME_NAME}
+                wordLength={WORD_LENGTH}
+            />
         </div>
     );
 }
+
+function ChallengeAuthGate() {
+    const searchParams = useSearchParams();
+    const challengeId = searchParams.get('challengeId');
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    // Challenge link'i açan kullanıcı giriş yapmamışsa → giriş/kayıt ekranı göster
+    if (challengeId && !isAuthenticated) {
+        const redirectUrl = `/games/wordle?challengeId=${challengeId}`;
+        return (
+            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg items-center justify-center px-6 text-center">
+                <div className="max-w-sm w-full">
+                    <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="text-4xl">⚔️</span>
+                    </div>
+                    <h2 className="text-2xl font-black text-text-main mb-3 tracking-tight">
+                        Meydan Okuma!
+                    </h2>
+                    <p className="text-text-secondary text-sm mb-8 leading-relaxed">
+                        Bir arkadaşın sana meydan okudu! Oynayabilmek için giriş yapman veya üye olman gerekiyor.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={() => router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`)}
+                            className="w-full bg-primary text-bg font-black py-3.5 rounded-2xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
+                        >
+                            GİRİŞ YAP
+                        </button>
+                        <button
+                            onClick={() => router.push(`/register?redirect=${encodeURIComponent(redirectUrl)}`)}
+                            className="w-full bg-surface-hover text-text-main font-bold py-3.5 rounded-2xl hover:bg-surface-mid transition-colors border border-surface-hover"
+                        >
+                            ÜYE OL
+                        </button>
+                        <button
+                            onClick={() => router.push('/')}
+                            className="text-text-muted text-sm mt-2 hover:text-text-main transition-colors"
+                        >
+                            Ana Sayfaya Dön
+                        </button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    return <WordlePageContent />;
+}
+
+export default function WordlePage() {
+    return (
+        <Suspense fallback={
+            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
+                <div className="flex-1 flex items-center justify-center">
+                    <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{ repeat: Infinity, duration: 1 }}
+                        className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
+                    />
+                </div>
+            </div>
+        }>
+            <ChallengeAuthGate />
+        </Suspense>
+    );
+}
+
+

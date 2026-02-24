@@ -2,17 +2,21 @@
 
 import { useState } from "react";
 import { supabase } from "@/lib/supabase";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import Link from "next/link";
 import { migrationService } from "@/services/migrationService";
 import { AuthFormWrapper } from "@/components/auth/AuthFormWrapper";
 import { AuthInput } from "@/components/auth/AuthInput";
-export default function LoginPage() {
+
+function LoginForm() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirect = searchParams.get('redirect');
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -30,7 +34,7 @@ export default function LoginPage() {
         } else if (data.user) {
             // Giriş başarılı, misafir verilerini aktar
             await migrationService.migrateGuestData(data.user.id);
-            router.push("/");
+            router.push(redirect || "/");
             router.refresh();
         }
     };
@@ -70,5 +74,13 @@ export default function LoginPage() {
                 placeholder="••••••••"
             />
         </AuthFormWrapper>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <Suspense>
+            <LoginForm />
+        </Suspense>
     );
 }

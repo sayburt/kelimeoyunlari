@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { wordService, Word } from '@/services/wordService';
 import { scoreService } from '@/services/scoreService';
+import { challengeService } from '@/services/challengeService';
 import { LetterState } from '@/components/game/LetterCell';
 import { evaluateGuess } from '@/services/gameService';
 import { useSound } from '@/hooks/useSound';
@@ -36,13 +37,15 @@ export interface UseGameOptions {
     initialWordLength?: number;
     initialMaxGuesses?: number;
     isPaused?: boolean;
+    challengeId?: string | null;
 }
 
 export function useGame(options: UseGameOptions = {}) {
     const {
         initialWordLength = 5,
         initialMaxGuesses = 6,
-        isPaused = false
+        isPaused = false,
+        challengeId = null
     } = options;
     const { difficulty } = useGameSettings();
     const [status, setStatus] = useState<GameStatus>('idle');
@@ -55,6 +58,8 @@ export function useGame(options: UseGameOptions = {}) {
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
     const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
     const [score, setScore] = useState<number>(0);
+    const [isChallengeMode, setIsChallengeMode] = useState(false);
+    const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
 
     const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
 
@@ -98,10 +103,36 @@ export function useGame(options: UseGameOptions = {}) {
         setWordLength(length);
         setMaxGuesses(max);
         try {
-            const word = await wordService.getRandomWord({
-                length,
-                difficulty: difficulty
-            });
+            let word: Word | null = null;
+
+            // Challenge modu: kelimeyi Supabase'den çek
+            if (challengeId) {
+                const challengeData = await challengeService.getChallenge(challengeId);
+                if (challengeData) {
+                    word = {
+                        kelime: challengeData.decodedWord,
+                        kategoriler: [],
+                        zorluk_seviyesi: 1,
+                        harf_sayisi: challengeData.challenge.word_length,
+                        anlam: '',
+                    };
+                    setIsChallengeMode(true);
+                    setActiveChallengeId(challengeId);
+                    setWordLength(challengeData.challenge.word_length);
+                } else {
+                    setStatus('idle');
+                    setError('Meydan okuma bulunamadı veya süresi dolmuş.');
+                    return;
+                }
+            } else {
+                word = await wordService.getRandomWord({
+                    length,
+                    difficulty: difficulty
+                });
+                setIsChallengeMode(false);
+                setActiveChallengeId(null);
+            }
+
             if (!word) {
                 setStatus('idle');
                 setError('Seçilen kriterlere uygun kelime bulunamadı.');
@@ -121,7 +152,7 @@ export function useGame(options: UseGameOptions = {}) {
             setStatus('idle');
             setError('Kelime yüklenirken bir hata oluştu.');
         }
-    }, [difficulty, initialWordLength, initialMaxGuesses, resetTimer]);
+    }, [difficulty, initialWordLength, initialMaxGuesses, resetTimer, challengeId]);
 
     const handleKeyPress = useCallback((key: string) => {
         if (status !== 'playing' || isProcessingRef.current) return;
@@ -155,12 +186,15 @@ export function useGame(options: UseGameOptions = {}) {
         playEnter();
         isProcessingRef.current = true;
         try {
-            const isValid = await wordService.isValidWord(currentGuess);
-            if (!isValid) {
-                playError();
-                setError('Kelime sözlükte bulunamadı!');
-                isProcessingRef.current = false;
-                return;
+            // Challenge modunda sözlük kontrolü yapılmaz
+            if (!isChallengeMode) {
+                const isValid = await wordService.isValidWord(currentGuess);
+                if (!isValid) {
+                    playError();
+                    setError('Kelime sözlükte bulunamadı!');
+                    isProcessingRef.current = false;
+                    return;
+                }
             }
 
             const target = targetWord!.kelime.toLocaleUpperCase('tr-TR');
@@ -206,17 +240,23 @@ export function useGame(options: UseGameOptions = {}) {
                 const calculatedScore = scoreService.calculateWordleScore(newGuesses.length, seconds, difficulty, joker.count);
                 setScore(calculatedScore);
 
-                scoreService.saveGameResult('wordle', true, newGuesses.length, {
-                    jokersUsed: joker.used ? 1 : 0,
-                    calculatedScore
-                }).catch(console.error);
+                // Challenge modunda normal istatistiklere işlenmez (manipülasyon önlemi)
+                if (!isChallengeMode) {
+                    scoreService.saveGameResult('wordle', true, newGuesses.length, {
+                        jokersUsed: joker.used ? 1 : 0,
+                        calculatedScore
+                    }).catch(console.error);
+                }
             } else if (newGuesses.length >= maxGuesses) {
                 playLose();
                 setStatus('lost');
-                scoreService.saveGameResult('wordle', false, newGuesses.length, {
-                    jokersUsed: joker.used ? 1 : 0,
-                    calculatedScore: 0
-                }).catch(console.error);
+                // Challenge modunda normal istatistiklere işlenmez
+                if (!isChallengeMode) {
+                    scoreService.saveGameResult('wordle', false, newGuesses.length, {
+                        jokersUsed: joker.used ? 1 : 0,
+                        calculatedScore: 0
+                    }).catch(console.error);
+                }
             }
 
             // Oyun bittiyse state'i temizle
@@ -229,7 +269,7 @@ export function useGame(options: UseGameOptions = {}) {
         } finally {
             isProcessingRef.current = false;
         }
-    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose, joker.used, joker.count, difficulty, elapsedTime]);
+    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose, joker.used, joker.count, difficulty, elapsedTime, isChallengeMode]);
 
     const useJoker = useCallback(() => {
         if (status !== 'playing' || joker.used || !targetWord) return;
@@ -319,6 +359,8 @@ export function useGame(options: UseGameOptions = {}) {
         elapsedTime,
         joker,
         score,
+        isChallengeMode,
+        activeChallengeId,
         startNewGame,
         handleKeyPress,
         handleDelete,

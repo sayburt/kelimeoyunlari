@@ -40,9 +40,9 @@ Oyun deneyimini daha profesyonel, rekabetçi ve eğlenceli hale getirecek temel 
 
 Kullanıcılar arası etkileşimi ve rekabeti artıracak paylaşım mekanizmaları.
 
-- [ ] **6.1. Challenge (Meydan Okuma) Mantığı**
+- [x] **6.1. Challenge (Meydan Okuma) Mantığı**
   - Belirli bir kelimeyi veya oyun sonucunu "meydan okuma" olarak işaretleme sistemi.
-- [ ] **6.2. Paylaşım ve URL Yapısı**
+- [x] **6.2. Paylaşım ve URL Yapısı**
   - `oyun-standartlari` skill'ine uygun dinamik link ve metadata (OG tags) üretimi.
 - [ ] **6.3. Liderlik Tablosu Geliştirmeleri**
   - Belirli meydan okumalara özel skor tablolarının oluşturulması.
