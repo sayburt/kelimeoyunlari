@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/layout/Navbar";
-import Footer from "@/components/layout/Footer";
+import ClientLayout from "./ClientLayout";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -11,6 +10,7 @@ const nunito = Nunito({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.kelimeoyunlari.tr"),
   title: "Kelime Oyunları",
   description: "Türkçe kelime oyunlarını bir arada sunan platform.",
 };
@@ -23,9 +23,9 @@ export default function RootLayout({
   return (
     <html lang="tr" suppressHydrationWarning>
       <body className={`${nunito.variable} font-sans`} suppressHydrationWarning>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   );

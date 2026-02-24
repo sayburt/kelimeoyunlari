@@ -1,9 +1,9 @@
 ---
 name: tasarim-sistemi
-description: Kelime projesi renk, tipografi ve UI bileşen kuralları.
+description: Kelime Oyunları projesi renk, tipografi ve UI bileşen kuralları.
 ---
 
-# Kelime — Tasarım Sistemi
+# Kelime Oyunları — Tasarım Sistemi
 
 ## 1. Tema ve Renkler
 Tek statik tema kullanılır. Dark/Light seçici yoktur.

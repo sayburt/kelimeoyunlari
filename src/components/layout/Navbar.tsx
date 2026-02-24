@@ -16,7 +16,7 @@ export default function Navbar() {
     return (
         <nav className="h-16 flex items-center justify-between px-6 bg-surface/10 backdrop-blur-md border-b border-surface/20 sticky top-0 z-50">
             <Link href="/" className="text-2xl font-black text-text-main tracking-tighter">
-                Kelime<span className="text-primary">.</span>
+                Kelime Oyunları<span className="text-primary">.</span>tr
             </Link>
 
             <div className="flex items-center gap-6">

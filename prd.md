@@ -1,11 +1,11 @@
-# Kelime. — Teknik Referans Belgesi
+# Kelime Oyunları — Teknik Referans Belgesi
 > v1.1 — Şubat 2026
 
 ---
 
 ## 1. Proje
 
-Kelime, Türkçe kelime oyunlarını bir arada sunan web ve mobil platformdur. Kullanıcılar giriş yapmadan misafir olarak veya hesap oluşturarak oyun oynayabilir. Platform yalnızca Türkçe içerik sunar. Gelir modeli Google Ads üzerine kuruludur.
+Kelime Oyunları, Türkçe kelime oyunlarını bir arada sunan web ve mobil platformdur. Kullanıcılar giriş yapmadan misafir olarak veya hesap oluşturarak oyun oynayabilir. Platform yalnızca Türkçe içerik sunar. Gelir modeli Google Ads üzerine kuruludur. Proje https://www.kelimeoyunlari.tr web sitesinde canlıya alınacaktır.
 
 ### Temel Kurallar
 

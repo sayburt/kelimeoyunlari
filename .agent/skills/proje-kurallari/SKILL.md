@@ -1,9 +1,9 @@
 ---
 name: proje-kurallari
-description: Kelime projesi temel mimari ve akış kuralları. Her türlü backend, frontend veya mobil geliştirme öncesi mutlaka oku.
+description: Kelime Oyunları projesi temel mimari ve akış kuralları. Her türlü backend, frontend veya mobil geliştirme öncesi mutlaka oku.
 ---
 
-# Kelime — Proje Kuralları
+# Kelime Oyunları — Proje Kuralları
 
 ## 1. Mimari Prensipler
 - **Yalnızca Türkçe:** Platformda her şey Türkçe karakter desteğiyle inşa edilir.

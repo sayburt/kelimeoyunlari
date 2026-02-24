@@ -1,0 +1,51 @@
+---
+name: oyun-standartlari
+description: Tüm oyun sayfalarının (Wordle vb.) sahip olması gereken yapısal, SEO ve UI standartlarını içerir. Bir oyun geliştirilirken zorunlu olarak uygulanmalıdır.
+---
+
+# Oyun Geliştirme Standartları (Game Page Standards)
+
+Bu belge, projeye eklenecek her yeni kelime/zeka oyunu için uyulması zorunlu olan UI (Kullanıcı Arayüzü), UX (Kullanıcı Deneyimi) ve SEO (Arama Motoru Optimizasyonu) standartlarını tanımlar.
+
+## 1. Sayfa ve Layout Yapısı (UI/UX)
+Yeni bir oyun eklerken, oyun deneyiminin kesintisiz olması en önemli kuraldır.
+
+*   **Ekranı Kaplayan Oyun Alanı:** Oyun tahtası ve klavye her zaman kullanıcının görüş alanında, yukarı kaydırma gerektirmeyen (above the fold) bir yapıda olmalıdır. Oyun oynamak için aşağı kaydırmak *gerekmemelidir*.
+    *   Bunun için kod içerisinde genellikle oyunun ana bölümünü saran div üzerinde `min-h-[100dvh] flex flex-col` yapıları kullanılmalıdır. Klavye esnek alanın (flex-1) altında ve görünür olmalıdır.
+*   **Aşağı Kaydırılabilir İçerik:** Oyun kontrol alanının (klavye vs.) bittiği çerçevenin hemen altında (kullanıcı bilinçli olarak aşağı kaydırdığında görünen) "Nasıl Oynanır?" vb. SEO destekli açıklamalar yer almalıdır.
+    *   Sayfaya genel bir scroll (kaydırma) yeteneği verebilmek için en üst sarmalayıcı (wrapper) eleman `overflow-y-auto` kullanmalıdır. İçerisinde oyun modülü bağımsız bir blok (`min-h-[100dvh] shrink-0` gibi), SEO metinleri alt blok olarak yer alabilir.
+
+## 2. SEO ve Meta Veriler (Teknik)
+Oyunun genel `page.tsx` dosyasının yanında, mutlaka oyunun kendi klasöründe (örneğin `app/games/oyun-adi/layout.tsx`) bir Layout dosyası bulunmalıdır.
+
+*   **Statik Metadata:** Next.js `Metadata` API kullanılarak sayfanın `title`, `description`, `keywords` ve `openGraph`, `twitter` bilgileri eksiksiz tanımlanmalıdır.
+*   **JSON-LD Schema Markup:** Arama motorlarına yönelik zengin sonuçları (rich snippets) aktif etmek için `layout.tsx` içerisinde `application/ld+json` formatında `VideoGame` ve (eğer adım adım oyun kuralları içeriyorsa) `HowTo` şemaları (schema) tanımlanmalı ve sayfaya render edilmelidir.
+*   **Sosyal Medya ve Paylaşım Görselleri (OG Images):** Her oyun için `public/games/oyun-adi/` klasörü altında 1200x630 çözünürlüğünde, PNG formatında bir `og.png` görseli bulunmalıdır. Bu görsel social meta tag'leri ile (og:image ve twitter:image) paylaşılmalıdır.
+
+## 3. Oyun Bilgi Kartları (GameCard)
+Ana sayfadaki grid sisteminde sergilenmek üzere her oyunun standart görselleri ve verileri bulunmalıdır.
+
+*   **Kart Görseli (Thumbnail):** Her oyunun `public/games/oyun-adi/` klasörü altında `card.webp` adında, 16:9 formatına uygun, performans için `.webp` formatında optimize edilmiş bir Thumbnail'ı olmalıdır.
+*   **Grid Verisi:** `page.tsx` içerisindeki oyunlar dizisinde (GAMES), oyun objesine resim olarak `thumbnail: '/games/oyun-adi/card.webp'` yolu verilmelidir.
+
+## 3. "Nasıl Oynanır?" Bölümü
+Oyun sayfasının en altına (oyun UI'ının hemen bittiği bloğun altına), SEO'yu besleyen ve oyuncuya pratik bilgi veren standart bir içerik bölümü eklenmelidir.
+
+*   **Başlık:** Eklendiği sayfa başlığı uygun bir H2 etiketiyle işaretlenmelidir (Örn: `<h2 className="text-2xl font-bold mb-6 text-primary">OyunAdı Nasıl Oynanır?</h2>`).
+*   **Görsel ve Tematik Anlatım:** Oyun kuralları açıklanırken; doğru, yanlış veya oyunda olan ama farklı konumda bulunan hücrelerin temsillerinde mevcut projenin tema renkleri (klasmanına göre `bg-correct`, `bg-present`, `bg-absent`, `border-surface-mid` vb.) kullanılarak canlı ve görsel destekli bir örnek dizisi oluşturulmalıdır.
+
+## 4. Ortak Bileşenler (Components)
+Temel altyapıyı baştan kodlamamak ve proje geneli tutarlılığı korumak amaçlı "Ortak Oyun Bileşenleri" benimsenmelidir. Özel bir ihtiyaç varsa bu bileşenler modüler olacak (prop alacak) şekilde zenginleştirilir.
+
+*   **Oyun Başlığı (Header):** `<GameHeader />` - Geri dön butonu, oyun başlığı ve mevcutsa ses aç/kapat gibi özellikleri barındırır.
+*   **Klavye (Girdi):** `<GameKeyboard />` - Özellikle kelime tabanlı oyunlarda fiziksel klavye desteği, ekrandan tıklama desteği sağlar.
+*   **Hatalar/Uyarılar:** `<ErrorToast message="..." />` - "Geçersiz kelime", "Kelime bulunamadı" gibi anlık hataların ekranda uyumlu (Toast formunda) belirmesi için kullanılır.
+*   **Sonuç Ekranı:** `<GameEndModal />` - Oyun tamamlandığında puanı, durumu ve istatistiksel sonuçları göstermek, "Yeni Oyun" düğmesini sağlamak için kullanılır.
+
+## 5. Veri ve Durum Yönetimi (State & Data)
+*   **Custom Hook:** Durum yönetimi (State Management) temiz ve test edilebilir tutulması prensibi doğrultusunda, sayfa bileşeninden (page.tsx) bağımsız olarak `useGame.ts` (ya da örneğin `useWordHunt.ts` vb.) formunda bir React Hook içinde yürütülmelidir.
+*   **Veritabanı / Kütüphane:** Kelime bankasının yönetimi, her zaman projenin root veya data dizinlerinde yer alan veriler üzerinden (örneğin `kelime-data.json`), aracı yardımcı fonksiyonlarla (Services) gerçekleştirilmelidir.
+*   **Yerel Depolama (Storage):** Oyuna dair yerel kayıt geçmişleri ve ilerlemeler (Guest Stats vs.), modüler `storage.ts` servisi ile kaydedilmeli/çağrılmalıdır.
+
+---
+*Not: Bu standartlar belgesi Kelime Oyunları projesi geliştirildikçe, yeni en iyi pratikler (best practices) keşfedildikçe güncellenmelidir ve herhangi bir LLM AI asistanına rehberlik etmesi amacıyla .agent/skills içerisinde tutulmaktadır.*
