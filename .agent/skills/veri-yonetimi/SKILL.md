@@ -15,9 +15,10 @@ description: Kelime verisi ve kullanıcı verisi (Supabase/LocalStorage) yöneti
 - **Aktarım:** Kullanıcı giriş yaptığında yerel veriler `services/migrationService.ts` üzerinden Supabase'e taşınır.
 - **Supabase Tabloları:** `profiles`, `game_stats`, `badges`, `game_likes`.
 
-## 3. Supabase Kurulum ve Yönetim Kuralı (ÖNEMLİ)
+## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
 - **Tüm Supabase işlemleri (yeni tablo oluşturma, RLS politikaları yazma, Auth ayarları, kolon ekleme vb.) YALNIZCA AI (Asistan) tarafından Supabase MCP aracı kullanılarak yapılmalıdır.**
-- Kullanıcı manuel olarak Supabase arayüzünden işlem yapmaz. AI, gerekli tüm SQL migration'larını kendi `apply_migration` aracı ile doğrudan projeye uygular.
+- **ASLA** kullanıcıya manuel SQL çalıştırma veya dashboard üzerinde işlem yapma talimatı verilemez. AI, gerekli tüm SQL migration'larını kendi `apply_migration` aracı ile doğrudan projeye uygular.
+- Eğer çalışma yetki hatası (privilege error) veriyorsa, önce Proje ID'sinin doğruluğu kontrol edilmeli, ardından MCP üzerinden tekrar denenmelidir.
 
 ## 4. RLS Kuralları
 Supabase tarafında her tabloda RLS aktif olmalı; kullanıcılar sadece kendi verilerine (`auth.uid() = user_id`) erişebilmelidir. AI bu politikaları tablo oluştururken otomatik uygular.

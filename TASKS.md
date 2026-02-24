@@ -12,14 +12,15 @@ Oyun deneyimini daha profesyonel, rekabetçi ve eğlenceli hale getirecek temel 
   - [x] Oyun sırasında geçen süreyi milisaniye hassasiyetinde takip eden bir timer sisteminin `useGame` hook'una eklenmesi.
   - [x] Zamanın duraklatılması (modal açıkken) ve oyun sonunda sürenin dondurulması.
   - [x] UI Refinement: Formatı saniye düzeyine çekme ve mobil uyumlu tasarımı iyileştirme.
-- [ ] **5.2. Joker (İpucu) Sistemi**
-  - Her oyun için belirli sayıda "Joker" hakkı tanımlanması.
-  - Wordle için: "Rastgele bir doğru harfi aç" veya "Kullanılmayan iki harfi klavyeden ele" fonksiyonlarının yazılması.
-  - Joker kullanımının puanlama üzerindeki negatif etkisinin belirlenmesi.
-- [ ] **5.3. Gerçek Puanlama Sistemi Entegrasyonu**
+- [x] **5.2. Joker (İpucu) Sistemi**
+  - [x] Her oyun için belirli sayıda "Joker" hakkı tanımlanması.
+  - [x] Wordle için: "Rastgele bir doğru harfi aç" fonksiyonunun yazılması ve UI entegrasyonu.
+  - [x] Joker butonunun hamburger menü dışına, erişilebilir alana konumlandırılması.
+  - [ ] Joker kullanımının puanlama üzerindeki negatif etkisinin belirlenmesi.
+- [x] **5.3. Gerçek Puanlama Sistemi Entegrasyonu**
   - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki formüllerin (`Taban + Deneme + Zaman x GW`) kodlanması.
   - `scoreService.ts` dosyasının sadece galibiyet değil, hesaplanan bu kompleks puanı da kaydedecek şekilde güncellenmesi.
-- [ ] **5.4. Rozet (Achievement) ve Eşik Sistemi**
+- [x] **5.4. Rozet (Achievement) ve Eşik Sistemi**
   - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki prestijli puan eşiklerinin (`1M`, `2.5M` vb.) kontrol mekanizmasının yazılması.
   - Eşik aşıldığında kullanıcıya anlık bildirim (toast/celebration) gösterilmesi ve rozetin `badges` tablosuna işlenmesi.
 - [ ] **5.5. Oyun State Persistence (Kalıcılık)**

@@ -28,6 +28,10 @@ export function GameInstructions({ instructions, title }: GameInstructionsProps)
 
                 {instructions.examples && instructions.examples.length > 0 && (
                     <div className="my-8 space-y-8">
+                        <h4 className="text-lg font-bold text-text-main/80 flex items-center gap-2">
+                            <span className="w-8 h-8 rounded-lg bg-surface-mid/30 flex items-center justify-center text-sm">💡</span>
+                            Örnekler
+                        </h4>
                         {instructions.examples.map((example, index) => (
                             <div key={index} className="bg-surface-mid/20 p-4 rounded-xl border border-surface-mid/30">
                                 <div className="flex gap-1.5 mb-3">
@@ -67,6 +71,30 @@ export function GameInstructions({ instructions, title }: GameInstructionsProps)
                                 </p>
                             </div>
                         ))}
+                    </div>
+                )}
+
+                {instructions.scoring && (
+                    <div className="my-8 space-y-4">
+                        <h4 className="text-lg font-bold text-text-main/80 flex items-center gap-2">
+                            <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm">🏆</span>
+                            Puanlama Sistemi
+                        </h4>
+                        <div className="bg-surface-mid/10 rounded-2xl border border-surface-mid/20 overflow-hidden">
+                            <div className="p-4 border-b border-surface-mid/20">
+                                <p className="text-sm text-text-muted leading-relaxed">
+                                    {instructions.scoring.description}
+                                </p>
+                            </div>
+                            <div className="divide-y divide-surface-mid/10">
+                                {instructions.scoring.points.map((item, index) => (
+                                    <div key={index} className="flex justify-between items-center px-4 py-3 hover:bg-surface-mid/5 transition-colors">
+                                        <span className="text-sm font-medium text-text-main/90">{item.condition}</span>
+                                        <span className="text-sm font-bold text-primary">{item.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
                     </div>
                 )}
 

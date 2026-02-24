@@ -12,6 +12,8 @@ export interface GameHeaderProps {
     onStats?: () => void;
     onSettings?: () => void;
     onShare?: () => void;
+    onJoker?: () => void;
+    jokerUsed?: boolean;
     backHref?: string;
     timerText?: string;
 }
@@ -23,6 +25,8 @@ export function GameHeader({
     onStats,
     onSettings,
     onShare,
+    onJoker,
+    jokerUsed,
     backHref = '/',
     timerText,
 }: GameHeaderProps) {
@@ -39,12 +43,20 @@ export function GameHeader({
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-    const menuItems = [
+    interface MenuItem {
+        icon: React.ElementType;
+        label: string;
+        onClick?: () => void;
+        disabled?: boolean;
+    }
+
+    const menuItems: MenuItem[] = [
         { icon: Info, label: 'Nasıl Oynanır?', onClick: onHelp },
         { icon: BarChart2, label: 'İstatistikler', onClick: onStats },
         { icon: Settings, label: 'Ayarlar', onClick: onSettings },
         { icon: Share2, label: 'Oyunu Paylaş', onClick: onShare },
     ];
+
 
     return (
         <header className="flex items-center justify-between py-2 sm:py-3 px-4 sm:px-6 border-b border-surface-mid/80 bg-bg/50 backdrop-blur-md sticky top-0 z-50 w-full mb-2 sm:mb-4">
@@ -67,28 +79,50 @@ export function GameHeader({
             </div>
 
             {/* Sağ: Sayaç ve İkonlar */}
-            <div className="flex-1 flex justify-end items-center gap-0.5 sm:gap-1.5">
+            <div className="flex-1 flex justify-end items-center gap-2 sm:gap-3">
                 {timerText && (
-                    <div className="mr-1 sm:mr-2 pointer-events-none">
+                    <div className="mr-0.5 sm:mr-1 pointer-events-none">
                         <span className="text-primary font-mono text-sm sm:text-base font-bold tabular-nums opacity-80 tracking-tighter">
                             {timerText}
                         </span>
                     </div>
                 )}
 
+                {/* Joker Butonu (Her zaman dışarıda) */}
+                <button
+                    onClick={onJoker}
+                    disabled={jokerUsed}
+                    className={`relative w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-all active:scale-95 group cursor-pointer ${jokerUsed
+                        ? 'opacity-40 grayscale cursor-not-allowed bg-surface/30'
+                        : 'bg-surface text-text-secondary hover:text-primary hover:bg-surface-mid shadow-sm'
+                        }`}
+                    title={jokerUsed ? 'İpucu Kullanıldı' : 'İpucu Kullan (💡)'}
+                    aria-label="İpucu"
+                >
+                    <span className={`text-base sm:text-xl ${!jokerUsed && 'group-hover:scale-125 transition-transform'}`}>💡</span>
+                    {jokerUsed && <div className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-bg" />}
+                </button>
+
                 {/* Desktop Menu */}
                 <div className="hidden sm:flex items-center gap-1.5">
-                    {menuItems.map((item, idx) => (
-                        <button
-                            key={idx}
-                            onClick={item.onClick}
-                            className="w-10 h-10 flex items-center justify-center rounded-xl text-text-secondary hover:text-primary hover:bg-surface transition-all active:scale-95 group cursor-pointer"
-                            title={item.label}
-                            aria-label={item.label}
-                        >
-                            <item.icon size={20} className="group-hover:scale-110 transition-transform" />
-                        </button>
-                    ))}
+                    {menuItems.map((item, idx) => {
+                        const Icon = item.icon;
+                        return (
+                            <button
+                                key={idx}
+                                onClick={item.onClick}
+                                disabled={item.disabled}
+                                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-all active:scale-95 group cursor-pointer ${item.disabled
+                                    ? 'opacity-30 grayscale cursor-not-allowed'
+                                    : 'text-text-secondary hover:text-primary hover:bg-surface'
+                                    }`}
+                                title={item.label}
+                                aria-label={item.label}
+                            >
+                                <Icon size={20} className="group-hover:scale-110 transition-transform" />
+                            </button>
+                        );
+                    })}
                 </div>
 
                 {/* Mobile Menu Button */}
@@ -111,19 +145,28 @@ export function GameHeader({
                                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
                                     className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-bg/95 backdrop-blur-xl border border-surface/40 shadow-2xl p-2 z-50 flex flex-col gap-1"
                                 >
-                                    {menuItems.map((item, idx) => (
-                                        <button
-                                            key={idx}
-                                            onClick={() => {
-                                                item.onClick?.();
-                                                setIsMenuOpen(false);
-                                            }}
-                                            className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-text-main hover:bg-surface hover:text-primary transition-all duration-200 w-full text-left"
-                                        >
-                                            <item.icon size={18} />
-                                            {item.label}
-                                        </button>
-                                    ))}
+                                    {menuItems.map((item, idx) => {
+                                        const Icon = item.icon;
+                                        return (
+                                            <button
+                                                key={idx}
+                                                onClick={() => {
+                                                    if (!item.disabled) {
+                                                        item.onClick?.();
+                                                        setIsMenuOpen(false);
+                                                    }
+                                                }}
+                                                disabled={item.disabled}
+                                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 w-full text-left ${item.disabled
+                                                    ? 'opacity-30 grayscale cursor-not-allowed text-text-muted'
+                                                    : 'text-text-main hover:bg-surface hover:text-primary'
+                                                    }`}
+                                            >
+                                                <Icon size={18} />
+                                                {item.label}
+                                            </button>
+                                        );
+                                    })}
                                 </motion.div>
                             </>
                         )}

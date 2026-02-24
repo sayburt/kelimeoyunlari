@@ -4,7 +4,8 @@ export interface GuestStat {
     game_name: string;
     played: number;
     won: number;
-    best_score: number;
+    best_score: number; // Wordle için: en az deneme sayısı
+    high_score: number; // Hesaplanan en yüksek puan
     current_streak: number;
     max_streak: number;
 }

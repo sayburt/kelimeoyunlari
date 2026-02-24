@@ -148,7 +148,7 @@ export default async function GameHowToPage({ params }: Props) {
 
                         {/* Pro Tips */}
                         <div className="p-8 rounded-3xl bg-surface/10 border border-surface/20">
-                            <h3 className="text-xl font-black text-primary mb-6 italic">PRO İPUÇLARI</h3>
+                            <h3 className="text-xl font-black text-primary mb-6 italic">İPUÇLARI</h3>
                             <ul className="space-y-6">
                                 {(game.blogContent?.proTips || ["Taktikler yakında burada olacak!"]).map((tip, idx) => (
                                     <li key={idx} className="text-sm text-text-muted leading-relaxed font-medium">
@@ -157,6 +157,29 @@ export default async function GameHowToPage({ params }: Props) {
                                 ))}
                             </ul>
                         </div>
+
+                        {/* Scoring System */}
+                        {game.instructions.scoring && (
+                            <div className="p-8 rounded-3xl bg-surface/10 border border-surface/20">
+                                <h3 className="text-xl font-black text-text-main mb-6 flex items-center gap-2">
+                                    <span className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-sm">🏆</span>
+                                    PUANLAMA
+                                </h3>
+                                <div className="space-y-4">
+                                    <p className="text-xs text-text-muted leading-relaxed font-medium">
+                                        {game.instructions.scoring.description}
+                                    </p>
+                                    <div className="space-y-2">
+                                        {game.instructions.scoring.points.map((item, idx) => (
+                                            <div key={idx} className="flex justify-between items-center p-3 rounded-xl bg-surface/20 border border-surface/10">
+                                                <span className="text-xs font-bold text-text-muted uppercase tracking-wider">{item.condition}</span>
+                                                <span className="text-sm font-black text-primary">{item.value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
                     </aside>
                 </div>
             </article>

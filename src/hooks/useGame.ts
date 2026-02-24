@@ -12,6 +12,12 @@ export interface GuessResult {
     states: LetterState[];
 }
 
+export interface JokerState {
+    used: boolean;
+    count: number;
+    max: number;
+}
+
 export type GameStatus = 'idle' | 'loading' | 'playing' | 'won' | 'lost';
 
 export interface UseGameOptions {
@@ -35,6 +41,7 @@ export function useGame(options: UseGameOptions = {}) {
     const [error, setError] = useState<string | null>(null);
     const [wordLength, setWordLength] = useState(initialWordLength);
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
+    const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
 
     const { elapsedTime, resetTimer } = useTimer(status === 'playing', isPaused);
 
@@ -62,6 +69,7 @@ export function useGame(options: UseGameOptions = {}) {
             setGuesses([]);
             setCurrentGuess('');
             setKeyboardState({});
+            setJoker({ used: false, count: 0, max: 1 });
             resetTimer();
             setStatus('playing');
         } catch (err) {
@@ -148,11 +156,22 @@ export function useGame(options: UseGameOptions = {}) {
             if (currentGuess === target) {
                 playWin();
                 setStatus('won');
-                scoreService.saveGameResult('wordle', true, newGuesses.length).catch(console.error);
+
+                // Puan hesapla
+                const seconds = Math.floor(elapsedTime / 1000);
+                const calculatedScore = scoreService.calculateWordleScore(newGuesses.length, seconds, difficulty);
+
+                scoreService.saveGameResult('wordle', true, newGuesses.length, {
+                    jokersUsed: joker.used ? 1 : 0,
+                    calculatedScore
+                }).catch(console.error);
             } else if (newGuesses.length >= maxGuesses) {
                 playLose();
                 setStatus('lost');
-                scoreService.saveGameResult('wordle', false, newGuesses.length).catch(console.error);
+                scoreService.saveGameResult('wordle', false, newGuesses.length, {
+                    jokersUsed: joker.used ? 1 : 0,
+                    calculatedScore: 0
+                }).catch(console.error);
             }
         } catch (err) {
             console.error('Kelime kontrol hatası:', err);
@@ -160,7 +179,40 @@ export function useGame(options: UseGameOptions = {}) {
         } finally {
             isProcessingRef.current = false;
         }
-    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose]);
+    }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, playWin, playLose, joker.used, difficulty, elapsedTime]);
+
+    const useJoker = useCallback(() => {
+        if (status !== 'playing' || joker.used || !targetWord) return;
+
+        // Wordle İpucu: Henüz bulunmamış doğru bir harfi klavye durumuna ekle
+        const target = targetWord.kelime.toLocaleUpperCase('tr-TR');
+        const correctLetters = Array.from(new Set(target.split('')));
+
+        // Henüz klavyede 'correct' olarak işaretlenmemiş doğru harfleri bul
+        const remainingLetters = correctLetters.filter(l => keyboardState[l] !== 'correct');
+
+        if (remainingLetters.length > 0) {
+            const randomLetter = remainingLetters[Math.floor(Math.random() * remainingLetters.length)];
+
+            setKeyboardState(prev => ({
+                ...prev,
+                [randomLetter]: 'correct'
+            }));
+
+            setJoker(prev => ({
+                ...prev,
+                used: true,
+                count: prev.count + 1
+            }));
+
+            playEnter(); // İpucu verildiğinde bir ses çal
+            return true;
+        } else {
+            playError(); // İpucu verilecek harf kalmadıysa hata sesi çal
+        }
+
+        return false;
+    }, [status, joker.used, targetWord, keyboardState, playEnter, playError]);
 
 
     return {
@@ -176,9 +228,11 @@ export function useGame(options: UseGameOptions = {}) {
         isSoundEnabled,
         toggleSound,
         elapsedTime,
+        joker,
         startNewGame,
         handleKeyPress,
         handleDelete,
-        handleEnter
+        handleEnter,
+        useJoker
     };
 }

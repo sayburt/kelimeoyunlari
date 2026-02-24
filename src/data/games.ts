@@ -8,6 +8,13 @@ export interface GameInstructionExample {
 export interface GameInstructions {
     basic: string;
     rules: string[];
+    scoring?: {
+        description: string;
+        points: {
+            condition: string;
+            value: string;
+        }[];
+    };
     examples?: GameInstructionExample[];
     footer?: string;
 }
@@ -44,6 +51,18 @@ export const GAMES: Game[] = [
                 'Her tahminden sonra, harflerin rengi tahmininizin gizli kelimeye ne kadar yakın olduğunu göstermek için değişecektir.',
                 'Doğru harf doğru yerdeyse yeşil, yanlış yerdeyse sarı, kelimede yoksa gri olur.'
             ],
+            scoring: {
+                description: 'Wordle oyununda puanlama, kelimeyi kaçıncı denemede bulduğuna ve ne kadar hızlı olduğuna göre hesaplanır:',
+                points: [
+                    { condition: '1. Denemede Bildiğinde', value: '100 Puan' },
+                    { condition: '2. Denemede Bildiğinde', value: '80 Puan' },
+                    { condition: '3. Denemede Bildiğinde', value: '60 Puan' },
+                    { condition: '4. Denemede Bildiğinde', value: '40 Puan' },
+                    { condition: '5. Denemede Bildiğinde', value: '20 Puan' },
+                    { condition: '6. Denemede Bildiğinde', value: '10 Puan' },
+                    { condition: 'Süre Bonusu', value: 'Her saniye için ek puan' }
+                ]
+            },
             examples: [
                 {
                     word: 'KALEM',

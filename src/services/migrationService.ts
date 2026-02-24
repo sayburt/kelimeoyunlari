@@ -27,6 +27,7 @@ export const migrationService = {
                         played: stat.played,
                         won: stat.won,
                         best_score: stat.best_score,
+                        high_score: stat.high_score,
                         current_streak: stat.current_streak,
                         max_streak: stat.max_streak,
                         updated_at: new Date().toISOString(),

@@ -43,10 +43,12 @@ export default function WordlePage() {
         maxGuesses,
         wordLength,
         elapsedTime,
+        joker,
         startNewGame,
         handleKeyPress,
         handleDelete,
         handleEnter,
+        useJoker
     } = useGame({
         initialWordLength: WORD_LENGTH,
         initialMaxGuesses: MAX_GUESSES,
@@ -153,6 +155,8 @@ export default function WordlePage() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onJoker={useJoker}
+                    jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
                 <div className="flex-1 flex items-center justify-center">
@@ -176,6 +180,8 @@ export default function WordlePage() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onJoker={useJoker}
+                    jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
 

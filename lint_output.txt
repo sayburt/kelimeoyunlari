@@ -1,0 +1,21 @@
+
+> kelime-oyunlari@0.1.0 lint
+> eslint
+
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\components\game\GameHeader.tsx
+  107:52   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:162  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  147:67   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:68   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  153:184  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\services\scoreService.ts
+   9:99   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  26:71   warning  'metadata' is defined but never used      @typescript-eslint/no-unused-vars
+  26:97   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  68:89   warning  'metadata' is defined but never used      @typescript-eslint/no-unused-vars
+  68:115  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Ô£û 10 problems (8 errors, 2 warnings)
+

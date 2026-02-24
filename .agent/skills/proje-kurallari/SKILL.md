@@ -13,9 +13,13 @@ description: Kelime Oyunları projesi temel mimari ve akış kuralları. Her tü
 ## 2. Teknoloji Stack
 - **Web:** Next.js (App Router) + TypeScript + TailwindCSS + Framer Motion.
 - **Mobil:** React Native + Expo + NativeWind + Reanimated.
-- **Backend:** Supabase (Auth & Veritabanı - Profil ve İstatistikler için).
 
-## 3. Dosya Yapısı (Web)
+## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
+- **Tüm Supabase işlemleri (yeni tablo oluşturma, RLS politikaları yazma, Auth ayarları, kolon ekleme vb.) YALNIZCA AI (Asistan) tarafından Supabase MCP aracı kullanılarak yapılmalıdır.**
+- **ASLA** kullanıcıya manuel SQL çalıştırma veya dashboard üzerinde işlem yapma talimatı verilemez. AI, gerekli tüm SQL migration'larını kendi `apply_migration` aracı ile doğrudan projeye uygular.
+- Eğer çalışma yetki hatası (privilege error) veriyorsa, önce Proje ID'sinin doğruluğu kontrol edilmeli, ardından MCP üzerinden tekrar denenmelidir.
+
+## 4. Dosya Yapısı (Web)
 ```
 src/
   app/               → Sayfalar
