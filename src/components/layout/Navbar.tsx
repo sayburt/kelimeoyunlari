@@ -4,9 +4,10 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { AvatarMenu } from "@/components/ui/AvatarMenu";
 
 export default function Navbar() {
-    const { isAuthenticated, signOut } = useAuth();
+    const { isAuthenticated } = useAuth();
     const pathname = usePathname();
 
     // Auth sayfalarında Navbar'ı gizleyebiliriz veya farklı gösterebiliriz
@@ -24,30 +25,11 @@ export default function Navbar() {
                 {isAuthenticated ? (
                     <div className="flex items-center gap-4">
                         <ThemeToggle />
-                        <Link
-                            href="/profile"
-                            className={`text-sm font-bold transition-colors ${pathname === "/profile" ? "text-primary" : "text-text-main hover:text-primary"
-                                }`}
-                        >
-                            Profil
-                        </Link>
-                        <button
-                            onClick={() => signOut()}
-                            className="px-4 py-2 text-xs font-bold bg-surface text-wrong border border-wrong/30 rounded-full hover:bg-wrong hover:text-white transition-all"
-                        >
-                            Çıkış
-                        </button>
+                        <AvatarMenu />
                     </div>
                 ) : (
                     <div className="flex items-center gap-3">
                         <ThemeToggle />
-                        <Link
-                            href="/profile"
-                            className={`text-sm font-bold transition-colors ${pathname === "/profile" ? "text-primary" : "text-text-main hover:text-primary"
-                                }`}
-                        >
-                            İstatistiklerim
-                        </Link>
                         <Link
                             href="/login"
                             className="text-sm font-bold text-text-main hover:text-primary transition-colors"
