@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, Info, BarChart2, Settings, Share2, Menu, X } from 'lucide-react';
+import { ArrowLeft, Info, BarChart2, Settings, Share2, Menu, X, Save } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -12,6 +12,9 @@ export interface GameHeaderProps {
     onStats?: () => void;
     onSettings?: () => void;
     onShare?: () => void;
+    onSave?: () => void;
+    isLoggedIn?: boolean;
+    gameStatus?: string;
     onJoker?: () => void;
     jokerUsed?: boolean;
     backHref?: string;
@@ -25,6 +28,9 @@ export function GameHeader({
     onStats,
     onSettings,
     onShare,
+    onSave,
+    isLoggedIn,
+    gameStatus,
     onJoker,
     jokerUsed,
     backHref = '/',
@@ -51,6 +57,7 @@ export function GameHeader({
     }
 
     const menuItems: MenuItem[] = [
+        ...(isLoggedIn && gameStatus === 'playing' && onSave ? [{ icon: Save, label: 'Sonra Devam Et', onClick: onSave }] : []),
         { icon: Info, label: 'Nasıl Oynanır?', onClick: onHelp },
         { icon: BarChart2, label: 'İstatistikler', onClick: onStats },
         { icon: Settings, label: 'Ayarlar', onClick: onSettings },

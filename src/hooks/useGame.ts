@@ -7,6 +7,7 @@ import { useSound } from '@/hooks/useSound';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { useTimer } from '@/hooks/useTimer';
 import { storage } from '@/lib/storage';
+import { savedGameService, SavedGameState } from '@/services/savedGameService';
 
 export interface PersistedGameState {
     status: GameStatus;
@@ -264,6 +265,45 @@ export function useGame(options: UseGameOptions = {}) {
     }, [status, joker.used, targetWord, keyboardState, playEnter, playError]);
 
 
+    // Bulut kaydetme fonksiyonu
+    const saveGameToCloud = useCallback(async (gameName: string): Promise<boolean> => {
+        if (status !== 'playing' || !targetWord) return false;
+
+        const stateToSave: SavedGameState = {
+            guesses,
+            keyboardState,
+            joker,
+            targetWord,
+            difficulty,
+            wordLength,
+            maxGuesses,
+        };
+
+        const success = await savedGameService.saveGame(gameName, stateToSave, elapsedTime);
+        return success;
+    }, [status, targetWord, guesses, keyboardState, joker, difficulty, wordLength, maxGuesses, elapsedTime]);
+
+    // Buluttan oyun yükleme
+    const loadGameFromCloud = useCallback((cloudState: SavedGameState, savedElapsedTime: number) => {
+        setTargetWord(cloudState.targetWord);
+        setGuesses(cloudState.guesses as GuessResult[]);
+        setKeyboardState(cloudState.keyboardState as Record<string, LetterState>);
+        setJoker(cloudState.joker);
+        setWordLength(cloudState.wordLength);
+        setMaxGuesses(cloudState.maxGuesses);
+        setElapsedTime(savedElapsedTime);
+        setCurrentGuess('');
+        setScore(0);
+        setError(null);
+        storage.clearGameState('wordle'); // localStorage'dan temizle, buluttan yükleniyor
+        setStatus('playing');
+    }, [setElapsedTime]);
+
+    // Bulut kaydını silme
+    const deleteCloudSave = useCallback(async (gameName: string) => {
+        await savedGameService.deleteSavedGame(gameName);
+    }, []);
+
     return {
         status,
         targetWord,
@@ -283,6 +323,9 @@ export function useGame(options: UseGameOptions = {}) {
         handleKeyPress,
         handleDelete,
         handleEnter,
-        useJoker
+        useJoker,
+        saveGameToCloud,
+        loadGameFromCloud,
+        deleteCloudSave,
     };
 }

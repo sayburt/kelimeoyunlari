@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useCallback, useState } from 'react';
+import React, { useEffect, useCallback, useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { useGame } from '@/hooks/useGame';
 import { GameHeader } from '@/components/game/GameHeader';
@@ -11,12 +11,17 @@ import { ErrorToast } from '@/components/game/ErrorToast';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { SettingsModal } from '@/components/game/SettingsModal';
+import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { useGameSettings } from '@/context/GameSettingsContext';
+import { useAuth } from '@/hooks/useAuth';
+import { savedGameService } from '@/services/savedGameService';
 import { formatTime } from '@/utils/timeUtils';
 import { shareContent } from '@/utils/shareUtils';
+import { useRouter } from 'next/navigation';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
+const GAME_NAME = 'wordle';
 
 // Türkçe harf seti (fiziksel klavye desteği)
 const TURKISH_LETTERS = new Set(
@@ -28,9 +33,20 @@ export default function WordlePage() {
     const [showStatsModal, setShowStatsModal] = useState(false);
     const [showSettingsModal, setShowSettingsModal] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [showResumeModal, setShowResumeModal] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
+    const [savedElapsedTime, setSavedElapsedTime] = useState(0);
+    const [savedGuessesCount, setSavedGuessesCount] = useState(0);
 
-    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showModal;
+    // Bulut kontrol durumunu ref ile takip et — bir kez kontrol edilecek
+    const cloudCheckDoneRef = useRef(false);
+    // Bulut kayıtlı state'i geçici olarak sakla
+    const savedCloudStateRef = useRef<{ state: import('@/services/savedGameService').SavedGameState; elapsedTime: number } | null>(null);
+
+    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showModal || showResumeModal;
+
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
 
     const {
         status,
@@ -49,7 +65,10 @@ export default function WordlePage() {
         handleKeyPress,
         handleDelete,
         handleEnter,
-        useJoker
+        useJoker,
+        saveGameToCloud,
+        loadGameFromCloud,
+        deleteCloudSave,
     } = useGame({
         initialWordLength: WORD_LENGTH,
         initialMaxGuesses: MAX_GUESSES,
@@ -61,17 +80,54 @@ export default function WordlePage() {
     const { difficulty } = useGameSettings();
 
     // Oyunu başlat veya zorluk değiştiğinde yeniden başlat
+    // Ancak bulut kontrolü yapılmadan başlatma
     useEffect(() => {
-        startNewGame(WORD_LENGTH, MAX_GUESSES);
-    }, [startNewGame, difficulty]);
+        if (cloudCheckDoneRef.current || !isAuthenticated) {
+            // Bulut kontrolü tamamlandıysa veya giriş yapılmamışsa normal başlat
+            startNewGame(WORD_LENGTH, MAX_GUESSES);
+        }
+    }, [startNewGame, difficulty, isAuthenticated]);
 
-    // Kazanma/kaybetme durumunda modal aç
+    // Giriş yapan kullanıcı için bulut kaydını kontrol et
+    useEffect(() => {
+        if (!isAuthenticated || cloudCheckDoneRef.current) return;
+
+        const checkCloudSave = async () => {
+            try {
+                const savedGame = await savedGameService.getSavedGame(GAME_NAME);
+                if (savedGame) {
+                    setSavedElapsedTime(savedGame.elapsed_time);
+                    setSavedGuessesCount(savedGame.state.guesses.length);
+                    savedCloudStateRef.current = {
+                        state: savedGame.state,
+                        elapsedTime: savedGame.elapsed_time,
+                    };
+                    setShowResumeModal(true);
+                } else {
+                    startNewGame(WORD_LENGTH, MAX_GUESSES);
+                }
+            } catch {
+                startNewGame(WORD_LENGTH, MAX_GUESSES);
+            }
+            cloudCheckDoneRef.current = true;
+        };
+
+        checkCloudSave();
+    }, [isAuthenticated, startNewGame]);
+
+    // Kazanma/kaybetme durumunda modal aç + bulut kaydını sil
     useEffect(() => {
         if (status === 'won' || status === 'lost') {
             const timer = setTimeout(() => setShowModal(true), 1200);
+
+            // Oyun bittiyse bulut kaydını da sil
+            if (isAuthenticated) {
+                deleteCloudSave(GAME_NAME).catch(console.error);
+            }
+
             return () => clearTimeout(timer);
         }
-    }, [status]);
+    }, [status, isAuthenticated, deleteCloudSave]);
 
     // Hata durumunda shake animasyonu
     useEffect(() => {
@@ -112,6 +168,37 @@ export default function WordlePage() {
     // Yeni oyun başlat
     const handleRestart = () => {
         setShowModal(false);
+        startNewGame(WORD_LENGTH, MAX_GUESSES);
+    };
+
+    // Sonra Devam Et — Kaydet ve ana sayfaya yönlendir
+    const handleSaveGame = async () => {
+        const success = await saveGameToCloud(GAME_NAME);
+        if (success) {
+            setToastMessage('Oyun kaydedildi!');
+            setTimeout(() => {
+                router.push('/');
+            }, 800);
+        } else {
+            setToastMessage('Oyun kaydedilemedi!');
+            setTimeout(() => setToastMessage(null), 3000);
+        }
+    };
+
+    // Resume Game — Kayıtlı oyun yükle
+    const handleResumeGame = () => {
+        setShowResumeModal(false);
+        if (savedCloudStateRef.current) {
+            loadGameFromCloud(savedCloudStateRef.current.state, savedCloudStateRef.current.elapsedTime);
+            savedCloudStateRef.current = null;
+        }
+    };
+
+    // Yeni oyun başlat — kayıtlı oyunu sil
+    const handleNewGameFromModal = async () => {
+        setShowResumeModal(false);
+        savedCloudStateRef.current = null;
+        await deleteCloudSave(GAME_NAME);
         startNewGame(WORD_LENGTH, MAX_GUESSES);
     };
 
@@ -156,6 +243,9 @@ export default function WordlePage() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
+                    isLoggedIn={isAuthenticated}
+                    gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
@@ -181,6 +271,9 @@ export default function WordlePage() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
+                    isLoggedIn={isAuthenticated}
+                    gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
@@ -232,6 +325,15 @@ export default function WordlePage() {
                 onRestart={handleRestart}
                 onShare={handleResultShare}
                 score={score}
+            />
+
+            {/* Kayıtlı Oyun Devam Modal */}
+            <ResumeGameModal
+                isOpen={showResumeModal}
+                elapsedTime={savedElapsedTime}
+                guessesCount={savedGuessesCount}
+                onResume={handleResumeGame}
+                onNewGame={handleNewGameFromModal}
             />
 
             {/* TODO: Placeholder Modallar - Gelecekte kendi bileşenleri ile değiştirilecek */}
