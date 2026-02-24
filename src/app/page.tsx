@@ -70,10 +70,10 @@ export default function Home() {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl sm:text-5xl font-black text-gray-100 tracking-tight mb-3">
-            Kelime Oyunları<span className="text-primary">.</span>tr
+          <h1 className="text-4xl sm:text-5xl font-black text-text-main tracking-tight mb-3">
+            <span className="text-primary">KELİME</span> oyunları<span className="text-primary">.</span>tr
           </h1>
-          <p className="text-slate-400 text-lg">
+          <p className="text-text-secondary text-lg">
             Türkçe kelime oyunlarının en eğlenceli adresi.
           </p>
         </motion.div>

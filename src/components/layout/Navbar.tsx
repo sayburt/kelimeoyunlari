@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export default function Navbar() {
     const { isAuthenticated, signOut } = useAuth();
@@ -16,12 +17,13 @@ export default function Navbar() {
     return (
         <nav className="h-16 flex items-center justify-between px-6 bg-surface/10 backdrop-blur-md border-b border-surface/20 sticky top-0 z-50">
             <Link href="/" className="text-2xl font-black text-text-main tracking-tighter">
-                Kelime Oyunları<span className="text-primary">.</span>tr
+                <span className="text-primary">KELİME</span> oyunları
             </Link>
 
             <div className="flex items-center gap-6">
                 {isAuthenticated ? (
                     <div className="flex items-center gap-4">
+                        <ThemeToggle />
                         <Link
                             href="/profile"
                             className={`text-sm font-bold transition-colors ${pathname === "/profile" ? "text-primary" : "text-text-main hover:text-primary"
@@ -38,6 +40,7 @@ export default function Navbar() {
                     </div>
                 ) : (
                     <div className="flex items-center gap-3">
+                        <ThemeToggle />
                         <Link
                             href="/profile"
                             className={`text-sm font-bold transition-colors ${pathname === "/profile" ? "text-primary" : "text-text-main hover:text-primary"

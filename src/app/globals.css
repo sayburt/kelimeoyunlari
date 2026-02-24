@@ -1,28 +1,78 @@
 @import "tailwindcss";
 
+@layer base {
+  :root {
+    --theme-bg: #F8FAFC;
+    --theme-surface: #FFFFFF;
+    --theme-surface-dark: #F1F5F9;
+    --theme-surface-mid: #E2E8F0;
+    --theme-surface-hover: #CBD5E1;
+    --theme-surface-accent: #94A3B8;
+    --theme-surface-accent-hover: #475569;
+
+    --theme-text-main: #0F172A;
+    --theme-text-secondary: #475569;
+    --theme-text-muted: #94A3B8;
+    --theme-text-on-state: #FFFFFF;
+
+    --theme-primary: #0284C7; /* Koyu turkuaz/mavi light mod için */
+
+    --theme-correct: #16A34A; /* Daha uyumlu yeşil */
+    --theme-correct-hover: #22C55E;
+    --theme-present: #D97706; /* Daha okunaklı sarı/turuncu */
+    --theme-present-hover: #EAB308;
+    --theme-absent: #CBD5E1;
+    --theme-wrong: #DC2626;
+  }
+  
+  .dark {
+    --theme-bg: #0F172A;
+    --theme-surface: #1E293B;
+    --theme-surface-dark: #0F172A;
+    --theme-surface-mid: #334155;
+    --theme-surface-hover: #475569;
+    --theme-surface-accent: #4B5563;
+    --theme-surface-accent-hover: #6B7280;
+
+    --theme-text-main: #E5E7EB;
+    --theme-text-secondary: #94A3B8;
+    --theme-text-muted: #64748B;
+    --theme-text-on-state: #FFFFFF;
+
+    --theme-primary: #22D3EE;
+
+    --theme-correct: #22C55E;
+    --theme-correct-hover: #4ADE80;
+    --theme-present: #EAB308;
+    --theme-present-hover: #FACC15;
+    --theme-absent: #334155;
+    --theme-wrong: #EF4444;
+  }
+}
+
 @theme {
   /* Colors */
-  --color-bg: #0F172A;          /* Ana sayfa arka planı */
-  --color-surface: #1E293B;     /* Kart yüzeyi */
-  --color-surface-dark: #0F172A; /* Çok koyu yüzey (boş hücre bg) */
-  --color-surface-mid: #334155; /* Orta ton yüzey (filled hücre, absent klavye) */
-  --color-surface-hover: #475569; /* Hover durumu */
-  --color-surface-accent: #4B5563; /* Accent yüzey (ENTER/DEL tuşları) */
-  --color-surface-accent-hover: #6B7280; /* ENTER/DEL hover */
+  --color-bg: var(--theme-bg);
+  --color-surface: var(--theme-surface);
+  --color-surface-dark: var(--theme-surface-dark);
+  --color-surface-mid: var(--theme-surface-mid);
+  --color-surface-hover: var(--theme-surface-hover);
+  --color-surface-accent: var(--theme-surface-accent);
+  --color-surface-accent-hover: var(--theme-surface-accent-hover);
 
-  --color-text-main: #E5E7EB;   /* Ana metin */
-  --color-text-secondary: #94A3B8; /* İkincil metin */
-  --color-text-muted: #64748B;  /* Soluk metin (absent harf) */
-  --color-text-on-state: #FFFFFF; /* Doğru/yanlış/mevcut üstündeki metin */
+  --color-text-main: var(--theme-text-main);
+  --color-text-secondary: var(--theme-text-secondary);
+  --color-text-muted: var(--theme-text-muted);
+  --color-text-on-state: var(--theme-text-on-state);
 
-  --color-primary: #22D3EE;     /* Ana vurgu (turkuaz) */
+  --color-primary: var(--theme-primary);
 
-  --color-correct: #22C55E;     /* Doğru harf (yeşil) */
-  --color-correct-hover: #4ADE80;
-  --color-present: #EAB308;     /* Mevcut harf (sarı) — oyun tokenı */
-  --color-present-hover: #FACC15;
-  --color-absent: #334155;      /* Yok harf (koyu gri) */
-  --color-wrong: #EF4444;       /* Hata/yanlış (kırmızı) */
+  --color-correct: var(--theme-correct);
+  --color-correct-hover: var(--theme-correct-hover);
+  --color-present: var(--theme-present);
+  --color-present-hover: var(--theme-present-hover);
+  --color-absent: var(--theme-absent);
+  --color-wrong: var(--theme-wrong);
 
   /* Typography */
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;

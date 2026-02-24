@@ -4,6 +4,7 @@ import React from 'react';
 import { usePathname } from 'next/navigation';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 
 export default function ClientLayout({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
@@ -12,10 +13,10 @@ export default function ClientLayout({ children }: { children: React.ReactNode }
     const isGameRoute = pathname?.startsWith('/games');
 
     return (
-        <>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             {!isGameRoute && <Navbar />}
             <main className="flex-1">{children}</main>
             <Footer />
-        </>
+        </ThemeProvider>
     );
 }

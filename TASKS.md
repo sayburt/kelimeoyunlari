@@ -4,20 +4,6 @@ Bu dosya projenin adım adım nasıl geliştirileceğini tanımlar. Geliştirme 
 
 ---
 
-## 🚀 FAZ 4: Tema Sistemi (Karanlık / Aydınlık Mod)
-
-Web platformunun her türlü ışık koşulunda rahat kullanılmasını sağlayacak dinamik tema altyapısı.
-
-- [ ] **4.1. Tema Altyapısı ve Context Kurulumu**
-  - `next-themes` veya custom Context ile tema yönetiminin kurulması.
-  - `tasarim-sistemi` skill'ine uygun renk paletlerinin (Light/Dark) `globals.css` içinde tanımlanması.
-- [ ] **4.2. UI Bileşenlerinin Tema Uyumluluğu**
-  - Tüm Shadcn ve custom bileşenlerin (Board, Klavye vb.) iki modda da kusursuz görünmesi.
-- [ ] **4.3. Kullanıcı Tercihi Senkronizasyonu**
-  - Tercihlerin `veri-yonetimi` kurallarına göre LocalStorage ve (giriş yapılmışsa) Supabase profiles tablosunda saklanması.
-
----
-
 ## 🎮 FAZ 5: Oyun Deneyimi (Kaldığı Yerden Devam Etme)
 
 Kullanıcının yarıda bıraktığı oyunları kaybetmemesini sağlayacak süreklilik sistemi.
@@ -111,4 +97,14 @@ Web platformu tüm özellikleriyle (Tema, Devam Etme, Sosyal) mükemmelleştikte
   - `seo-uzmani` skill'ine göre meta etiketlerinin ve OG görsellerinin optimize edilmesi.
 </details>
 
+<details>
+<summary><b>Faz 4: Tema Sistemi (Karanlık / Aydınlık Mod)</b></summary>
 
+- [x] **4.1. Tema Altyapısı ve Context Kurulumu**
+  - `next-themes` veya custom Context ile tema yönetiminin kurulması.
+  - `tasarim-sistemi` skill'ine uygun renk paletlerinin (Light/Dark) `globals.css` içinde tanımlanması.
+- [x] **4.2. UI Bileşenlerinin Tema Uyumluluğu**
+  - Tüm Shadcn ve custom bileşenlerin (Board, Klavye vb.) iki modda da kusursuz görünmesi.
+- [x] **4.3. Kullanıcı Tercihi Senkronizasyonu**
+  - Tercihlerin `veri-yonetimi` kurallarına göre LocalStorage ve (giriş yapılmışsa) Supabase profiles tablosunda saklanması.
+</details>
