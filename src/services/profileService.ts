@@ -169,12 +169,26 @@ export const profileService = {
      */
     async requestAccountDeletion(): Promise<{ success: boolean; error?: string }> {
         try {
-            const { error } = await supabase.functions.invoke('request-account-deletion');
+            const { data: { session } } = await supabase.auth.getSession();
+            const { data, error } = await supabase.functions.invoke('request-account-deletion', {
+                headers: {
+                    Authorization: `Bearer ${session?.access_token}`
+                }
+            });
+
             if (error) throw error;
+
+            if (data?.emailStatus === 'failed') {
+                return {
+                    success: false,
+                    error: `Mail gönderilemedi: ${data.emailError?.message || 'Bilinmeyen hata'}`
+                };
+            }
+
             return { success: true };
         } catch (error) {
             console.error("Hesap silme talebi gönderilirken hata:", error);
-            return { success: false, error: "Talebiniz iletilemedi. Lütfen daha sonra tekrar deneyin." };
+            return { success: false, error: "Talebiniz iletilemedi. Lütfen oturumunuzu kontrol edip tekrar deneyin." };
         }
     },
 

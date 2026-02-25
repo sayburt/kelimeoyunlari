@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { corsHeaders } from "../_shared/cors.ts"
 
 const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY')
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')
@@ -7,6 +8,11 @@ const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 const SITE_URL = Deno.env.get('SITE_URL') || 'https://kelimeoyunlari.com'
 
 serve(async (req: Request) => {
+    // Handle CORS preflight requests
+    if (req.method === 'OPTIONS') {
+        return new Response('ok', { headers: corsHeaders })
+    }
+
     try {
         const supabaseClient = createClient(
             SUPABASE_URL!,
@@ -14,14 +20,21 @@ serve(async (req: Request) => {
         )
 
         // Get user from JWT
-        const authHeader = req.headers.get('Authorization')!
+        const authHeader = req.headers.get('Authorization')
+        if (!authHeader) {
+            return new Response(JSON.stringify({ error: 'No authorization header' }), {
+                status: 401,
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+            })
+        }
+
         const token = authHeader.replace('Bearer ', '')
         const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token)
 
         if (userError || !user) {
             return new Response(JSON.stringify({ error: 'Unauthorized' }), {
                 status: 401,
-                headers: { 'Content-Type': 'application/json' },
+                headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             })
         }
 
@@ -80,14 +93,15 @@ serve(async (req: Request) => {
         }
 
         return new Response(JSON.stringify({ message: 'Success' }), {
-            headers: { 'Content-Type': 'application/json' },
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
 
     } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
         return new Response(JSON.stringify({ error: errorMessage }), {
             status: 500,
-            headers: { 'Content-Type': 'application/json' },
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         })
     }
 })
+
