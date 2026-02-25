@@ -164,7 +164,11 @@ function WordlePageContent() {
 
     const handleRestart = () => {
         setShowResultModal(false);
-        startNewGame(WORD_LENGTH, MAX_GUESSES);
+        if (isChallengeMode) {
+            router.push('/games/wordle');
+        } else {
+            startNewGame(WORD_LENGTH, MAX_GUESSES);
+        }
     };
 
     const handleSaveGame = async () => {
@@ -312,6 +316,7 @@ function WordlePageContent() {
                 maxGuesses={maxGuesses}
                 targetWord={targetWord}
                 isCustomWord={isCustomWord}
+                isChallenge={isChallengeMode}
                 onRestart={handleRestart}
                 onShare={handleResultShare}
                 score={score}

@@ -162,5 +162,36 @@ export const profileService = {
             console.error("Profil güncellenirken hata:", error);
             return false;
         }
+    },
+
+    /**
+     * Hesap silme talebi oluşturur.
+     */
+    async requestAccountDeletion(): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase.functions.invoke('request-account-deletion');
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error("Hesap silme talebi gönderilirken hata:", error);
+            return { success: false, error: "Talebiniz iletilemedi. Lütfen daha sonra tekrar deneyin." };
+        }
+    },
+
+    /**
+     * Hesap silme işlemini onaylar.
+     */
+    async confirmAccountDeletion(token: string): Promise<{ success: boolean; error?: string }> {
+        try {
+            const { error } = await supabase.functions.invoke('confirm-account-deletion', {
+                body: { token }
+            });
+            if (error) throw error;
+            return { success: true };
+        } catch (error) {
+            console.error("Hesap silme onaylanırken hata:", error);
+            return { success: false, error: "Hesap silme işlemi başarısız oldu. Link geçersiz veya süresi dolmuş olabilir." };
+        }
     }
 };
+

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, LogOut } from 'lucide-react';
+import { X, LogOut, Trash2 } from 'lucide-react';
 import { profileService } from '@/services/profileService';
 
 const AVATARS = [
@@ -26,6 +26,10 @@ export function EditProfileModal({ userId, username, avatar, onClose, onSave, on
     const [editUsername, setEditUsername] = useState(username);
     const [editAvatar, setEditAvatar] = useState(avatar);
     const [saving, setSaving] = useState(false);
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [deleteLoading, setDeleteLoading] = useState(false);
+    const [deleteSuccess, setDeleteSuccess] = useState(false);
+    const [deleteError, setDeleteError] = useState(null as string | null);
 
     const handleSave = async () => {
         if (!userId || saving || !editUsername.trim()) return;
@@ -39,6 +43,19 @@ export function EditProfileModal({ userId, username, avatar, onClose, onSave, on
             onClose();
         }
         setSaving(false);
+    };
+
+    const handleDeleteAccount = async () => {
+        setDeleteLoading(true);
+        setDeleteError(null);
+        const result = await profileService.requestAccountDeletion();
+        if (result.success) {
+            setDeleteSuccess(true);
+            setShowDeleteConfirm(false);
+        } else {
+            setDeleteError(result.error ?? 'Bir hata oluştu.');
+        }
+        setDeleteLoading(false);
     };
 
     return (
@@ -97,17 +114,60 @@ export function EditProfileModal({ userId, username, avatar, onClose, onSave, on
                     {saving ? <div className="w-5 h-5 border-2 border-bg/30 border-t-bg rounded-full animate-spin" /> : 'Kaydet'}
                 </button>
 
-                {/* Çıkış Yap */}
-                <div className="mt-6 pt-6 border-t border-surface-mid">
+                {/* Çıkış Yap ve Hesap Silme */}
+                <div className="mt-6 pt-6 border-t border-surface-mid space-y-3">
                     <button
                         onClick={onSignOut}
-                        className="w-full flex items-center justify-center gap-2 text-danger font-bold py-2.5 rounded-xl hover:bg-danger/10 transition-colors"
+                        className="w-full flex items-center justify-center gap-2 text-text-secondary font-bold py-2.5 rounded-xl hover:bg-surface-mid transition-colors"
                     >
                         <LogOut size={18} />
                         Hesaptan Çıkış Yap
                     </button>
+
+                    {!showDeleteConfirm ? (
+                        <button
+                            onClick={() => setShowDeleteConfirm(true)}
+                            className="w-full flex items-center justify-center gap-2 text-danger/70 hover:text-danger text-sm font-bold py-2 transition-colors"
+                        >
+                            <Trash2 size={16} />
+                            Hesabımı Sil
+                        </button>
+                    ) : (
+                        <div className="bg-danger/5 border border-danger/20 rounded-xl p-4 space-y-3">
+                            <p className="text-xs text-center text-text-secondary">
+                                Hesabınızı silmek istediğinize emin misiniz? Mail adresinize bir onay bağlantısı gönderilecek.
+                            </p>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={handleDeleteAccount}
+                                    disabled={deleteLoading}
+                                    className="flex-1 bg-danger text-white text-xs font-bold py-2 rounded-lg hover:bg-danger-dark transition-colors disabled:opacity-50"
+                                >
+                                    {deleteLoading ? 'Gönderiliyor...' : 'Evet, Onay Maili Gönder'}
+                                </button>
+                                <button
+                                    onClick={() => setShowDeleteConfirm(false)}
+                                    className="flex-1 bg-surface-mid text-text-main text-xs font-bold py-2 rounded-lg hover:bg-surface-mid2 transition-colors"
+                                >
+                                    Vazgeç
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {deleteSuccess && (
+                        <p className="text-xs text-center text-success font-medium">
+                            Onay e-postası gönderildi! Lütfen gelen kutunuzu kontrol edin.
+                        </p>
+                    )}
+                    {deleteError && (
+                        <p className="text-xs text-center text-danger font-medium">
+                            {deleteError}
+                        </p>
+                    )}
                 </div>
             </motion.div>
         </div>
     );
 }
+

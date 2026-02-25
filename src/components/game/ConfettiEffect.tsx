@@ -26,23 +26,24 @@ export function ConfettiEffect({ isVisible }: ConfettiEffectProps) {
     useEffect(() => {
         if (isVisible) {
             const timer = setTimeout(() => {
-                const particles = Array.from({ length: 20 }).map((_, i) => ({
+                const particles = Array.from({ length: 80 }).map((_, i) => ({
                     id: `confetti-${i}`,
                     targetX: `${Math.random() * 100}vw`,
-                    targetY: `${Math.random() * 100}vh`,
+                    targetY: `${Math.random() * 110}vh`,
                     rotate: Math.random() * 720 - 360,
-                    duration: 1.5 + Math.random(),
-                    delay: Math.random() * 0.3,
-                    width: 8 + Math.random() * 8,
-                    height: 8 + Math.random() * 8,
+                    duration: 1.5 + Math.random() * 1.5,
+                    delay: Math.random() * 0.5,
+                    width: 6 + Math.random() * 8,
+                    height: 6 + Math.random() * 8,
                     borderRadius: Math.random() > 0.5 ? '50%' : '2px',
                     background: [
-                        '#22C55E',
-                        '#22D3EE',
-                        '#F59E0B',
-                        '#A855F7',
-                        '#EC4899',
-                    ][Math.floor(Math.random() * 5)],
+                        '#22C55E', // Green
+                        '#22D3EE', // Cyan
+                        '#F59E0B', // Amber
+                        '#A855F7', // Purple
+                        '#EC4899', // Pink
+                        '#FFFFFF', // White
+                    ][Math.floor(Math.random() * 6)],
                 }));
                 setConfettiParticles(particles);
             }, 0);
@@ -56,7 +57,7 @@ export function ConfettiEffect({ isVisible }: ConfettiEffectProps) {
     return (
         <AnimatePresence>
             {isVisible && (
-                <motion.div key="confetti-container" className="fixed inset-0 pointer-events-none z-40">
+                <motion.div key="confetti-container" className="fixed inset-0 pointer-events-none z-[150]">
                     {confettiParticles.map((particle) => (
                         <motion.div
                             key={particle.id}
@@ -67,17 +68,18 @@ export function ConfettiEffect({ isVisible }: ConfettiEffectProps) {
                                 scale: 0,
                             }}
                             animate={{
-                                opacity: [1, 1, 0],
+                                opacity: [1, 1, 0.8, 0],
                                 x: particle.targetX,
                                 y: particle.targetY,
-                                scale: [0, 1, 0.5],
+                                scale: [0, 1.2, 0.8, 0.5],
                                 rotate: particle.rotate,
                             }}
                             transition={{
                                 duration: particle.duration,
                                 delay: particle.delay,
+                                ease: "easeOut"
                             }}
-                            className="fixed z-40 pointer-events-none"
+                            className="fixed z-[150] pointer-events-none"
                             style={{
                                 width: particle.width,
                                 height: particle.height,

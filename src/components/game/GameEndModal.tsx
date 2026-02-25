@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, Trophy, Frown, Share2 } from 'lucide-react';
+import { RotateCcw, Trophy, Frown, Share2, Home } from 'lucide-react';
 import { ConfettiEffect } from './ConfettiEffect';
 
 export interface GameEndModalProps {
@@ -15,6 +15,7 @@ export interface GameEndModalProps {
         anlam?: string | null;
     } | null;
     isCustomWord?: boolean;
+    isChallenge?: boolean;
     onRestart: () => void;
     onShare?: () => void;
     score?: number;
@@ -27,6 +28,7 @@ export function GameEndModal({
     maxGuesses,
     targetWord,
     isCustomWord,
+    isChallenge,
     onRestart,
     onShare,
     score = 0,
@@ -182,8 +184,17 @@ export function GameEndModal({
                                     onClick={onRestart}
                                     className="w-full py-2.5 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base text-bg bg-primary hover:brightness-110 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] flex items-center justify-center gap-1.5 sm:gap-2 premium-btn active:scale-[0.98]"
                                 >
-                                    <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
-                                    Tekrar Oyna
+                                    {isChallenge ? (
+                                        <>
+                                            <Home className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            Normal Oyun
+                                        </>
+                                    ) : (
+                                        <>
+                                            <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
+                                            Tekrar Oyna
+                                        </>
+                                    )}
                                 </motion.button>
 
                                 {onShare && (

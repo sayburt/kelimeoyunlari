@@ -1,0 +1,14 @@
+
+> kelime-oyunlari@0.1.0 type-check
+> tsc --noEmit
+
+supabase/functions/confirm-account-deletion/index.ts(1,23): error TS2307: Cannot find module 'https://deno.land/std@0.168.0/http/server.ts' or its corresponding type declarations.
+supabase/functions/confirm-account-deletion/index.ts(2,30): error TS2307: Cannot find module 'https://esm.sh/@supabase/supabase-js@2' or its corresponding type declarations.
+supabase/functions/confirm-account-deletion/index.ts(4,22): error TS2304: Cannot find name 'Deno'.
+supabase/functions/confirm-account-deletion/index.ts(5,35): error TS2304: Cannot find name 'Deno'.
+supabase/functions/request-account-deletion/index.ts(1,23): error TS2307: Cannot find module 'https://deno.land/std@0.168.0/http/server.ts' or its corresponding type declarations.
+supabase/functions/request-account-deletion/index.ts(2,30): error TS2307: Cannot find module 'https://esm.sh/@supabase/supabase-js@2' or its corresponding type declarations.
+supabase/functions/request-account-deletion/index.ts(4,24): error TS2304: Cannot find name 'Deno'.
+supabase/functions/request-account-deletion/index.ts(5,22): error TS2304: Cannot find name 'Deno'.
+supabase/functions/request-account-deletion/index.ts(6,35): error TS2304: Cannot find name 'Deno'.
+supabase/functions/request-account-deletion/index.ts(7,18): error TS2304: Cannot find name 'Deno'.
