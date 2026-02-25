@@ -82,6 +82,16 @@ Web platformu tüm özellikleriyle (Tema, Devam Etme, Sosyal) mükemmelleştikte
 
 ---
 
+## 🎨 Bekleyen İyileştirmeler (UI/UX)
+
+- [x] **Header (Navigasyon) Mobil Uyumluluk ve UX Revizyonu**
+  - [x] Tema değiştirme (dark/light toggle) butonunun sadece ikon (Ay/Güneş) olacak şekilde sadeleştirilmesi.
+  - [x] "Giriş" ve "Kayıt Ol" metinli butonlarının kaldırılarak sağ üste sadece tek bir Kullanıcı (User) ikonu eklenmesi.
+  - [x] Kullanıcı ikonuna tıklandığında açılacak (dropdown) modern ve projenin tasarım sistemine uygun bir menü yapılması, Giriş/Kayıt seçeneklerinin bu menüye taşınması.
+  - [x] Logoların, tema ve kullanıcı ikonlarının aynı hizada, estetik boşluklarla (flex, justify-between, items-center) mobilde şık duracak şekilde optimize edilmesi.
+
+---
+
 ## ✅ TAMAMLANAN GÖREVLER (ARŞİV)
 
 <details>

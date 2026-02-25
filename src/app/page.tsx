@@ -38,7 +38,7 @@ export default function Home() {
             <span className="text-primary">KELİME</span> oyunları<span className="text-primary">.</span>tr
           </h1>
           <p className="text-text-secondary text-lg">
-            Türkçe kelime oyunlarının en eğlenceli adresi.
+            Kelime oyunu tutkunlarının yeni buluşma noktası.
           </p>
         </motion.div>
 
