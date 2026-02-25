@@ -101,12 +101,12 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-md z-[100] flex items-center justify-center p-4">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="bg-surface p-6 sm:p-8 rounded-3xl max-w-md w-full border border-surface-hover shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto custom-scrollbar"
+                    className="bg-[var(--theme-card-glass)] backdrop-blur-xl p-6 sm:p-8 rounded-3xl max-w-md w-full border border-[var(--theme-glass-border)] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] max-h-[90vh] overflow-y-auto custom-scrollbar"
                 >
                     {/* Header */}
                     <div className="flex justify-between items-center mb-6">
@@ -211,7 +211,7 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
                                     (activeTab === 'dictionary' && dictionaryWord.length !== wordLength) ||
                                     (activeTab === 'custom' && customWord.length !== wordLength)
                                 }
-                                className="w-full mt-6 bg-primary text-bg font-black py-4 rounded-2xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100"
+                                className="w-full mt-6 bg-primary text-bg font-black py-4 rounded-2xl premium-btn hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.98]"
                             >
                                 {isCreating ? (
                                     <span className="flex items-center justify-center gap-2">
@@ -259,7 +259,7 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
                                 </button>
                                 <button
                                     onClick={handleShare}
-                                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm bg-primary text-bg hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
+                                    className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl font-bold text-sm bg-primary text-bg premium-btn hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 active:scale-[0.98]"
                                 >
                                     <Share2 size={18} />
                                     Paylaş

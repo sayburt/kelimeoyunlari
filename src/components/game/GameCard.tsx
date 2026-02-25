@@ -26,10 +26,10 @@ export function GameCard({
     return (
         <div
             onClick={!comingSoon ? onClick : undefined}
-            className={`group relative overflow-hidden rounded-2xl bg-surface border-2 border-surface-mid flex flex-col w-full h-full transition-all duration-300
+            className={`group relative overflow-hidden rounded-2xl bg-[var(--theme-card-glass)] backdrop-blur-md border border-[var(--theme-glass-border)] flex flex-col w-full h-full transition-all duration-300
         ${comingSoon
                     ? 'opacity-70 cursor-not-allowed grayscale-[0.3]'
-                    : 'hover:border-primary/50 hover:bg-surface hover:-translate-y-1 cursor-pointer shadow-lg hover:shadow-primary/10'
+                    : 'hover:-translate-y-1.5 cursor-pointer shadow-[var(--theme-premium-shadow)] hover:shadow-[var(--theme-premium-shadow-hover)]'
                 }
       `}
         >
@@ -40,7 +40,7 @@ export function GameCard({
                         src={thumbnail}
                         alt={`${title} thumbnail`}
                         fill
-                        className={`object-cover transition-transform duration-500 ${!comingSoon ? 'group-hover:scale-105' : ''}`}
+                        className={`object-cover transition-all duration-500 ${!comingSoon ? 'group-hover:scale-105 group-hover:saturate-[1.05]' : ''}`}
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                 ) : (

@@ -13,7 +13,7 @@ export default function Footer() {
     if (isGamePage || isAuthPage) return null;
 
     return (
-        <footer className="pt-6 pb-2 md:py-12 px-6 border-t border-surface/50 text-text-secondary">
+        <footer className="pt-6 pb-2 md:py-12 px-6 premium-footer text-text-secondary">
             <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4 md:gap-8">
                 <div className="text-center md:text-left">
                     <h2 className="text-xl font-black text-text-main mb-0 md:mb-2"><span className="text-primary">KELİME</span> oyunları</h2>

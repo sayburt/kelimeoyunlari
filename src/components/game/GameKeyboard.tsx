@@ -25,10 +25,10 @@ export function GameKeyboard({
         const state = keyStates[key];
 
         let baseClasses =
-            'flex items-center justify-center font-bold rounded-lg cursor-pointer transition-colors duration-150 select-none px-1 py-3 sm:p-4 text-xs sm:text-sm flex-1';
+            'flex items-center justify-center font-bold rounded-lg cursor-pointer transition-all duration-150 select-none px-1 py-3 sm:p-4 text-xs sm:text-sm flex-1 shadow-sm';
 
         if (key === 'ENTER' || key === 'DEL') {
-            baseClasses += ' bg-surface-accent hover:bg-surface-accent-hover text-text-on-state min-w-[3rem] sm:min-w-[3.5rem]';
+            baseClasses += ' bg-surface-accent hover:bg-surface-accent-hover text-text-on-state min-w-[3rem] sm:min-w-[3.5rem] active:translate-y-px active:shadow-none';
             return baseClasses;
         }
 
@@ -36,16 +36,16 @@ export function GameKeyboard({
 
         switch (state) {
             case 'correct':
-                baseClasses += ' bg-correct hover:bg-correct-hover text-text-on-state';
+                baseClasses += ' bg-correct hover:bg-correct-hover text-text-on-state active:translate-y-px';
                 break;
             case 'present':
-                baseClasses += ' bg-present hover:bg-present-hover text-text-on-state';
+                baseClasses += ' bg-present hover:bg-present-hover text-text-on-state active:translate-y-px';
                 break;
             case 'absent':
                 baseClasses += ' bg-absent hover:bg-surface-hover text-text-muted';
                 break;
             default:
-                baseClasses += ' bg-surface-mid hover:bg-surface-hover text-text-main';
+                baseClasses += ' bg-surface-mid hover:bg-surface-hover text-text-main active:translate-y-px active:shadow-none';
                 break;
         }
 

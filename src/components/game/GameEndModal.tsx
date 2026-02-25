@@ -42,7 +42,7 @@ export function GameEndModal({
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-md px-4"
                         onClick={onRestart}
                     >
                         <motion.div
@@ -50,7 +50,7 @@ export function GameEndModal({
                             animate={{ scale: 1, opacity: 1 }}
                             exit={{ scale: 0.7, opacity: 0 }}
                             transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                            className="relative bg-slate-900 border border-slate-700 rounded-2xl sm:rounded-3xl p-5 sm:p-8 sm:px-10 max-w-sm w-full text-center shadow-2xl mx-auto"
+                            className="relative bg-slate-900/90 backdrop-blur-xl border border-slate-700/50 rounded-2xl sm:rounded-3xl p-5 sm:p-8 sm:px-10 max-w-sm w-full text-center shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] mx-auto"
                             onClick={(e) => e.stopPropagation()}
                         >
                             {/* Decorative glow */}
@@ -180,7 +180,7 @@ export function GameEndModal({
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={onRestart}
-                                    className="w-full py-2.5 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base text-bg bg-primary hover:brightness-110 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] flex items-center justify-center gap-1.5 sm:gap-2"
+                                    className="w-full py-2.5 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base text-bg bg-primary hover:brightness-110 transition-all shadow-[0_0_20px_rgba(34,211,238,0.3)] flex items-center justify-center gap-1.5 sm:gap-2 premium-btn active:scale-[0.98]"
                                 >
                                     <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5" />
                                     Tekrar Oyna
@@ -191,7 +191,7 @@ export function GameEndModal({
                                         whileHover={{ scale: 1.05 }}
                                         whileTap={{ scale: 0.95 }}
                                         onClick={onShare}
-                                        className="w-full py-2.5 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base text-text-main bg-surface hover:bg-surface-mid transition-all border border-surface-mid flex items-center justify-center gap-1.5 sm:gap-2"
+                                        className="w-full py-2.5 sm:py-3.5 rounded-xl font-bold text-sm sm:text-base text-text-main bg-surface/80 backdrop-blur-sm hover:bg-surface-mid transition-all border border-surface-mid/50 flex items-center justify-center gap-1.5 sm:gap-2 premium-btn"
                                     >
                                         <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
                                         Paylaş

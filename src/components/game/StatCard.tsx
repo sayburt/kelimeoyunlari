@@ -12,8 +12,8 @@ export function StatCard({ label, value, icon, highlight = false }: StatCardProp
         <div
             className={`flex flex-col items-center justify-center rounded-2xl p-5 transition-all duration-200
                 ${highlight
-                    ? "bg-primary/10 border-2 border-primary/30 shadow-[0_0_20px_rgba(34,211,238,0.1)]"
-                    : "bg-surface border-2 border-surface-mid"
+                    ? "bg-primary/10 backdrop-blur-md border border-primary/30 shadow-[0_0_20px_rgba(34,211,238,0.1)]"
+                    : "bg-[var(--theme-card-glass)] backdrop-blur-md border border-[var(--theme-glass-border)] premium-shadow"
                 }`}
         >
             {icon && (

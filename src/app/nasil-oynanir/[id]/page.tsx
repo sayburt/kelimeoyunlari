@@ -31,7 +31,7 @@ export default async function GameHowToPage({ params }: Props) {
     }
 
     return (
-        <main className="min-h-screen bg-bg">
+        <main className="min-h-screen bg-bg hero-glow">
             {/* Hero Section */}
             <header className="relative h-[50vh] min-h-[400px] w-full bg-surface/20 flex items-end overflow-hidden">
                 <Image

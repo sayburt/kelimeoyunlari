@@ -34,7 +34,7 @@ export default function Navbar() {
     if (isAuthPage) return null;
 
     return (
-        <nav className="h-16 flex items-center justify-between px-6 bg-surface/10 backdrop-blur-md border-b border-surface/20 sticky top-0 z-50">
+        <nav className="h-16 flex items-center justify-between px-6 glass-header sticky top-0 z-50">
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -102,7 +102,7 @@ export default function Navbar() {
 
             {/* Mobile Menu Dropdown */}
             {isMobileMenuOpen && (
-                <div className="absolute top-16 left-0 w-full bg-surface border-b border-surface-mid md:hidden flex flex-col p-4 gap-4 shadow-xl z-40 animate-in slide-in-from-top-2">
+                <div className="absolute top-16 left-0 w-full glass-surface md:hidden flex flex-col p-4 gap-4 z-40 animate-in slide-in-from-top-2">
                     <Link
                         href="/"
                         onClick={() => setIsMobileMenuOpen(false)}

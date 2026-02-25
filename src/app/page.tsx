@@ -25,7 +25,7 @@ export default function Home() {
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
 
   return (
-    <div className="min-h-screen bg-bg px-4 py-12 sm:py-20 flex flex-col">
+    <div className="min-h-screen bg-bg hero-glow px-4 py-12 sm:py-20 flex flex-col">
       <div className="max-w-5xl mx-auto w-full flex-grow">
         {/* Başlık */}
         <motion.div
@@ -81,7 +81,7 @@ export default function Home() {
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto bg-surface border border-surface-mid shadow-2xl rounded-2xl p-6 sm:p-8"
+              className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto glass-surface rounded-2xl p-6 sm:p-8"
             >
               <button
                 onClick={() => setSelectedGame(null)}
@@ -108,13 +108,13 @@ export default function Home() {
                     router.push(selectedGame.href);
                   }}
                   disabled={selectedGame.comingSoon}
-                  className="flex-1 bg-primary text-black font-bold py-3 px-6 rounded-xl hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 bg-primary text-black font-bold py-3 px-6 rounded-xl premium-btn hover:bg-primary-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98]"
                 >
                   {selectedGame.comingSoon ? 'Yakında' : 'Şimdi Oyna'}
                 </button>
                 <button
                   onClick={() => setSelectedGame(null)}
-                  className="flex-1 bg-surface-mid text-text-main font-bold py-3 px-6 rounded-xl hover:bg-surface-hover transition-colors"
+                  className="flex-1 bg-surface-mid text-text-main font-bold py-3 px-6 rounded-xl premium-btn hover:bg-surface-hover transition-colors active:scale-[0.98]"
                 >
                   Kapat
                 </button>

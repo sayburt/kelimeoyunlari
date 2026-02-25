@@ -21,7 +21,7 @@ export default function HowToPlayPage() {
     }, [searchQuery]);
 
     return (
-        <main className="min-h-screen bg-bg py-12 px-6">
+        <main className="min-h-screen bg-bg hero-glow py-12 px-6">
             <div className="max-w-6xl mx-auto">
                 <header className="mb-12 text-center">
                     <h1 className="text-4xl md:text-6xl font-black text-text-main mb-4 tracking-tighter">

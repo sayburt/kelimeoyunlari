@@ -2,7 +2,7 @@
 
 @layer base {
   :root {
-    --theme-bg: #F8FAFC;
+    --theme-bg: #F7F9FC;
     --theme-surface: #FFFFFF;
     --theme-surface-dark: #F1F5F9;
     --theme-surface-mid: #E2E8F0;
@@ -15,20 +15,31 @@
     --theme-text-muted: #94A3B8;
     --theme-text-on-state: #FFFFFF;
 
-    --theme-primary: #0284C7; /* Koyu turkuaz/mavi light mod için */
+    --theme-primary: #0284C7;
 
-    --theme-correct: #16A34A; /* Daha uyumlu yeşil */
+    --theme-correct: #16A34A;
     --theme-correct-hover: #22C55E;
-    --theme-present: #D97706; /* Daha okunaklı sarı/turuncu */
+    --theme-present: #D97706;
     --theme-present-hover: #EAB308;
     --theme-absent: #CBD5E1;
     --theme-wrong: #DC2626;
+
+    /* Premium Design Tokens — Light */
+    --theme-footer-bg: #F1F5F9;
+    --theme-footer-border: #E2E8F0;
+    --theme-glass-bg: rgba(255,255,255,0.8);
+    --theme-glass-border: rgba(15,23,42,0.06);
+    --theme-card-glass: rgba(255,255,255,0.85);
+    --theme-hero-glow: rgba(14,165,233,0.06);
+    --theme-premium-shadow: 0 6px 20px rgba(15,23,42,0.08);
+    --theme-premium-shadow-hover: 0 12px 32px rgba(15,23,42,0.12);
+    --theme-header-shadow: 0 6px 20px rgba(15,23,42,0.08);
   }
   
   .dark {
-    --theme-bg: #0F172A;
+    --theme-bg: #0E1628;
     --theme-surface: #1E293B;
-    --theme-surface-dark: #0F172A;
+    --theme-surface-dark: #0E1628;
     --theme-surface-mid: #334155;
     --theme-surface-hover: #475569;
     --theme-surface-accent: #4B5563;
@@ -47,6 +58,17 @@
     --theme-present-hover: #FACC15;
     --theme-absent: #334155;
     --theme-wrong: #EF4444;
+
+    /* Premium Design Tokens — Dark */
+    --theme-footer-bg: #070B14;
+    --theme-footer-border: rgba(255,255,255,0.06);
+    --theme-glass-bg: rgba(15,23,42,0.75);
+    --theme-glass-border: rgba(255,255,255,0.08);
+    --theme-card-glass: rgba(17,25,40,0.7);
+    --theme-hero-glow: rgba(34,211,238,0.08);
+    --theme-premium-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    --theme-premium-shadow-hover: 0 16px 40px rgba(0,0,0,0.35);
+    --theme-header-shadow: 0 8px 24px rgba(0,0,0,0.25);
   }
 }
 
@@ -85,6 +107,73 @@
   body {
     @apply min-h-screen bg-bg text-text-main font-sans antialiased;
   }
+}
+
+/* ═══════════════════════════════════════════
+   Premium Design Utilities
+   ═══════════════════════════════════════════ */
+
+/* Glassmorphism surface */
+.glass-surface {
+  background: var(--theme-card-glass);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--theme-glass-border);
+  box-shadow: var(--theme-premium-shadow);
+}
+
+/* Glassmorphism header */
+.glass-header {
+  background: var(--theme-glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--theme-glass-border);
+  box-shadow: var(--theme-header-shadow);
+}
+
+/* Premium shadow */
+.premium-shadow {
+  box-shadow: var(--theme-premium-shadow);
+}
+
+/* Premium card with glass + depth */
+.premium-card {
+  background: var(--theme-card-glass);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid var(--theme-glass-border);
+  box-shadow: var(--theme-premium-shadow);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.premium-card:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--theme-premium-shadow-hover);
+}
+
+/* Premium button depth */
+.premium-btn {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.premium-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--theme-premium-shadow);
+}
+
+.premium-btn:active {
+  transform: translateY(0px);
+}
+
+/* Hero glow background */
+.hero-glow {
+  background-image: radial-gradient(circle at top center, var(--theme-hero-glow), transparent 60%);
+}
+
+/* Footer premium separation */
+.premium-footer {
+  background-color: var(--theme-footer-bg);
+  border-top: 1px solid var(--theme-footer-border);
 }
 
 /* Base styles for cards */

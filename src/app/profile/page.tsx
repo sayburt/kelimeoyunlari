@@ -104,7 +104,7 @@ export default function ProfilePage() {
         : 0;
 
     return (
-        <div className="min-h-screen bg-bg px-4 py-10 sm:py-16">
+        <div className="min-h-screen bg-bg hero-glow px-4 py-10 sm:py-16">
             <div className="max-w-3xl mx-auto">
                 <motion.div
                     variants={containerVariants}
@@ -171,12 +171,12 @@ export default function ProfilePage() {
 
                     {/* ─── Sekmeler ─── */}
                     <motion.div variants={itemVariants}>
-                        <div className="flex gap-1 p-1 bg-surface border-2 border-surface-mid rounded-2xl">
+                        <div className="flex gap-1 p-1 bg-[var(--theme-card-glass)] backdrop-blur-md border border-[var(--theme-glass-border)] rounded-2xl">
                             <button
                                 onClick={() => setActiveTab('normal')}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 ${activeTab === 'normal'
-                                        ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
-                                        : 'text-text-secondary hover:text-text-main'
+                                    ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
+                                    : 'text-text-secondary hover:text-text-main'
                                     }`}
                             >
                                 <BarChart3 size={16} />
@@ -185,8 +185,8 @@ export default function ProfilePage() {
                             <button
                                 onClick={() => setActiveTab('challenge')}
                                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 ${activeTab === 'challenge'
-                                        ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
-                                        : 'text-text-secondary hover:text-text-main'
+                                    ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
+                                    : 'text-text-secondary hover:text-text-main'
                                     }`}
                             >
                                 <Swords size={16} />

@@ -30,7 +30,7 @@ export function LetterCell({ letter, state = 'empty' }: LetterCellProps) {
 
     return (
         <div
-            className={`w-10 h-10 min-[380px]:w-12 min-[380px]:h-12 sm:w-14 sm:h-14 flex items-center justify-center border-2 rounded-xl text-xl min-[380px]:text-2xl font-bold uppercase transition-all duration-300 select-none ${stateClasses}`}
+            className={`w-10 h-10 min-[380px]:w-12 min-[380px]:h-12 sm:w-14 sm:h-14 flex items-center justify-center border-2 rounded-xl text-xl min-[380px]:text-2xl font-bold uppercase transition-all duration-300 select-none shadow-sm ${stateClasses}`}
         >
             {letter}
         </div>

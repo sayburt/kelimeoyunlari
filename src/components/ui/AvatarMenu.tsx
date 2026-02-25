@@ -37,8 +37,8 @@ export function AvatarMenu() {
                             animate={{ opacity: 1, y: 0, scale: 1 }}
                             exit={{ opacity: 0, y: 10, scale: 0.95 }}
                             transition={{ duration: 0.2, ease: "easeOut" }}
-                            className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-bg/90 backdrop-blur-xl border border-surface/40 shadow-2xl p-2 z-50 flex flex-col gap-1"
-                            style={{ boxShadow: "0 15px 40px -10px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(34,211,238,0.15)" }}
+                            className="absolute right-0 top-full mt-3 w-64 rounded-2xl bg-[var(--theme-card-glass)] backdrop-blur-xl border border-[var(--theme-glass-border)] p-2 z-50 flex flex-col gap-1"
+                            style={{ boxShadow: "var(--theme-premium-shadow-hover)" }}
                         >
                             <div className="px-3 py-3 border-b border-surface/30 mb-1">
                                 <p className="text-xs text-text-main/50 font-medium uppercase tracking-wider mb-1">Oturum Açık</p>

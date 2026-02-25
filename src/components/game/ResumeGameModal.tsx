@@ -29,7 +29,7 @@ export function ResumeGameModal({
                     initial={{ opacity: 0, scale: 0.9, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                    className="bg-surface p-6 sm:p-8 rounded-[2.5rem] max-w-md w-full border border-surface-hover shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] overflow-hidden relative"
+                    className="bg-[var(--theme-card-glass)] backdrop-blur-xl p-6 sm:p-8 rounded-[2.5rem] max-w-md w-full border border-[var(--theme-glass-border)] shadow-[0_32px_64px_-12px_rgba(0,0,0,0.5)] overflow-hidden relative"
                 >
                     {/* Background Decorative Element */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-primary/10 blur-[50px] rounded-full -mr-16 -mt-16 pointer-events-none" />
@@ -64,14 +64,14 @@ export function ResumeGameModal({
                         <div className="space-y-3">
                             <button
                                 onClick={onResume}
-                                className="w-full flex items-center justify-center gap-3 bg-primary text-bg font-black py-4 rounded-2xl hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 uppercase tracking-[0.15em] text-sm active:scale-[0.98]"
+                                className="w-full flex items-center justify-center gap-3 bg-primary text-bg font-black py-4 rounded-2xl premium-btn hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 uppercase tracking-[0.15em] text-sm active:scale-[0.98]"
                             >
                                 <Play size={20} />
                                 Kaldığım Yerden Devam Et
                             </button>
                             <button
                                 onClick={onNewGame}
-                                className="w-full flex items-center justify-center gap-3 bg-surface-hover text-text-main font-black py-4 rounded-2xl hover:bg-surface-mid transition-all border border-surface-mid/50 uppercase tracking-[0.15em] text-sm active:scale-[0.98]"
+                                className="w-full flex items-center justify-center gap-3 bg-surface-hover/80 backdrop-blur-sm text-text-main font-black py-4 rounded-2xl premium-btn hover:bg-surface-mid transition-all border border-[var(--theme-glass-border)] uppercase tracking-[0.15em] text-sm active:scale-[0.98]"
                             >
                                 <RotateCcw size={18} />
                                 Yeni Oyun Başlat

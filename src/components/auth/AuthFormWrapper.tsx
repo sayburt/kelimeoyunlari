@@ -25,8 +25,8 @@ export function AuthFormWrapper({
     bottomContent,
 }: AuthFormWrapperProps) {
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 sm:p-8">
-            <div className="w-full max-w-md bg-surface rounded-3xl p-6 sm:p-10 shadow-[0_0_40px_rgba(34,211,238,0.15)] border border-primary/30 relative transition-all duration-500 hover:shadow-[0_0_60px_rgba(34,211,238,0.25)]">
+        <div className="min-h-screen flex items-center justify-center p-4 sm:p-8 hero-glow">
+            <div className="w-full max-w-md bg-[var(--theme-card-glass)] backdrop-blur-xl rounded-3xl p-6 sm:p-10 shadow-[0_0_40px_rgba(34,211,238,0.15)] border border-primary/20 relative transition-all duration-500 hover:shadow-[0_0_60px_rgba(34,211,238,0.25)]">
                 <div className="relative">
                     <h1 className="text-3xl font-black text-text-main mb-2 text-center">{title}</h1>
                     <p className="text-text-secondary text-center mb-8">{subtitle}</p>
@@ -43,7 +43,7 @@ export function AuthFormWrapper({
                         <button
                             type="submit"
                             disabled={loading}
-                            className="w-full h-12 bg-primary text-bg font-bold rounded-xl hover:scale-[1.02] transition-all disabled:opacity-50 mt-4 shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] active:scale-95"
+                            className="w-full h-12 bg-primary text-bg font-bold rounded-xl premium-btn hover:scale-[1.02] transition-all disabled:opacity-50 mt-4 shadow-[0_0_15px_rgba(34,211,238,0.3)] hover:shadow-[0_0_20px_rgba(34,211,238,0.5)] active:scale-[0.98]"
                         >
                             {loading ? loadingText : submitText}
                         </button>

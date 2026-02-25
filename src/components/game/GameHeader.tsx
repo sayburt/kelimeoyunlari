@@ -71,7 +71,7 @@ export function GameHeader({
 
 
     return (
-        <header className="flex items-center justify-between py-2 sm:py-3 px-4 sm:px-6 border-b border-surface-mid/80 bg-bg/50 backdrop-blur-md sticky top-0 z-50 w-full mb-2 sm:mb-4">
+        <header className="flex items-center justify-between py-2 sm:py-3 px-4 sm:px-6 glass-header sticky top-0 z-50 w-full mb-2 sm:mb-4">
             {/* Sol: Geri Dön İkonu */}
             <div className="flex-1 flex justify-start">
                 <button
@@ -155,7 +155,7 @@ export function GameHeader({
                                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute right-0 top-full mt-2 w-48 rounded-2xl bg-bg/95 backdrop-blur-xl border border-surface/40 shadow-2xl p-2 z-50 flex flex-col gap-1"
+                                    className="absolute right-0 top-full mt-2 w-48 rounded-2xl glass-surface p-2 z-50 flex flex-col gap-1"
                                 >
                                     {menuItems.map((item, idx) => {
                                         const Icon = item.icon;
