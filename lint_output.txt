@@ -1,21 +1,39 @@
 
-> kelime-oyunlari@0.1.0 lint
-> eslint
+C:\Users\sayburt\projeler\kelime-oyunlari\src\app\games\wordle\page.tsx
+  136:13  error  Error: Calling setState synchronously within an effect can trigger cascading renders
 
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
 
-C:\Users\sayburt\projeler\kelime-oyunlari\src\components\game\GameHeader.tsx
-  107:52   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  108:162  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  147:67   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  152:68   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  153:184  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
 
-C:\Users\sayburt\projeler\kelime-oyunlari\src\services\scoreService.ts
-   9:99   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  26:71   warning  'metadata' is defined but never used      @typescript-eslint/no-unused-vars
-  26:97   error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-  68:89   warning  'metadata' is defined but never used      @typescript-eslint/no-unused-vars
-  68:115  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+C:\Users\sayburt\projeler\kelime-oyunlari\src\app\games\wordle\page.tsx:136:13
+  134 |     useEffect(() => {
+  135 |         if (error) {
+> 136 |             setShakeRow(true);
+      |             ^^^^^^^^^^^ Avoid calling setState() directly within an effect
+  137 |             const timer = setTimeout(() => setShakeRow(false), 500);
+  138 |             return () => clearTimeout(timer);
+  139 |         }  react-hooks/set-state-in-effect
 
-Ô£û 10 problems (8 errors, 2 warnings)
+C:\Users\sayburt\projeler\kelime-oyunlari\src\components\profile\ChallengeStatsTab.tsx
+  5:29  warning  'Gamepad2' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\components\profile\ProfileInfo.tsx
+  13:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\components\profile\StatsCards.tsx
+  11:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\hooks\useGame.ts
+    3:41  warning  'useEffect' is defined but never used                                                                               @typescript-eslint/no-unused-vars
+   12:10  warning  'storage' is defined but never used                                                                                 @typescript-eslint/no-unused-vars
+   13:10  warning  'savedGameService' is defined but never used                                                                        @typescript-eslint/no-unused-vars
+   99:29  error    Unexpected any. Specify a different type                                                                            @typescript-eslint/no-explicit-any
+  266:8   warning  React Hook useCallback has a missing dependency: 'handleGameEnd'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  287:48  warning  'gameName' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+  316:48  warning  'gameName' is defined but never used                                                                                @typescript-eslint/no-unused-vars
+
+Ô£û 11 problems (4 errors, 7 warnings)
 

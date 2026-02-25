@@ -1,20 +1,41 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { User, LogOut } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 export function AvatarMenu() {
     const { user, signOut } = useAuth();
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
+    const [avatar, setAvatar] = useState<string | null>(null);
 
     // Get username from metadata, fallback to email prefix if not available
     const username = user?.user_metadata?.username || user?.email?.split("@")[0] || "Kullanıcı";
     const initial = username.charAt(0).toUpperCase();
+
+    // Supabase profiles tablosundan avatar bilgisini çek
+    useEffect(() => {
+        if (!user?.id) return;
+
+        const fetchAvatar = async () => {
+            const { data } = await supabase
+                .from("profiles")
+                .select("avatar")
+                .eq("id", user.id)
+                .single();
+
+            if (data?.avatar) {
+                setAvatar(data.avatar);
+            }
+        };
+
+        fetchAvatar();
+    }, [user?.id]);
 
     const closeMenu = () => setIsOpen(false);
 
@@ -24,7 +45,7 @@ export function AvatarMenu() {
                 onClick={() => setIsOpen(!isOpen)}
                 className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-primary/60 text-bg font-bold text-lg shadow-[0_0_10px_rgba(34,211,238,0.3)] hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
-                {initial}
+                {avatar ? <span className="text-xl leading-none">{avatar}</span> : initial}
             </button>
 
             <AnimatePresence>
@@ -42,7 +63,8 @@ export function AvatarMenu() {
                         >
                             <div className="px-3 py-3 border-b border-surface/30 mb-1">
                                 <p className="text-xs text-text-main/50 font-medium uppercase tracking-wider mb-1">Oturum Açık</p>
-                                <p className="text-sm font-semibold text-text-main truncate">
+                                <p className="text-sm font-semibold text-text-main truncate flex items-center gap-2">
+                                    {avatar && <span className="text-lg leading-none">{avatar}</span>}
                                     {username}
                                 </p>
                             </div>
