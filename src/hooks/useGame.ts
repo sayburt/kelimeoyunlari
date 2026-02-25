@@ -60,6 +60,7 @@ export function useGame(options: UseGameOptions = {}) {
     const [score, setScore] = useState<number>(0);
     const [isChallengeMode, setIsChallengeMode] = useState(false);
     const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
+    const [isCustomWord, setIsCustomWord] = useState(false);
 
     const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
 
@@ -119,6 +120,7 @@ export function useGame(options: UseGameOptions = {}) {
                     setIsChallengeMode(true);
                     setActiveChallengeId(challengeId);
                     setWordLength(challengeData.challenge.word_length);
+                    setIsCustomWord(challengeData.challenge.target_word_type === 'custom');
                 } else {
                     setStatus('idle');
                     setError('Meydan okuma bulunamadı veya süresi dolmuş.');
@@ -131,6 +133,7 @@ export function useGame(options: UseGameOptions = {}) {
                 });
                 setIsChallengeMode(false);
                 setActiveChallengeId(null);
+                setIsCustomWord(false);
             }
 
             if (!word) {
@@ -361,6 +364,7 @@ export function useGame(options: UseGameOptions = {}) {
         score,
         isChallengeMode,
         activeChallengeId,
+        isCustomWord,
         startNewGame,
         handleKeyPress,
         handleDelete,

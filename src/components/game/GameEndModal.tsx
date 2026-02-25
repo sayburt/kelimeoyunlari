@@ -14,6 +14,7 @@ export interface GameEndModalProps {
         kelime: string;
         anlam?: string | null;
     } | null;
+    isCustomWord?: boolean;
     onRestart: () => void;
     onShare?: () => void;
     score?: number;
@@ -25,6 +26,7 @@ export function GameEndModal({
     guessesCount,
     maxGuesses,
     targetWord,
+    isCustomWord,
     onRestart,
     onShare,
     score = 0,
@@ -100,10 +102,21 @@ export function GameEndModal({
                                             <p className="text-2xl font-black text-white tracking-widest mb-1">
                                                 {targetWord?.kelime?.toLocaleUpperCase('tr-TR')}
                                             </p>
-                                            {targetWord?.anlam && (
-                                                <p className="text-sm text-slate-400 italic leading-snug">
-                                                    &ldquo;{targetWord.anlam}&rdquo;
-                                                </p>
+                                            {isCustomWord ? (
+                                                <div className="mt-3 p-3 bg-[#B8A4D4]/10 border border-[#B8A4D4]/30 rounded-xl shadow-[0_0_15px_rgba(184,164,212,0.1)]">
+                                                    <p className="text-[#B8A4D4] font-bold text-sm mb-1 flex items-center justify-center gap-2">
+                                                        <span>⚔️</span> Özel Meydan Okuma Kelimesi
+                                                    </p>
+                                                    <p className="text-slate-300 text-xs">
+                                                        Bu kelime rakibin tarafından özel olarak seçildi, sözlükte yer almayabilir.
+                                                    </p>
+                                                </div>
+                                            ) : (
+                                                targetWord?.anlam && (
+                                                    <p className="text-sm text-slate-400 italic leading-snug">
+                                                        &ldquo;{targetWord.anlam}&rdquo;
+                                                    </p>
+                                                )
                                             )}
                                         </div>
 
@@ -122,10 +135,21 @@ export function GameEndModal({
                                         <p className="text-2xl font-black text-white tracking-widest">
                                             {targetWord?.kelime?.toLocaleUpperCase('tr-TR')}
                                         </p>
-                                        {targetWord?.anlam && (
-                                            <p className="text-sm text-slate-400 mt-2 italic">
-                                                &ldquo;{targetWord.anlam}&rdquo;
-                                            </p>
+                                        {isCustomWord ? (
+                                            <div className="mt-3 p-3 bg-[#B8A4D4]/10 border border-[#B8A4D4]/30 rounded-xl shadow-[0_0_15px_rgba(184,164,212,0.1)] inline-block">
+                                                <p className="text-[#B8A4D4] font-bold text-sm mb-1 flex items-center justify-center gap-2">
+                                                    <span>⚔️</span> Özel Meydan Okuma Kelimesi
+                                                </p>
+                                                <p className="text-slate-300 text-xs">
+                                                    Bu kelime rakibin tarafından özel olarak seçildi, sözlükte yer almayabilir.
+                                                </p>
+                                            </div>
+                                        ) : (
+                                            targetWord?.anlam && (
+                                                <p className="text-sm text-slate-400 mt-2 italic">
+                                                    &ldquo;{targetWord.anlam}&rdquo;
+                                                </p>
+                                            )
                                         )}
                                     </>
                                 )}

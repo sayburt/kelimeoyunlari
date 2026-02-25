@@ -68,6 +68,7 @@ function WordlePageContent() {
         score,
         isChallengeMode,
         activeChallengeId,
+        isCustomWord,
         startNewGame,
         handleKeyPress,
         handleDelete,
@@ -352,6 +353,7 @@ function WordlePageContent() {
                 guessesCount={guesses.length}
                 maxGuesses={maxGuesses}
                 targetWord={targetWord}
+                isCustomWord={isCustomWord}
                 onRestart={handleRestart}
                 onShare={handleResultShare}
                 score={score}
