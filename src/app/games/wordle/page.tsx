@@ -326,7 +326,7 @@ function WordlePageContent() {
             />
 
             {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
-            {showStatsModal && <StatsModal onClose={() => setShowStatsModal(false)} />}
+            {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
 
             <SettingsModal
                 isOpen={showSettingsModal}

@@ -5,18 +5,20 @@ interface AuthFormWrapperProps {
     title: string;
     subtitle: string;
     error: string | null;
+    message?: string | null;
     onSubmit: (e: React.FormEvent) => void;
     loading: boolean;
     submitText: string;
     loadingText: string;
     children: React.ReactNode;
-    bottomContent: React.ReactNode;
+    bottomContent?: React.ReactNode;
 }
 
 export function AuthFormWrapper({
     title,
     subtitle,
     error,
+    message,
     onSubmit,
     loading,
     submitText,
@@ -32,8 +34,14 @@ export function AuthFormWrapper({
                     <p className="text-text-secondary text-center mb-8">{subtitle}</p>
 
                     {error && (
-                        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl mb-6 text-sm">
+                        <div className="bg-red-500/10 border border-red-500/20 text-red-400 px-4 py-3 rounded-xl mb-6 text-sm">
                             {error}
+                        </div>
+                    )}
+
+                    {message && (
+                        <div className="bg-green-500/10 border border-green-500/20 text-green-400 px-4 py-3 rounded-xl mb-6 text-sm text-center">
+                            {message}
                         </div>
                     )}
 

@@ -103,4 +103,36 @@ export const leaderboardService = {
             };
         });
     },
+
+    /**
+     * Belirli bir oyun için liderlik tablosunu getirir.
+     * `game_stats` tablosundan `high_score` sıralı, `profiles` join'li.
+     */
+    async getGameLeaderboard(
+        gameName: string,
+        limit = 20
+    ): Promise<LeaderboardEntry[]> {
+        const { data, error } = await supabase
+            .from('game_stats')
+            .select('user_id, high_score, profiles!inner(username, avatar)')
+            .eq('game_name', gameName)
+            .order('high_score', { ascending: false })
+            .gt('high_score', 0)
+            .limit(limit);
+
+        if (error) {
+            console.error('Oyun liderlik tablosu hatası:', error);
+            return [];
+        }
+
+        return (data ?? []).map((row: Record<string, unknown>) => {
+            const profiles = row.profiles as Record<string, unknown> | null;
+            return {
+                user_id: row.user_id as string,
+                username: (profiles?.username as string) ?? null,
+                avatar: (profiles?.avatar as string) ?? null,
+                value: row.high_score as number,
+            };
+        });
+    },
 };

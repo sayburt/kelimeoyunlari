@@ -24,6 +24,7 @@ Kullanıcı tercihine veya sistem ayarına bağlı olarak **Light** ve **Dark** 
 ## 3. UI Bileşen Sınırları
 - **Shadcn Kullanımı:** Navbar, Footer, Modal, Ayarlar, Formlar.
 - **Custom Tailwind Kullanımı:** Oyun Board'u, Harf Hücreleri, Klavye, Joker Butonları.
+- **Profil Bileşenleri:** `ProfileInfo`, `StatsCards`, `GameStatsTab`, `ChallengeStatsTab`, `BadgesSection`, `EditProfileModal` gibi modüler alt bileşenler kullanılır.
 
 ## 4. Düzen ve Animasyon
 - Oyun ekranlarında dikey scroll olmaz (`overflow-hidden`).
@@ -62,7 +63,20 @@ Tüm premium efekt değerleri CSS değişkenleri ile yönetilir (Dark/Light ayr�
 - ❌ Kalın border (`border-2`) yerine `border` (1px) + glass-border used
 - ✅ Derinlik sadece shadow + translateY ile sağlanır
 
-## 6. Yetenek (Skill) Koordinasyonu
+## 6. Avatar ve İkon Standartları
+
+### a) Avatar (Emoji) Sistemi
+- Kullanıcı avatarları resim dosyası yerine **Emoji** olarak yönetilir.
+- `AvatarMenu` ve `ProfileInfo` içinde `gradient-to-tr from-primary to-primary/60` arka planlı daireler içinde gösterilir.
+- Supabase `profiles` tablosundaki `avatar` kolonu (string) üzerinden çekilir.
+- **Varsayılan:** `😎` (veya sunucudan dönen ilk avatar).
+
+### b) Kritik İkonlar
+- **Liderlik (Leaderboard):** `Trophy` (Lucide) ikonu kullanılır.
+- **Paylaş (Share):** `Share2` ikonu kullanılır.
+- **Profil/Giriş:** `User` veya mevcut `avatar` emojisi kullanılır.
+
+## 7. Yetenek (Skill) Koordinasyonu
 Bu tasarım sistemi projenin görsel kurallarını belirler. Geliştirme yaparken:
 - Oyun arayüzüne özel kullanıcı deneyimi (UX) yerleşimleri ve "Nasıl Oynanır?" görselleri için `oyun-standartlari` yeteneğine bakınız.
 - Projede renk kodları veya metinler (özellikle oyun içi açıklamalar) değiştiğinde, oyun talimatlarının ana kaynağı olan `veri-yonetimi` yeteneğindeki **Oyun İçerikleri (Games Data)** kuralına uygun hareket ediniz.

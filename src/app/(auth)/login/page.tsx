@@ -17,6 +17,7 @@ function LoginForm() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirect = searchParams.get('redirect');
+    const successMessage = searchParams.get('message');
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -44,6 +45,7 @@ function LoginForm() {
             title="Giriş Yap"
             subtitle="Kelime dünyasına geri dön."
             error={error}
+            message={successMessage}
             onSubmit={handleLogin}
             loading={loading}
             submitText="Giriş Yap"
@@ -65,14 +67,24 @@ function LoginForm() {
                 required
                 placeholder="ornek@mail.com"
             />
-            <AuthInput
-                label="Şifre"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                placeholder="••••••••"
-            />
+            <div className="relative">
+                <AuthInput
+                    label="Şifre"
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    placeholder="••••••••"
+                />
+                <div className="absolute top-0 right-0">
+                    <Link
+                        href="/forgot-password"
+                        className="text-xs text-primary/70 hover:text-primary transition-colors"
+                    >
+                        Şifremi Unuttum
+                    </Link>
+                </div>
+            </div>
         </AuthFormWrapper>
     );
 }

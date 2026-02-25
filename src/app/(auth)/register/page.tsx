@@ -12,6 +12,7 @@ function RegisterForm() {
     const [username, setUsername] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [confirmPassword, setConfirmPassword] = useState("");
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -22,6 +23,12 @@ function RegisterForm() {
         e.preventDefault();
         setLoading(true);
         setError(null);
+
+        if (password !== confirmPassword) {
+            setError("Şifreler eşleşmiyor.");
+            setLoading(false);
+            return;
+        }
 
         // Not: Username profiles tablosuna handle_new_user trigger'ı ile otomatik yazılacak
         const { error } = await supabase.auth.signUp({
@@ -82,6 +89,14 @@ function RegisterForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                required
+                placeholder="••••••••"
+            />
+            <AuthInput
+                label="Şifre Tekrarı"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
                 required
                 placeholder="••••••••"
             />
