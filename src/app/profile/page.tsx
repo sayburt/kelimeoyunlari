@@ -21,22 +21,27 @@ import {
     SendHorizonal,
     Users,
     Star,
+    Settings,
+    X,
+    LogOut,
 } from 'lucide-react';
 
+const AVATARS = ['😎', '🤓', '🤠', '👻', '👾', '🤖', '👽', '🧠', '🦉', '🐱'];
+
 // Rozet adı mapping
-const BADGE_LABELS: Record<string, { label: string; icon: React.ReactNode }> = {
-    first_win: { label: 'İlk Galibiyet', icon: <Trophy size={20} /> },
-    streak_5: { label: '5 Seri Galibiyet', icon: <Flame size={20} /> },
-    streak_10: { label: '10 Seri Galibiyet', icon: <Zap size={20} /> },
-    games_10: { label: '10 Oyun Oynandı', icon: <Gamepad2 size={20} /> },
-    games_50: { label: '50 Oyun Oynandı', icon: <Target size={20} /> },
-    perfect_score: { label: 'Mükemmel Skor', icon: <Award size={20} /> },
-    points_1k: { label: 'Binlik Kulübü', icon: <Trophy size={20} className="text-yellow-600" /> },
-    points_10k: { label: 'Acemi Dilci', icon: <Target size={20} className="text-blue-500" /> },
-    points_50k: { label: 'Kelime Avcısı', icon: <Zap size={20} className="text-purple-500" /> },
-    points_100k: { label: 'Puan Ustası', icon: <Trophy size={20} className="text-yellow-400" /> },
-    points_250k: { label: 'Kelime Efsanesi', icon: <Flame size={20} className="text-orange-500" /> },
-    points_500k: { label: 'Ölümsüz Dilbilimci', icon: <Award size={20} className="text-red-500" /> },
+const BADGE_LABELS: Record<string, { label: string; criteria: string; icon: React.ReactNode }> = {
+    first_win: { label: 'İlk Galibiyet', criteria: 'İlk oyun zaferi', icon: <Trophy size={20} /> },
+    streak_5: { label: 'Ateşli', criteria: '5 seri galibiyet', icon: <Flame size={20} /> },
+    streak_10: { label: 'Durdurulamaz', criteria: '10 seri galibiyet', icon: <Zap size={20} /> },
+    games_10: { label: 'Acemi', criteria: '10 oyun oynandı', icon: <Gamepad2 size={20} /> },
+    games_50: { label: 'Müdavim', criteria: '50 oyun oynandı', icon: <Target size={20} /> },
+    perfect_score: { label: 'Kusursuz', criteria: 'İlk denemede bildin', icon: <Award size={20} /> },
+    points_1k: { label: 'Binlik Kulübü', criteria: '1,000 puan', icon: <Trophy size={20} className="text-yellow-600" /> },
+    points_10k: { label: 'Acemi Dilci', criteria: '10,000 puan', icon: <Target size={20} className="text-blue-500" /> },
+    points_50k: { label: 'Kelime Avcısı', criteria: '50,000 puan', icon: <Zap size={20} className="text-purple-500" /> },
+    points_100k: { label: 'Puan Ustası', criteria: '100,000 puan', icon: <Trophy size={20} className="text-yellow-400" /> },
+    points_250k: { label: 'Kelime Efsanesi', criteria: '250,000 puan', icon: <Flame size={20} className="text-orange-500" /> },
+    points_500k: { label: 'Ölümsüz Dilbilimci', criteria: '500,000 puan', icon: <Award size={20} className="text-red-500" /> },
 };
 
 const GAME_LABELS: Record<string, string> = {
@@ -59,10 +64,16 @@ const itemVariants = {
 type Tab = 'normal' | 'challenge';
 
 export default function ProfilePage() {
-    const { user, loading: authLoading } = useAuth();
+    const { user, loading: authLoading, signOut } = useAuth();
     const [profile, setProfile] = useState<ProfileData | null>(null);
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState<Tab>('normal');
+
+    // Düzenleme state'leri
+    const [isEditingProfile, setIsEditingProfile] = useState(false);
+    const [editUsername, setEditUsername] = useState('');
+    const [editAvatar, setEditAvatar] = useState<string | null>(null);
+    const [savingProfile, setSavingProfile] = useState(false);
 
     useEffect(() => {
         async function fetchProfile() {
@@ -86,7 +97,7 @@ export default function ProfilePage() {
     if (!profile) return null;
 
     const displayName = profile.username ?? 'Misafir Oyuncu';
-    const initial = displayName.charAt(0).toLocaleUpperCase('tr-TR');
+    const activeAvatar = profile.avatar ?? AVATARS[0];
     const memberSince = profile.createdAt
         ? new Date(profile.createdAt).toLocaleDateString('tr-TR', {
             year: 'numeric',
@@ -115,30 +126,46 @@ export default function ProfilePage() {
                     {/* ─── Profil Başlığı ─── */}
                     <motion.div
                         variants={itemVariants}
-                        className="flex items-center gap-5"
+                        className="flex items-start sm:items-center justify-between gap-5"
                     >
-                        <div className="w-16 h-16 rounded-full bg-primary/15 border-2 border-primary/40 flex items-center justify-center text-primary text-2xl font-black shrink-0 shadow-[0_0_24px_rgba(34,211,238,0.15)]">
-                            {profile.isGuest ? (
-                                <User size={28} />
-                            ) : (
-                                initial
-                            )}
+                        <div className="flex gap-4 items-center">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-surface border-2 border-surface-mid flex items-center justify-center text-3xl shrink-0 shadow-[0_0_20px_rgba(0,0,0,0.2)]">
+                                {profile.isGuest ? (
+                                    <User size={32} className="text-text-secondary" />
+                                ) : (
+                                    <span>{activeAvatar}</span>
+                                )}
+                            </div>
+                            <div>
+                                <h1 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight">
+                                    {displayName}
+                                </h1>
+                                {memberSince && (
+                                    <p className="text-sm text-text-secondary mt-0.5">
+                                        Üye: {memberSince}
+                                    </p>
+                                )}
+                                {profile.isGuest && (
+                                    <p className="text-sm text-text-secondary mt-0.5 flex items-center gap-1">
+                                        Misafir olarak oynuyorsun
+                                    </p>
+                                )}
+                            </div>
                         </div>
-                        <div>
-                            <h1 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight">
-                                {displayName}
-                            </h1>
-                            {memberSince && (
-                                <p className="text-sm text-text-secondary mt-0.5">
-                                    Üye: {memberSince}
-                                </p>
-                            )}
-                            {profile.isGuest && (
-                                <p className="text-sm text-text-secondary mt-0.5">
-                                    Misafir olarak oynuyorsun
-                                </p>
-                            )}
-                        </div>
+
+                        {!profile.isGuest && (
+                            <button
+                                onClick={() => {
+                                    setEditUsername(profile.username ?? '');
+                                    setEditAvatar(profile.avatar ?? AVATARS[0]);
+                                    setIsEditingProfile(true);
+                                }}
+                                className="p-2 sm:px-4 sm:py-2 rounded-xl bg-surface border-2 border-surface-mid hover:border-primary/40 text-text-secondary hover:text-text-main transition-colors flex items-center gap-2 group"
+                            >
+                                <Settings size={20} className="group-hover:rotate-45 transition-transform" />
+                                <span className="hidden sm:inline font-bold text-sm">Düzenle</span>
+                            </button>
+                        )}
                     </motion.div>
 
                     {/* ─── Özet Kartlar ─── */}
@@ -353,27 +380,37 @@ export default function ProfilePage() {
                                     </div>
                                 ) : (
                                     <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                                        {profile.badges.map((badge) => {
-                                            const info = BADGE_LABELS[badge.badge_key];
+                                        {Object.keys(BADGE_LABELS).map((badgeKey) => {
+                                            const info = BADGE_LABELS[badgeKey];
+                                            const earnedBadge = profile.badges.find(b => b.badge_key === badgeKey);
+                                            const isEarned = !!earnedBadge;
+
                                             return (
                                                 <div
-                                                    key={badge.badge_key}
-                                                    className="bg-surface border-2 border-primary/20 rounded-2xl p-4 flex flex-col items-center text-center gap-2 shadow-[0_0_12px_rgba(34,211,238,0.08)]"
+                                                    key={badgeKey}
+                                                    className={`border-2 rounded-2xl p-4 flex flex-col items-center text-center gap-2 transition-all ${isEarned
+                                                        ? 'bg-surface border-primary/20 shadow-[0_0_12px_rgba(34,211,238,0.08)]'
+                                                        : 'bg-bg/50 border-surface-mid opacity-40 grayscale-[50%]'
+                                                        }`}
                                                 >
-                                                    <div className="text-primary">
+                                                    <div className={isEarned ? "text-primary scale-110 transition-transform" : "text-text-secondary"}>
                                                         {info?.icon ?? (
                                                             <Award size={20} />
                                                         )}
                                                     </div>
-                                                    <p className="text-xs font-bold text-text-main">
-                                                        {info?.label ??
-                                                            badge.badge_key}
+                                                    <p className={`text-xs font-bold leading-tight ${isEarned ? 'text-text-main' : 'text-text-secondary'}`}>
+                                                        {info?.label ?? badgeKey}
                                                     </p>
-                                                    <p className="text-[10px] text-text-secondary">
-                                                        {new Date(
-                                                            badge.earned_at
-                                                        ).toLocaleDateString('tr-TR')}
-                                                    </p>
+
+                                                    {isEarned ? (
+                                                        <p className="text-[10px] text-text-secondary">
+                                                            Kazanıldı: {new Date(earnedBadge!.earned_at).toLocaleDateString('tr-TR')}
+                                                        </p>
+                                                    ) : (
+                                                        <p className="text-[10px] text-text-secondary leading-tight mt-1 line-clamp-2">
+                                                            {info?.criteria}
+                                                        </p>
+                                                    )}
                                                 </div>
                                             );
                                         })}
@@ -616,6 +653,98 @@ export default function ProfilePage() {
                         </motion.div>
                     )}
                 </motion.div>
+
+                {/* ─── Profil Düzenleme Modalı ─── */}
+                {isEditingProfile && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-bg/80 backdrop-blur-sm">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="bg-surface border-2 border-surface-mid rounded-2xl p-6 w-full max-w-md shadow-2xl relative"
+                        >
+                            <button
+                                onClick={() => setIsEditingProfile(false)}
+                                className="absolute top-4 right-4 text-text-secondary hover:text-text-main transition-colors p-1"
+                            >
+                                <X size={20} />
+                            </button>
+
+                            <h2 className="text-xl font-black text-text-main mb-6">Profili Düzenle</h2>
+
+                            {/* Avatar Seçimi */}
+                            <div className="mb-6">
+                                <label className="block text-sm font-bold text-text-secondary mb-3">Avatar Seç</label>
+                                <div className="grid grid-cols-5 gap-3">
+                                    {AVATARS.map(avatar => (
+                                        <button
+                                            key={avatar}
+                                            onClick={() => setEditAvatar(avatar)}
+                                            className={`text-3xl flex items-center justify-center h-14 rounded-xl transition-all ${editAvatar === avatar
+                                                ? 'bg-primary/20 border-2 border-primary scale-110 shadow-[0_0_12px_rgba(34,211,238,0.2)]'
+                                                : 'bg-surface-mid/50 border-2 border-transparent hover:scale-105 hover:bg-surface-mid'}`}
+                                        >
+                                            {avatar}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Kullanıcı Adı */}
+                            <div className="mb-8">
+                                <label className="block text-sm font-bold text-text-secondary mb-2">Kullanıcı Adı</label>
+                                <input
+                                    type="text"
+                                    value={editUsername}
+                                    onChange={(e) => setEditUsername(e.target.value)}
+                                    className="w-full bg-bg border-2 border-surface-mid rounded-xl px-4 py-3 text-text-main focus:border-primary focus:outline-none transition-colors font-medium placeholder:text-text-secondary/50"
+                                    placeholder="Kullanıcı adınızı girin"
+                                    maxLength={20}
+                                />
+                            </div>
+
+                            {/* Butonlar */}
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={async () => {
+                                        if (!user?.id || savingProfile) return;
+                                        setSavingProfile(true);
+                                        const success = await profileService.updateProfile(user.id, {
+                                            username: editUsername,
+                                            avatar: editAvatar ?? undefined
+                                        });
+                                        if (success) {
+                                            setProfile(prev => prev ? { ...prev, username: editUsername, avatar: editAvatar } : null);
+                                            setIsEditingProfile(false);
+                                        }
+                                        setSavingProfile(false);
+                                    }}
+                                    disabled={savingProfile || !editUsername.trim()}
+                                    className="flex-1 bg-primary text-bg font-bold py-3 rounded-xl hover:scale-[1.02] transition-transform disabled:opacity-50 disabled:hover:scale-100 flex justify-center items-center shadow-[0_0_15px_rgba(34,211,238,0.2)]"
+                                >
+                                    {savingProfile ? (
+                                        <div className="w-5 h-5 border-2 border-bg/30 border-t-bg rounded-full animate-spin" />
+                                    ) : (
+                                        'Kaydet'
+                                    )}
+                                </button>
+                            </div>
+
+                            {/* Çıkış Yap */}
+                            <div className="mt-6 pt-6 border-t border-surface-mid">
+                                <button
+                                    onClick={() => {
+                                        setIsEditingProfile(false);
+                                        signOut();
+                                    }}
+                                    className="w-full flex items-center justify-center gap-2 text-danger font-bold py-2.5 rounded-xl hover:bg-danger/10 transition-colors"
+                                >
+                                    <LogOut size={18} />
+                                    Hesaptan Çıkış Yap
+                                </button>
+                            </div>
+                        </motion.div>
+                    </div>
+                )}
             </div>
         </div>
     );

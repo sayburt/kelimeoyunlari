@@ -44,11 +44,11 @@ Kullanıcılar arası etkileşimi ve rekabeti artıracak paylaşım mekanizmalar
   - Belirli bir kelimeyi veya oyun sonucunu "meydan okuma" olarak işaretleme sistemi.
 - [x] **6.2. Paylaşım ve URL Yapısı**
   - `oyun-standartlari` skill'ine uygun dinamik link ve metadata (OG tags) üretimi.
-- [ ] **6.3. Meydan Okuma İstatistiklerinin Ayrı Tutulması**
+- [x] **6.3. Meydan Okuma İstatistiklerinin Ayrı Tutulması**
   - `challenge_stats` tablosu oluşturulması: kullanıcı başına gönderilen / katılan / kazanılan / en iyi skor alanları.
   - `challengeService.updateChallengeResult()` içinde `challenge_stats` tablosunun `upsert` ile güncellenmesi.
   - `profileService` üzerinden `challenge_stats` verisinin `ProfileData`'ya eklenmesi.
-- [ ] **6.4. Liderlik Tablosu Geliştirmeleri**
+- [x] **6.4. Liderlik Tablosu Geliştirmeleri**
   - Belirli meydan okumalara özel skor tablolarının oluşturulması (`challenge_stats` tablosu baz alınır).
 
 ---
@@ -57,14 +57,14 @@ Kullanıcılar arası etkileşimi ve rekabeti artıracak paylaşım mekanizmalar
 
 Kullanıcının gelişimini detaylı analiz edebileceği ve profilini kişiselleştirebileceği alan.
 
-- [ ] **7.1. Detaylı İstatistik Analitiği ve Profil Sayfası Yeniden Tasarımı**
+- [x] **7.1. Detaylı İstatistik Analitiği ve Profil Sayfası Yeniden Tasarımı**
   - Profil sayfasının sekme (tab) mimarisine geçirilmesi: **"Normal Oyunlar"** ve **"Meydan Okumalar"** sekmeleri.
   - **Normal Oyunlar sekmesi:** Mevcut `game_stats` tabanlı oyun istatistikleri (tahmin dağılımları, kazanma oranı, seri).
   - **Meydan Okumalar sekmesi:** `challenge_stats` tabanlı — Gönderilen / Katılan / Kazanılan / En İyi Skor özet kartları ve başarı çubuğu.
   - Misafir kullanıcılar için her iki sekmede de kilitli/CTA durumu gösterilmesi.
-- [ ] **7.2. Profil Özelleştirme**
+- [x] **7.2. Profil Özelleştirme**
   - Avatar seçimi, kullanıcı adı güncelleme ve hesap yönetimi ekranları.
-- [ ] **7.3. Başarı (Achievement) Sistemi**
+- [x] **7.3. Başarı (Achievement) Sistemi**
   - `proje-kurallari` çerçevesinde rozet ve başarı kriterlerinin görselleştirilmesi.
 
 ---

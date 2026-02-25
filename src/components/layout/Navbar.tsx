@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AvatarMenu } from "@/components/ui/AvatarMenu";
 import { shareContent } from "@/utils/shareUtils";
 import { useState } from "react";
-import { Share2, User, Menu, X } from "lucide-react";
+import { Share2, User, Menu, X, Trophy } from "lucide-react";
 
 export default function Navbar() {
     const { isAuthenticated } = useAuth();
@@ -63,6 +63,14 @@ export default function Navbar() {
                     >
                         Nasıl Oynanır?
                     </Link>
+                    <Link
+                        href="/leaderboard"
+                        className={`text-sm font-bold transition-colors hover:text-primary flex items-center gap-1.5 ${pathname.startsWith("/leaderboard") ? "text-primary" : "text-text-main"
+                            }`}
+                    >
+                        <Trophy size={14} />
+                        Liderlik
+                    </Link>
                     <button
                         onClick={handleShare}
                         className="text-sm font-bold text-text-main hover:text-primary transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
@@ -116,6 +124,14 @@ export default function Navbar() {
                         className={`text-base font-bold transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"}`}
                     >
                         Nasıl Oynanır?
+                    </Link>
+                    <Link
+                        href="/leaderboard"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-base font-bold transition-colors hover:text-primary flex items-center gap-2 ${pathname.startsWith("/leaderboard") ? "text-primary" : "text-text-main"}`}
+                    >
+                        <Trophy size={16} />
+                        Liderlik Tablosu
                     </Link>
                     <button
                         onClick={handleShare}

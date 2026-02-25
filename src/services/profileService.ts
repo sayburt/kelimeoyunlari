@@ -27,6 +27,7 @@ export interface Badge {
 
 export interface ProfileData {
     username: string | null;
+    avatar: string | null;
     createdAt: string | null;
     stats: GameStat[];
     challengeStats: ChallengeStat[];
@@ -76,6 +77,7 @@ export const profileService = {
 
         return {
             username: null,
+            avatar: null,
             createdAt: null,
             stats,
             challengeStats: [],
@@ -89,7 +91,7 @@ export const profileService = {
         try {
             // Profil, istatistikler, challenge istatistikleri ve rozetleri paralel çek
             const [profileRes, statsRes, challengeStatsRes, badgesRes] = await Promise.all([
-                supabase.from("profiles").select("username, created_at").eq("id", userId).single(),
+                supabase.from("profiles").select("username, avatar, created_at").eq("id", userId).single(),
                 supabase.from("game_stats").select("game_name, played, won, best_score, current_streak, max_streak").eq("user_id", userId),
                 supabase.from("challenge_stats").select("game_name, sent_count, received_count, won_count, best_score, total_score, last_played_at").eq("user_id", userId),
                 supabase.from("badges").select("badge_key, earned_at").eq("user_id", userId),
@@ -126,6 +128,7 @@ export const profileService = {
 
             return {
                 username: profile?.username ?? null,
+                avatar: profile?.avatar ?? null,
                 createdAt: profile?.created_at ?? null,
                 stats: rawStats,
                 challengeStats: rawChallengeStats,
@@ -139,4 +142,25 @@ export const profileService = {
             return this.getGuestProfile();
         }
     },
+
+    /**
+     * Kullanıcı profilini (username ve avatar) günceller.
+     */
+    async updateProfile(userId: string, updates: { username?: string; avatar?: string }): Promise<boolean> {
+        try {
+            const { error } = await supabase
+                .from("profiles")
+                .update({
+                    ...(updates.username !== undefined ? { username: updates.username } : {}),
+                    ...(updates.avatar !== undefined ? { avatar: updates.avatar } : {})
+                })
+                .eq("id", userId);
+
+            if (error) throw error;
+            return true;
+        } catch (error) {
+            console.error("Profil güncellenirken hata:", error);
+            return false;
+        }
+    }
 };
