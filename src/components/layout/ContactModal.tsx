@@ -20,14 +20,23 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
 
     if (!isOpen) return null;
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setStatus('submitting');
 
-        // Şimdilik sadece konsola yazdırıyoruz, Supabase'e bağlanabilir.
-        console.log('Form Gönderildi:', formData);
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
 
-        setTimeout(() => {
+            if (!response.ok) {
+                throw new Error('Gönderim hatası');
+            }
+
             setStatus('success');
             setTimeout(() => {
                 onClose();
@@ -37,7 +46,11 @@ export function ContactModal({ isOpen, onClose }: ContactModalProps) {
                     setFormData({ name: '', email: '', topic: 'Genel', message: '' });
                 }, 300);
             }, 2000);
-        }, 1000);
+        } catch (error) {
+            console.error('İletişim form hatası:', error);
+            alert('Mesaj gönderilirken bir hata oluştu. Lütfen bağlantınızı kontrol edip tekrar deneyin.');
+            setStatus('idle');
+        }
     };
 
     return (
