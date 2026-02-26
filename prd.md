@@ -172,38 +172,13 @@ Tüm veri işlemleri `services/` klasörü altındaki fonksiyonlar üzerinden ya
 
 ## 8. Tasarım Sistemi
 
-### Tema
-Kullanıcı deneyimini artırmak için dinamik tema desteği sunulur. Karanlık (Dark) ve Aydınlık (Light) mod seçeneği mevcuttur. Sistem temasına göre otomatik geçiş veya kullanıcı tercihi saklanır.
+Projenin görsel kimliği, premium tasarım standartları ve UI bileşen kuralları için aşağıdaki güncel dökümanlar referans alınmalıdır:
 
-### Renkler
-| | |
-|---|---|
-| Arka plan | Degrade — `#2C3347` → `#3D4A6B` (yukarıdan aşağı) |
-| Yüzey / Kartlar | `#F7F5F0` |
-| Pastel aksanlar | Mint `#A8D5A2` — Lavender `#B8A4D4` — Peach `#F4A8B8` — Sky `#9ECAE1` |
-| Doğru | `#A8D5A2` (soft yeşil) |
-| Mevcut ama yanlış yerde | `#F9D89C` (soft sarı) |
-| Yanlış | `#C8CDD8` (nötr gri) |
-| Metin — koyu arka planda | `#F7F5F0` |
-| Metin — açık kart üzerinde | `#1A1F2E` |
+- **Ana Tasarım Sistemi:** [.agent/skills/tasarim-sistemi/SKILL.md](file:///.agent/skills/tasarim-sistemi/SKILL.md)
+- **Premium Tasarım Standartları:** [docs/tasarim-revizyon.md](file:///docs/tasarim-revizyon.md)
 
-### Tipografi
-- Font: **Nunito**
-- Ağırlıklar: 400 — 700 — 900
-- Nunito, Türkçe karakterleri (ğ, ş, ı, ö, ü, ç) tam destekler.
+Bu dökümanlar; renk paleti, tipografi, glassmorphism efektleri ve premium derinlik kurallarını (Soft Depth, Subtle Glow) detaylandırmaktadır.
 
-### Düzen Kuralları
-- Oyun ekranı viewport'a tam oturur, dikey scroll olmaz
-- Navbar ince tutulur, oyun ekranında footer gizlenir
-- Buton minimum yüksekliği 48px (mobil dokunma standartı)
-- Köşeler rounded-xl, hafif box-shadow, flat design
-- Animasyonlar 180–250ms, subtle
-
-### Ses
-- Doğru harf / hamle: yumuşak "ding"
-- Yanlış harf / hamle: kısa "thud"
-- Oyun kazanıldı: kısa melodi
-- Ses tercihi kullanıcı ayarlarında saklanır
 
 ---
 

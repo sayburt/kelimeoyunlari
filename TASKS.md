@@ -10,62 +10,18 @@ Bu dosya projenin adım adım nasıl geliştirileceğini tanımlar. Geliştirme 
 
 ---
 
-## 🎮 FAZ 5: Gelişmiş Oyun Mekanikleri ve Puanlama
-
-Oyun deneyimini daha profesyonel, rekabetçi ve eğlenceli hale getirecek temel özelliklerin entegrasyonu.
-
-- [x] **5.1. Saat ve Zaman Yönetimi**
-  - [x] Oyun sırasında geçen süreyi milisaniye hassasiyetinde takip eden bir timer sisteminin `useGame` hook'una eklenmesi.
-  - [x] Zamanın duraklatılması (modal açıkken) ve oyun sonunda sürenin dondurulması.
-  - [x] UI Refinement: Formatı saniye düzeyine çekme ve mobil uyumlu tasarımı iyileştirme.
-- [x] **5.2. Joker (İpucu) Sistemi**
-  - [x] Her oyun için belirli sayıda "Joker" hakkı tanımlanması.
-  - [x] Wordle için: "Rastgele bir doğru harfi aç" fonksiyonunun yazılması ve UI entegrasyonu.
-  - [x] Joker butonunun hamburger menü dışına, erişilebilir alana konumlandırılması.
-  - [x] Joker kullanımının puanlama üzerindeki negatif etkisinin belirlenmesi.
-- [x] **5.3. Gerçek Puanlama Sistemi Entegrasyonu**
-  - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki formüllerin (`Taban + Deneme + Zaman x GW`) kodlanması.
-  - `scoreService.ts` dosyasının sadece galibiyet değil, hesaplanan bu kompleks puanı da kaydedecek şekilde güncellenmesi.
-- [x] **5.4. Rozet (Achievement) ve Eşik Sistemi**
-  - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki prestijli puan eşiklerinin (`1M`, `2.5M` vb.) kontrol mekanizmasının yazılması.
-  - Eşik aşıldığında kullanıcıya anlık bildirim (toast/celebration) gösterilmesi ve rozetin `badges` tablosuna işlenmesi.
-- [x] **5.5. Oyun State Persistence (Kalıcılık)**
-  - Mevcut tahminlerin, aktif sürenin ve kullanılan jokerlerin `localStorage` / `Supabase` üzerinden anlık takibi.
+## 🎮 FAZ 5: Gelişmiş Oyun Mekanikleri ve Puanlama (Arşivlendi)
+Referans: TAMAMLANAN GÖREVLER (ARŞİV) içindeki Faz 5 başlığına bakınız.
 
 ---
 
----
-
-## 🏆 FAZ 6: Sosyal ve Rekabetçi Özellikler (Meydan Okuma)
-
-Kullanıcılar arası etkileşimi ve rekabeti artıracak paylaşım mekanizmaları.
-
-- [x] **6.1. Challenge (Meydan Okuma) Mantığı**
-  - Belirli bir kelimeyi veya oyun sonucunu "meydan okuma" olarak işaretleme sistemi.
-- [x] **6.2. Paylaşım ve URL Yapısı**
-  - `oyun-standartlari` skill'ine uygun dinamik link ve metadata (OG tags) üretimi.
-- [x] **6.3. Meydan Okuma İstatistiklerinin Ayrı Tutulması**
-  - `challenge_stats` tablosu oluşturulması: kullanıcı başına gönderilen / katılan / kazanılan / en iyi skor alanları.
-  - `challengeService.updateChallengeResult()` içinde `challenge_stats` tablosunun `upsert` ile güncellenmesi.
-  - `profileService` üzerinden `challenge_stats` verisinin `ProfileData`'ya eklenmesi.
-- [x] **6.4. Liderlik Tablosu Geliştirmeleri**
-  - Belirli meydan okumalara özel skor tablolarının oluşturulması (`challenge_stats` tablosu baz alınır).
+## 🏆 FAZ 6: Sosyal ve Rekabetçi Özellikler (Meydan Okuma) (Arşivlendi)
+Referans: TAMAMLANAN GÖREVLER (ARŞİV) içindeki Faz 6 başlığına bakınız.
 
 ---
 
-## 👤 FAZ 7: Gelişmiş Üye Paneli ve İstatistikler
-
-Kullanıcının gelişimini detaylı analiz edebileceği ve profilini kişiselleştirebileceği alan.
-
-- [x] **7.1. Detaylı İstatistik Analitiği ve Profil Sayfası Yeniden Tasarımı**
-  - Profil sayfasının sekme (tab) mimarisine geçirilmesi: **"Normal Oyunlar"** ve **"Meydan Okumalar"** sekmeleri.
-  - **Normal Oyunlar sekmesi:** Mevcut `game_stats` tabanlı oyun istatistikleri (tahmin dağılımları, kazanma oranı, seri).
-  - **Meydan Okumalar sekmesi:** `challenge_stats` tabanlı — Gönderilen / Katılan / Kazanılan / En İyi Skor özet kartları ve başarı çubuğu.
-  - Misafir kullanıcılar için her iki sekmede de kilitli/CTA durumu gösterilmesi.
-- [x] **7.2. Profil Özelleştirme**
-  - Avatar seçimi, kullanıcı adı güncelleme ve hesap yönetimi ekranları.
-- [x] **7.3. Başarı (Achievement) Sistemi**
-  - `proje-kurallari` çerçevesinde rozet ve başarı kriterlerinin görselleştirilmesi.
+## 👤 FAZ 7: Gelişmiş Üye Paneli ve İstatistikler (Arşivlendi)
+Referans: TAMAMLANAN GÖREVLER (ARŞİV) içindeki Faz 7 başlığına bakınız.
 
 ---
 
@@ -79,16 +35,6 @@ Web platformu tüm özellikleriyle (Tema, Devam Etme, Sosyal) mükemmelleştikte
   - Web'deki `services/` mantığının `proje-kurallari` skill'ine uygun şekilde mobile uyarlanması. `LocalStorage` yerine `AsyncStorage` kullanımı.
 - [ ] **8.3. Mobil UI / UX Uyarlaması**
   - Oyun Board'u ve klavyenin mobil cihaza göre boyutlandırılması ve `tasarim-sistemi` standartlarının mobil adaptasyonu.
-
----
-
-## 🎨 Bekleyen İyileştirmeler (UI/UX)
-
-- [x] **Header (Navigasyon) Mobil Uyumluluk ve UX Revizyonu**
-  - [x] Tema değiştirme (dark/light toggle) butonunun sadece ikon (Ay/Güneş) olacak şekilde sadeleştirilmesi.
-  - [x] "Giriş" ve "Kayıt Ol" metinli butonlarının kaldırılarak sağ üste sadece tek bir Kullanıcı (User) ikonu eklenmesi.
-  - [x] Kullanıcı ikonuna tıklandığında açılacak (dropdown) modern ve projenin tasarım sistemine uygun bir menü yapılması, Giriş/Kayıt seçeneklerinin bu menüye taşınması.
-  - [x] Logoların, tema ve kullanıcı ikonlarının aynı hizada, estetik boşluklarla (flex, justify-between, items-center) mobilde şık duracak şekilde optimize edilmesi.
 
 ---
 
@@ -142,5 +88,67 @@ Web platformu tüm özellikleriyle (Tema, Devam Etme, Sosyal) mükemmelleştikte
 - [x] **4.2. UI Bileşenlerinin Tema Uyumluluğu**
   - Tüm Shadcn ve custom bileşenlerin (Board, Klavye vb.) iki modda da kusursuz görünmesi.
 - [x] **4.3. Kullanıcı Tercihi Senkronizasyonu**
-  - Tercihlerin `veri-yonetimi` kurallarına göre LocalStorage ve (giriş yapılmışsa) Supabase profiles tablosunda saklanması.
+  - Tercihlerin `veri-yonetimi` kurallarına göre LocalStorage and (giriş yapılmışsa) Supabase profiles tablosunda saklanması.
 </details>
+
+<details>
+<summary><b>Faz 5: Gelişmiş Oyun Mekanikleri ve Puanlama</b></summary>
+
+- [x] **5.1. Saat ve Zaman Yönetimi**
+  - [x] Oyun sırasında geçen süreyi milisaniye hassasiyetinde takip eden bir timer sisteminin `useGame` hook'una eklenmesi.
+  - [x] Zamanın duraklatılması (modal açıkken) ve oyun sonunda sürenin dondurulması.
+  - [x] UI Refinement: Formatı saniye düzeyine çekme ve mobil uyumlu tasarımı iyileştirme.
+- [x] **5.2. Joker (İpucu) Sistemi**
+  - [x] Her oyun için belirli sayıda "Joker" hakkı tanımlanması.
+  - [x] Wordle için: "Rastgele bir doğru harfi aç" fonksiyonunun yazılması ve UI entegrasyonu.
+  - [x] Joker butonunun hamburger menü dışına, erişilebilir alana konumlandırılması.
+  - [x] Joker kullanımının puanlama üzerindeki negatif etkisinin belirlenmesi.
+- [x] **5.3. Gerçek Puanlama Sistemi Entegrasyonu**
+  - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki formüllerin (`Taban + Deneme + Zaman x GW`) kodlanması.
+  - `scoreService.ts` dosyasının sadece galibiyet değil, hesaplanan bu kompleks puanı da kaydedecek şekilde güncellenmesi.
+- [x] **5.4. Rozet (Achievement) ve Eşik Sistemi**
+  - [puanlama-sistemi.md](docs/puanlama-sistemi.md) dökümanındaki prestijli puan eşiklerinin (`1M`, `2.5M` vb.) kontrol mekanizmasının yazılması.
+  - Eşik aşıldığında kullanıcıya anlık bildirim (toast/celebration) gösterilmesi ve rozetin `badges` tablosuna işlenmesi.
+- [x] **5.5. Oyun State Persistence (Kalıcılık)**
+  - Mevcut tahminlerin, aktif sürenin ve kullanılan jokerlerin `localStorage` / `Supabase` üzerinden anlık takibi.
+</details>
+
+<details>
+<summary><b>Faz 6: Sosyal ve Rekabetçi Özellikler (Meydan Okuma)</b></summary>
+
+- [x] **6.1. Challenge (Meydan Okuma) Mantığı**
+  - Belirli bir kelimeyi veya oyun sonucunu "meydan okuma" olarak işaretleme sistemi.
+- [x] **6.2. Paylaşım ve URL Yapısı**
+  - `oyun-standartlari` skill'ine uygun dinamik link ve metadata (OG tags) üretimi.
+- [x] **6.3. Meydan Okuma İstatistiklerinin Ayrı Tutulması**
+  - `challenge_stats` tablosu oluşturulması: kullanıcı başına gönderilen / katılan / kazanılan / en iyi skor alanları.
+  - `challengeService.updateChallengeResult()` içinde `challenge_stats` tablosunun `upsert` ile güncellenmesi.
+  - `profileService` üzerinden `challenge_stats` verisinin `ProfileData`'ya eklenmesi.
+- [x] **6.4. Liderlik Tablosu Geliştirmeleri**
+  - Belirli meydan okumalara özel skor tablolarının oluşturulması (`challenge_stats` tablosu baz alınır).
+</details>
+
+<details>
+<summary><b>Faz 7: Gelişmiş Üye Paneli ve İstatistikler</b></summary>
+
+- [x] **7.1. Detaylı İstatistik Analitiği ve Profil Sayfası Yeniden Tasarımı**
+  - Profil sayfasının sekme (tab) mimarisine geçirilmesi: **"Normal Oyunlar"** ve **"Meydan Okumalar"** sekmeleri.
+  - **Normal Oyunlar sekmesi:** Mevcut `game_stats` tabanlı oyun istatistikleri (tahmin dağılımları, kazanma oranı, seri).
+  - **Meydan Okumalar sekmesi:** `challenge_stats` tabanlı — Gönderilen / Katılan / Kazanılan / En İyi Skor özet kartları ve başarı çubuğu.
+  - Misafir kullanıcılar için her iki sekmede de kilitli/CTA durumu gösterilmesi.
+- [x] **7.2. Profil Özelleştirme**
+  - Avatar seçimi, kullanıcı adı güncelleme ve hesap yönetimi ekranları.
+- [x] **7.3. Başarı (Achievement) Sistemi**
+  - `proje-kurallari` çerçevesinde rozet ve başarı kriterlerinin görselleştirilmesi.
+</details>
+
+<details>
+<summary><b>Diğer İyileştirmeler (UI/UX)</b></summary>
+
+- [x] **Header (Navigasyon) Mobil Uyumluluk ve UX Revizyonu**
+  - [x] Tema değiştirme (dark/light toggle) butonunun sadece ikon (Ay/Güneş) olacak şekilde sadeleştirilmesi.
+  - [x] "Giriş" ve "Kayıt Ol" metinli butonlarının kaldırılarak sağ üste sadece tek bir Kullanıcı (User) ikonu eklenmesi.
+  - [x] Kullanıcı ikonuna tıklandığında açılacak (dropdown) modern ve projenin tasarım sistemine uygun bir menü yapılması, Giriş/Kayıt seçeneklerinin bu menüye taşınması.
+  - [x] Logoların, tema ve kullanıcı ikonlarının aynı hizada, estetik boşluklarla (flex, justify-between, items-center) mobilde şık duracak şekilde optimize edilmesi.
+</details>
+
