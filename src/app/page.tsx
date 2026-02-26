@@ -7,6 +7,7 @@ import { GameInstructions } from '@/components/game/GameInstructions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GAMES, Game } from '@/data/games';
 import { X } from 'lucide-react';
+import { statsService } from '@/services/statsService';
 
 const containerVariants = {
   hidden: {},
@@ -23,6 +24,15 @@ const itemVariants = {
 export default function Home() {
   const router = useRouter();
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
+  const [playCounts, setPlayCounts] = useState<Record<string, number>>({});
+
+  React.useEffect(() => {
+    async function fetchStats() {
+      const counts = await statsService.getGlobalPlayCounts();
+      setPlayCounts(counts);
+    }
+    fetchStats();
+  }, []);
 
   return (
     <div className="min-h-screen bg-bg hero-glow px-4 py-12 sm:py-20 flex flex-col">
@@ -58,7 +68,7 @@ export default function Home() {
                 onClick={() => router.push(game.href)}
                 onInfo={() => setSelectedGame(game)}
                 thumbnail={game.thumbnail}
-                playCount={game.playCount}
+                playCount={playCounts[game.id] || game.playCount}
                 likeCount={game.likeCount}
               />
             </motion.div>
