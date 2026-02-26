@@ -7,15 +7,10 @@ import { useSound } from '@/hooks/useSound';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { useTimer } from '@/hooks/useTimer';
 import { useGamePersistence } from '@/hooks/useGamePersistence';
+import { GameStatus, JokerState } from '@/types/game';
 
-export type GameStatus = 'idle' | 'loading' | 'playing' | 'won' | 'lost';
+export type { GameStatus, JokerState } from '@/types/game';
 export type LetterState = 'correct' | 'absent' | 'idle';
-
-export interface JokerState {
-    used: boolean;
-    count: number;
-    max: number;
-}
 
 export interface PersistedHangmanState {
     status: GameStatus;

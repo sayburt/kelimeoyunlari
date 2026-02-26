@@ -6,13 +6,7 @@ import { Swords, BarChart3, SendHorizonal, Users, Trophy, Star } from 'lucide-re
 import Link from 'next/link';
 import { StatCard } from '@/components/game/StatCard';
 import { ProfileData } from '@/services/profileService';
-
-const GAME_LABELS: Record<string, string> = {
-    wordle: 'Wordle',
-    anagram: 'Anagram',
-    hangman: 'Adam Asmaca',
-    quiz: 'Kelime Bilgi',
-};
+import { GAME_LABELS } from '@/constants/games';
 
 interface ChallengeStatsTabProps {
     profile: ProfileData;

@@ -3,6 +3,7 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { wordService, Word } from '@/services/wordService';
 import { scoreService } from '@/services/scoreService';
+import { GameStatus, JokerState } from '@/types/game';
 import { challengeService } from '@/services/challengeService';
 import { LetterState } from '@/components/game/LetterCell';
 import { evaluateGuess } from '@/services/gameService';
@@ -27,13 +28,7 @@ export interface GuessResult {
     states: LetterState[];
 }
 
-export interface JokerState {
-    used: boolean;
-    count: number;
-    max: number;
-}
-
-export type GameStatus = 'idle' | 'loading' | 'playing' | 'won' | 'lost';
+export type { GameStatus, JokerState } from '@/types/game';
 
 export interface UseGameOptions {
     initialWordLength?: number;

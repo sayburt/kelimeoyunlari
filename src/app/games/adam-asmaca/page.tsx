@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useEffect, useState, useRef, Suspense } from 'react';
+import React, { useEffect, useRef, Suspense } from 'react';
 import { Heart } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useHangman } from '@/hooks/useHangman';
 import { GameHeader } from '@/components/game/GameHeader';
 import { GameEndModal } from '@/components/game/GameEndModal';
@@ -16,17 +15,20 @@ import { shareContent } from '@/utils/shareUtils';
 import { HangmanDrawing } from '@/components/game/HangmanDrawing';
 import { HangmanKeyboard } from '@/components/game/HangmanKeyboard';
 import { HangmanWordDisplay } from '@/components/game/HangmanWordDisplay';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useGameModals } from '@/hooks/useGameModals';
 
 const GAME_NAME = 'hangman';
 
 function AdamAsmacaPageContent() {
-    const [showInfoModal, setShowInfoModal] = useState(false);
-    const [showStatsModal, setShowStatsModal] = useState(false);
-    const [showSettingsModal, setShowSettingsModal] = useState(false);
-    const [showResultModal, setShowResultModal] = useState(false);
-    const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showResultModal;
+    const {
+        showInfoModal, setShowInfoModal,
+        showStatsModal, setShowStatsModal,
+        showSettingsModal, setShowSettingsModal,
+        showResultModal, setShowResultModal,
+        isPaused,
+    } = useGameModals();
+    const [toastMessage, setToastMessage] = React.useState<string | null>(null);
 
     const { isAuthenticated } = useAuth();
 
@@ -62,7 +64,7 @@ function AdamAsmacaPageContent() {
             const timer = setTimeout(() => setShowResultModal(true), 1200);
             return () => clearTimeout(timer);
         }
-    }, [status]);
+    }, [status, setShowResultModal]);
 
     const handleRestart = () => {
         setShowResultModal(false);
@@ -112,11 +114,7 @@ function AdamAsmacaPageContent() {
                     timerText={formatTime(elapsedTime)}
                 />
                 <div className="flex-1 flex items-center justify-center">
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                        className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-                    />
+                    <LoadingSpinner />
                 </div>
             </div>
         );
@@ -214,11 +212,7 @@ export default function AdamAsmacaPage() {
         <Suspense fallback={
             <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
                 <div className="flex-1 flex items-center justify-center">
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                        className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-                    />
+                    <LoadingSpinner />
                 </div>
             </div>
         }>

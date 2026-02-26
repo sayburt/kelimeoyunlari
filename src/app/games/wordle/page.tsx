@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useCallback, useState, useRef, Suspense } from 'react';
-import { motion } from 'framer-motion';
 import { useGame } from '@/hooks/useGame';
 import { GameHeader } from '@/components/game/GameHeader';
 import { GameKeyboard } from '@/components/game/GameKeyboard';
@@ -22,6 +21,8 @@ import { challengeService } from '@/services/challengeService';
 import { formatTime } from '@/utils/timeUtils';
 import { shareContent } from '@/utils/shareUtils';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { useGameModals } from '@/hooks/useGameModals';
 
 const WORD_LENGTH = 5;
 const MAX_GUESSES = 6;
@@ -34,10 +35,13 @@ const TURKISH_LETTERS = new Set(
 function WordlePageContent() {
     const searchParams = useSearchParams();
     const challengeId = searchParams.get('challengeId');
-    const [showInfoModal, setShowInfoModal] = useState(false);
-    const [showStatsModal, setShowStatsModal] = useState(false);
-    const [showSettingsModal, setShowSettingsModal] = useState(false);
-    const [showResultModal, setShowResultModal] = useState(false);
+    const {
+        showInfoModal, setShowInfoModal,
+        showStatsModal, setShowStatsModal,
+        showSettingsModal, setShowSettingsModal,
+        showResultModal, setShowResultModal,
+        isPaused: baseIsPaused,
+    } = useGameModals();
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showChallengeModal, setShowChallengeModal] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -47,7 +51,7 @@ function WordlePageContent() {
     const cloudCheckDoneRef = useRef(false);
     const savedCloudStateRef = useRef<{ state: import('@/services/savedGameService').SavedGameState; elapsedTime: number } | null>(null);
 
-    const isPaused = showInfoModal || showStatsModal || showSettingsModal || showResultModal || showResumeModal || showChallengeModal;
+    const isPaused = baseIsPaused || showResumeModal || showChallengeModal;
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
@@ -129,7 +133,7 @@ function WordlePageContent() {
             }
             return () => clearTimeout(timer);
         }
-    }, [status, isAuthenticated, deleteCloudSave, isChallengeMode, activeChallengeId, score, guesses.length]);
+    }, [status, isAuthenticated, deleteCloudSave, isChallengeMode, activeChallengeId, score, guesses.length, setShowResultModal]);
 
     useEffect(() => {
         if (error) {
@@ -243,11 +247,7 @@ function WordlePageContent() {
                     timerText={formatTime(elapsedTime)}
                 />
                 <div className="flex-1 flex items-center justify-center">
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                        className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-                    />
+                    <LoadingSpinner />
                 </div>
             </div>
         );
@@ -393,11 +393,7 @@ export default function WordlePage() {
         <Suspense fallback={
             <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
                 <div className="flex-1 flex items-center justify-center">
-                    <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ repeat: Infinity, duration: 1 }}
-                        className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full"
-                    />
+                    <LoadingSpinner />
                 </div>
             </div>
         }>

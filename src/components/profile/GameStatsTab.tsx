@@ -5,13 +5,7 @@ import { motion } from 'framer-motion';
 import { BarChart3, Gamepad2 } from 'lucide-react';
 import Link from 'next/link';
 import { ProfileData } from '@/services/profileService';
-
-const GAME_LABELS: Record<string, string> = {
-    wordle: 'Wordle',
-    anagram: 'Anagram',
-    hangman: 'Adam Asmaca',
-    quiz: 'Kelime Bilgi',
-};
+import { GAME_LABELS } from '@/constants/games';
 
 interface GameStatsTabProps {
     profile: ProfileData;

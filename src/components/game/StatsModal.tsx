@@ -8,13 +8,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { storage, GuestStat } from '@/lib/storage';
 import Link from 'next/link';
-
-const GAME_LABELS: Record<string, string> = {
-    wordle: 'Wordle',
-    anagram: 'Anagram',
-    hangman: 'Adam Asmaca',
-    quiz: 'Kelime Bilgi',
-};
+import { GAME_LABELS } from '@/constants/games';
 
 interface PersonalStats {
     played: number;
