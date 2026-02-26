@@ -54,7 +54,7 @@ Oyun rehber sayfaları (`src/app/nasil-oynanir/[id]/page.tsx`), hem eğitici hem
 
 *   **Dinamik Grid Yapısı:** Sayfa ana içeriği `2/3` (Sol - Bilgi) ve `1/3` (Sağ - Sidebar) oranında bölünmüş bir grid kullanmalıdır:
     *   **Sol Sütun (İçerik):** 
-        *   **Tarihçe:** Oyunun kökenlerini anlatan metin bloğu.
+        *   **Tarihçe (Opsiyonel):** Oyunun kökenlerini anlatan metin bloğu. Eğer oyunun bilinen gerçek bir geçmişi/tarihçesi varsa eklenmelidir; her oyun için zorunlu değildir.
         *   **Adım Adım Kurallar:** `rules` dizisinden beslenen, numaralandırılmış liste yapısı.
         *   **Görsel Örnekler:** CSS ile çizilmiş, oyunun mantığını (ör: Wordle renkleri) anlatan interaktif kutucuklar ve açıklamaları.
     *   **Sağ Sütun (Sidebar):**

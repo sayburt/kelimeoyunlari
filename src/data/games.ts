@@ -94,4 +94,54 @@ export const GAMES: Game[] = [
             ]
         }
     },
+    {
+        id: 'adam-asmaca',
+        title: 'Adam Asmaca',
+        description: 'Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul! Klasik adam asmaca oyunu.',
+        href: '/games/adam-asmaca',
+        thumbnail: '/games/hangman/card.webp',
+        playCount: 0,
+        likeCount: 0,
+        comingSoon: false,
+        instructions: {
+            basic: 'Adam Asmaca, gizli kelimeyi harflerini tahmin ederek bulmaya çalıştığınız klasik bir kelime oyunudur. Toplamda 6 hakkınız var.',
+            rules: [
+                'Oyun başladığında ekranda kelimenin harf sayısı kadar boşluk görürsünüz.',
+                'Klavyeden bir harfe tıklayın: harf kelimede varsa ilgili boşluklara yerleşir, yoksa idam sehpasındaki adam bir adım daha çizilir.',
+                '6 canınız bitmeden kelimeyi bulursanız kazanırsınız.',
+                'Hızlı tahminler ve daha uzun kelimeler daha yüksek puan verir. Her oyun 1 joker hakkınız bulunur.'
+            ],
+            scoring: {
+                description: 'Adam Asmaca oyununda puanlama, tahmin sayısına, süreye ve kelime uzunluğuna bağlıdır:',
+                points: [
+                    { condition: 'Hiç Hata Yapmadan', value: 'Maksimum Puan' },
+                    { condition: 'Kalan Can Sayısı', value: 'Her can için ekstra puan' },
+                    { condition: 'Sürekli Doğru Seri', value: 'Kombo Çarpanı' }
+                ]
+            },
+            examples: [
+                {
+                    word: 'E L M A',
+                    colors: ['correct', 'default', 'default', 'correct'],
+                    highlightLetter: 'E',
+                    description: 'E harfi kelimede var ve açıldı.'
+                },
+                {
+                    word: '_ _ _ _',
+                    colors: ['default', 'default', 'default', 'default'],
+                    highlightLetter: 'Z',
+                    description: 'Z harfi yanlış, adam figürü 1 parça daha tamamlandı.'
+                }
+            ],
+            footer: '6 can içinde bul ve darağacından kurtar!'
+        },
+        blogContent: {
+            history: 'Adam Asmaca, kökeni 19. yüzyılın sonlarına, Viktorya dönemine kadar uzanan çok eski bir tahmin oyunudur. Kâğıt ve kalemle oynanan en popüler oyunların başında gelen bu klasik, dijital dünyada da zihni çalıştıran yapısıyla yerini korumaktadır.',
+            proTips: [
+                'Her zaman en sık kullanılan sesli harflerle (A, E, İ) başlayın.',
+                'Sessiz harflerde çok kullanılan R, N, L harflerini tercih edin.',
+                'Kelimedeki bilinen harflere bakarak Türkçe kelime yapısına göre takı tahmininde bulunun (ör. -LAR, -MEK).'
+            ]
+        }
+    }
 ];

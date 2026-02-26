@@ -54,6 +54,8 @@ export function useSound() {
     const playEnter = useCallback(() => playTone(400, 'sine', 0.15, 0.05), [playTone]);
     const playDelete = useCallback(() => playTone(200, 'sine', 0.1, 0.05), [playTone]);
     const playError = useCallback(() => playTone(150, 'sawtooth', 0.3, 0.1), [playTone]);
+    const playCorrect = useCallback(() => playTone(600, 'sine', 0.15, 0.05), [playTone]);
+    const playWrong = useCallback(() => playTone(200, 'sawtooth', 0.2, 0.05), [playTone]);
 
     // Win is a sequence of notes
     const playWin = useCallback(() => {
@@ -78,6 +80,8 @@ export function useSound() {
         playEnter,
         playDelete,
         playError,
+        playCorrect,
+        playWrong,
         playWin,
         playLose
     };

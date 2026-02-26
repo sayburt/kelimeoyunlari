@@ -1,0 +1,59 @@
+
+> kelime-oyunlari@0.1.0 lint
+> eslint
+
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\app\games\adam-asmaca\page.tsx
+  10:10  warning  'GAMES' is defined but never used            @typescript-eslint/no-unused-vars
+  34:11  warning  'router' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\hooks\useHangman.ts
+   76:30  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   77:40  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+   78:26  error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @typescript-eslint/no-explicit-any
+  159:37  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `playWrong`, but the source dependencies were [status, guessedLetters, targetWord, wrongGuesses, handleGameEnd, playKeyPress]. Inferred different dependency than source.
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\hooks\useHangman.ts:159:37
+  157 |     }, [difficulty, category, resetTimer, clearLocal]);
+  158 |
+> 159 |     const handleGuess = useCallback(async (letter: string) => {
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 160 |         if (status !== 'playing' || isProcessingRef.current || !targetWord) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 161 |
+      ÔÇĞ
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 195 |         isProcessingRef.current = false;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 196 |     }, [status, guessedLetters, targetWord, wrongGuesses, handleGameEnd, playKeyPress]);
+      | ^^^^^^ Could not preserve existing manual memoization
+  197 |
+  198 |     const useJoker = useCallback(() => {
+  199 |         if (status !== 'playing' || joker.used || !targetWord) return false;    react-hooks/preserve-manual-memoization
+  159:37  error    Compilation Skipped: Existing memoization could not be preserved
+
+React Compiler has skipped optimizing this component because the existing manual memoization could not be preserved. The inferred dependencies did not match the manually specified dependencies, which could cause the value to change more or less frequently than expected. The inferred dependency was `playCorrect`, but the source dependencies were [status, guessedLetters, targetWord, wrongGuesses, handleGameEnd, playKeyPress]. Inferred different dependency than source.
+
+C:\Users\sayburt\projeler\kelime-oyunlari\src\hooks\useHangman.ts:159:37
+  157 |     }, [difficulty, category, resetTimer, clearLocal]);
+  158 |
+> 159 |     const handleGuess = useCallback(async (letter: string) => {
+      |                                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 160 |         if (status !== 'playing' || isProcessingRef.current || !targetWord) return;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 161 |
+      ÔÇĞ
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 195 |         isProcessingRef.current = false;
+      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> 196 |     }, [status, guessedLetters, targetWord, wrongGuesses, handleGameEnd, playKeyPress]);
+      | ^^^^^^ Could not preserve existing manual memoization
+  197 |
+  198 |     const useJoker = useCallback(() => {
+  199 |         if (status !== 'playing' || joker.used || !targetWord) return false;  react-hooks/preserve-manual-memoization
+  196:8   warning  React Hook useCallback has missing dependencies: 'playCorrect' and 'playWrong'. Either include them or remove the dependency array                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        react-hooks/exhaustive-deps
+
+Ô£û 8 problems (5 errors, 3 warnings)
+

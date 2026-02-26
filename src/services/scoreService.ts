@@ -29,6 +29,29 @@ export const scoreService = {
     },
 
     /**
+     * Adam Asmaca (Hangman) için puan hesaplar.
+     * Toplam Puan = ((Taban + (Kalan Can * 200) + Zaman) x Zorluk Çarpanı x 0.8) - (Joker x 200)
+     */
+    calculateHangmanScore(remainingLives: number, seconds: number, difficulty: number, wordLength: number, jokersUsed: number = 0): number {
+        const basePoint = 1000;
+        const livesBonus = remainingLives * 200;
+        const timeBonus = Math.max(0, (300 - seconds) * 2);
+
+        let multiplier = 1.0;
+        if (difficulty === 2) multiplier = 1.5;
+        if (difficulty === 3) multiplier = 2.0;
+
+        // Kelime uzunluğu çarpanı eklentisi
+        const lengthMultiplier = 1 + ((Math.max(wordLength - 5, 0)) * 0.1);
+
+        const jokerPenalty = jokersUsed * 200;
+        const gameWeight = 0.8;
+
+        const totalScore = Math.max(0, Math.round(((basePoint + livesBonus + timeBonus) * multiplier * lengthMultiplier * gameWeight) - jokerPenalty));
+        return totalScore;
+    },
+
+    /**
      * Oyun sonucunu (kazanma/kaybetme) kaydeder.
      * Kullanıcı giriş yapmışsa Supabase'e, misafirse LocalStorage'a kaydeder.
      */

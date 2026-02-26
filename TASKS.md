@@ -38,6 +38,33 @@ Web platformu tüm özellikleriyle (Tema, Devam Etme, Sosyal) mükemmelleştikte
 
 ---
 
+## 🪢 FAZ 9: Yeni Oyun - Adam Asmaca
+
+Adam Asmaca oyununun projenin standartlarına uygun şekilde uçtan uca implementasyonu.
+
+- [x] **9.1. Hazırlık ve Altyapı**
+  - [x] `app/games/adam-asmaca/` dizininin (page.tsx, layout.tsx) oluşturulması.
+  - [x] `src/data/games.ts` dosyasına Adam Asmaca verilerinin (metadata, instructions, SEO metni) eklenmesi.
+  - [x] Oyun görsellerinin (`card.webp`, `og.png`) yer tutucu veya final hallerinin `public/games/hangman/` altına eklenmesi.
+- [x] **9.2. Oyun Mantığı ve State Yönetimi**
+  - [x] `hooks/useHangman.ts` hook'unun oluşturulması: Kelime seçimi, harf tahmini, can takibi (6 hak) ve oyun durum yönetimi.
+  - [x] `WordService` entegrasyonu ile Türkçe kelime listesinden veri çekilmesi.
+  - [x] `scoreService.ts` üzerinden projenin evrensel puanlama formülünün uygulanması.
+- [x] **9.3. Görsel Bileşenler ve SVG Çizimi**
+  - [x] `components/game/HangmanDrawing.tsx` bileşeni: Her yanlış tahminde bir parçası beliren SVG tabanlı adam figürü.
+  - [x] `components/game/HangmanKeyboard.tsx` bileşeni: Tasarım dökümanına uygun, sesli ve sessiz harflerin ayrıldığı, dinamik genişlikli özel klavye.
+  - [x] Gizli kelime gösterge alanı (`_ _ _`) ve harf animasyonlarının (Framer Motion) implementasyonu.
+- [x] **9.4. Özellikler ve Entegrasyon**
+  - [x] Joker sistemi: Her oyun için 1 rastgele doğru harf açma fonksiyonunun eklenmesi.
+  - [x] `GameHeader`, `GameEndModal` ve `GameInstructions` bileşenlerinin entegrasyonu.
+  - [x] Ses efektlerinin (doğru/yanlış/galibiyet/kayıp) `useSound` ile eklenmesi.
+- [x] **9.5. SEO, Performans ve Test**
+  - [x] `seo-uzmani` skill'ine uygun Meta ve OpenGraph etiketlerinin layout.tsx'e eklenmesi.
+  - [x] `VideoGame` ve `HowTo` JSON-LD schema markup'larının eklenmesi.
+  - [x] Mobil uyumluluk (responsive) kontrolü ve `tasarim-sistemi` standartlarının doğrulanması.
+
+---
+
 ## ✅ TAMAMLANAN GÖREVLER (ARŞİV)
 
 <details>

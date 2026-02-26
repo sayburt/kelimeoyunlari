@@ -24,6 +24,9 @@ Kullanıcı tercihine veya sistem ayarına bağlı olarak **Light** ve **Dark** 
 ## 3. UI Bileşen Sınırları
 - **Shadcn Kullanımı:** Navbar, Footer, Modal, Ayarlar, Formlar.
 - **Custom Tailwind Kullanımı:** Oyun Board'u, Harf Hücreleri, Klavye, Joker Butonları.
+- **Klavye Düzenleri (Layouts):**
+    - *Q-Klavye (Standart):* Wordle gibi tahmin tabanlı oyunlar için hızlı yazım sağlar.
+    - *Alfabetik Ayrışmış (Premium):* Adam Asmaca gibi harf seçme tabanlı oyunlar için sesli ve sessiz harfleri gruplandırır. Sol tarafta genişleyen sesli harfler, sağ tarafta sabit genişlikli sessiz harfler ve aralarında dikey ayraç bulunur.
 - **Profil Bileşenleri:** `ProfileInfo`, `StatsCards`, `GameStatsTab`, `ChallengeStatsTab`, `BadgesSection`, `EditProfileModal` gibi modüler alt bileşenler kullanılır.
 
 ## 4. Düzen ve Animasyon

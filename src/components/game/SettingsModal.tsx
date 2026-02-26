@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check, Volume2, VolumeX, Moon, Sun } from 'lucide-react';
-import { useGameSettings, DifficultyLevel } from '@/context/GameSettingsContext';
+import { useGameSettings, DifficultyLevel, CategoryOption } from '@/context/GameSettingsContext';
 import { useTheme } from 'next-themes';
 
 interface SettingsModalProps {
     isOpen: boolean;
     onClose: () => void;
+    showCategory?: boolean;
 }
 
-export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
-    const { difficulty, setDifficulty, isSoundEnabled, toggleSound } = useGameSettings();
+export function SettingsModal({ isOpen, onClose, showCategory }: SettingsModalProps) {
+    const { difficulty, setDifficulty, category, setCategory, isSoundEnabled, toggleSound } = useGameSettings();
     const { theme, setTheme } = useTheme();
+    const [activeTab, setActiveTab] = useState<'game' | 'system'>('game');
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
@@ -26,6 +28,24 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         { level: 1, label: 'KOLAY', description: 'Yaygın kelimeler.' },
         { level: 2, label: 'ORTA', description: 'Standart zorluk.' },
         { level: 3, label: 'ZOR', description: 'Nadir ve zorlayıcı.' },
+    ];
+
+    const categoryOptions: { id: CategoryOption; label: string }[] = [
+        { id: 'rastgele', label: 'RASTGELE' },
+        { id: 'hayvan', label: 'HAYVANLAR' },
+        { id: 'bitki', label: 'BİTKİLER' },
+        { id: 'şehir', label: 'ŞEHİRLER' },
+        { id: 'yemek', label: 'YEMEKLER' },
+        { id: 'spor', label: 'SPOR' },
+        { id: 'meslek', label: 'MESLEKLER' },
+        { id: 'isim', label: 'İSİM' },
+        { id: 'sıfat', label: 'SIFAT' },
+        { id: 'zarf', label: 'ZARF' },
+        { id: 'ünlem', label: 'ÜNLEM' },
+        { id: 'edat', label: 'EDAT' },
+        { id: 'bağlaç', label: 'BAĞLAÇ' },
+        { id: 'zamir', label: 'ZAMİR' },
+        { id: 'diğer', label: 'DİĞER' },
     ];
 
     if (!isOpen) return null;
@@ -57,93 +77,181 @@ export function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                         </button>
                     </div>
 
-                    <div className="space-y-8 relative">
-                        {/* Zorluk Ayarı */}
-                        <div>
-                            <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-4 block opacity-80">
-                                Oyun Zorluk Seviyesi
-                            </label>
-                            <div className="grid grid-cols-3 gap-3">
-                                {difficultyOptions.map((option) => (
-                                    <button
-                                        key={option.level}
-                                        onClick={() => setDifficulty(option.level)}
-                                        className={`flex flex-col items-center justify-center py-4 px-2 rounded-2xl border-2 transition-all relative group ${difficulty === option.level
-                                            ? 'border-primary bg-primary/10 shadow-[0_8px_20px_-4px_rgba(34,211,238,0.3)]'
-                                            : 'border-surface-mid bg-surface-hover/50 hover:border-surface-hover text-text-secondary'
-                                            }`}
-                                    >
-                                        <span className={`text-xs font-black tracking-tight mb-1 ${difficulty === option.level ? 'text-primary' : ''}`}>
-                                            {option.label}
-                                        </span>
-                                        {difficulty === option.level && (
-                                            <motion.div
-                                                layoutId="active-difficulty"
-                                                className="absolute -top-2 -right-2 w-6 h-6 rounded-full bg-primary flex items-center justify-center text-bg shadow-lg"
-                                            >
-                                                <Check size={14} strokeWidth={4} />
-                                            </motion.div>
-                                        )}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Ses Ayarı */}
-                        <div className="flex items-center justify-between p-5 rounded-3xl bg-surface-hover/30 border border-surface-mid/50">
-                            <div className="flex items-center gap-4">
-                                <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-colors ${isSoundEnabled ? 'bg-primary/20 text-primary' : 'bg-surface-mid text-text-muted'}`}>
-                                    {isSoundEnabled ? <Volume2 size={24} /> : <VolumeX size={24} />}
-                                </div>
-                                <div>
-                                    <h4 className="font-black text-text-main text-sm">Oyun Sesleri</h4>
-                                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Efektler ve Uyarılar</p>
-                                </div>
-                            </div>
-                            <button
-                                onClick={toggleSound}
-                                className={`w-14 h-8 rounded-full p-1 transition-all relative ${isSoundEnabled ? 'bg-primary shadow-[0_0_15px_rgba(34,211,238,0.4)]' : 'bg-surface-mid'}`}
-                            >
+                    {/* Tab Navigation */}
+                    <div className="flex bg-surface-hover/30 p-1 rounded-2xl mb-6 relative z-10 border border-surface-mid/50">
+                        <button
+                            onClick={() => setActiveTab('game')}
+                            className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase transition-all rounded-xl relative ${activeTab === 'game' ? 'text-primary' : 'text-text-muted hover:text-text-main'}`}
+                        >
+                            Oyun
+                            {activeTab === 'game' && (
                                 <motion.div
-                                    animate={{ x: isSoundEnabled ? 24 : 0 }}
-                                    className="w-6 h-6 rounded-full bg-white shadow-md"
+                                    layoutId="settings-tab"
+                                    className="absolute inset-0 bg-surface rounded-xl shadow-sm border border-surface-mid/50 -z-10"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                 />
-                            </button>
-                        </div>
+                            )}
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('system')}
+                            className={`flex-1 py-2.5 text-xs font-black tracking-widest uppercase transition-all rounded-xl relative ${activeTab === 'system' ? 'text-primary' : 'text-text-muted hover:text-text-main'}`}
+                        >
+                            Sistem
+                            {activeTab === 'system' && (
+                                <motion.div
+                                    layoutId="settings-tab"
+                                    className="absolute inset-0 bg-surface rounded-xl shadow-sm border border-surface-mid/50 -z-10"
+                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                />
+                            )}
+                        </button>
+                    </div>
 
-                        {/* Tema Ayarı */}
-                        <div className="flex items-center justify-between p-5 rounded-3xl bg-surface-hover/30 border border-surface-mid/50">
-                            <div className="flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-2xl bg-surface-mid/50 flex items-center justify-center text-primary">
-                                    {mounted && (theme === 'dark' ? <Moon size={24} /> : <Sun size={24} />)}
-                                </div>
-                                <div>
-                                    <h4 className="font-black text-text-main text-sm">Görünüm</h4>
-                                    <p className="text-[10px] text-text-muted font-bold uppercase tracking-wider">Koyu / Açık Tema</p>
-                                </div>
-                            </div>
-                            <div className="flex bg-surface-mid rounded-xl p-1 gap-1">
-                                <button
-                                    onClick={() => setTheme('light')}
-                                    className={`w-9 h-9 flex items-center justify-center rounded-lg transition-all ${theme === 'light' ? 'bg-white text-orange-500 shadow-sm' : 'text-text-muted hover:text-text-main'}`}
-                                    title="Açık Tema"
+                    <div className="space-y-6 relative max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                        <AnimatePresence mode="wait">
+                            {activeTab === 'game' ? (
+                                <motion.div
+                                    key="game-settings"
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: 10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="space-y-6"
                                 >
-                                    <Sun size={18} />
-                                </button>
-                                <button
-                                    onClick={() => setTheme('dark')}
-                                    className={`w-9 h-9 flex items-center justify-center rounded-lg transition-all ${theme === 'dark' ? 'bg-surface text-primary shadow-sm' : 'text-text-muted hover:text-text-main'}`}
-                                    title="Koyu Tema"
+                                    {/* Zorluk Ayarı */}
+                                    <div>
+                                        <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3 block opacity-80">
+                                            Oyun Zorluk Seviyesi
+                                        </label>
+                                        <div className="grid grid-cols-3 gap-2">
+                                            {difficultyOptions.map((option) => (
+                                                <button
+                                                    key={option.level}
+                                                    onClick={() => setDifficulty(option.level)}
+                                                    className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border-2 transition-all relative group ${difficulty === option.level
+                                                        ? 'border-primary bg-primary/10 shadow-[0_4px_12px_-4px_rgba(34,211,238,0.3)]'
+                                                        : 'border-surface-mid bg-surface-hover/50 hover:border-surface-hover text-text-secondary'
+                                                        }`}
+                                                >
+                                                    <span className={`text-[11px] font-black tracking-tight ${difficulty === option.level ? 'text-primary' : ''}`}>
+                                                        {option.label}
+                                                    </span>
+                                                    {difficulty === option.level && (
+                                                        <motion.div
+                                                            layoutId="active-difficulty"
+                                                            className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-bg shadow-md"
+                                                        >
+                                                            <Check size={12} strokeWidth={4} />
+                                                        </motion.div>
+                                                    )}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Kategoriler */}
+                                    {showCategory && (
+                                        <div>
+                                            <label className="text-[10px] font-black text-primary uppercase tracking-[0.2em] mb-3 block opacity-80">
+                                                Oyun Kategorisi
+                                            </label>
+                                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                                {categoryOptions.map((option) => (
+                                                    <button
+                                                        key={option.id}
+                                                        onClick={() => setCategory(option.id)}
+                                                        className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl border-2 transition-all relative group ${category === option.id
+                                                            ? 'border-primary bg-primary/10 shadow-[0_4px_12px_-4px_rgba(34,211,238,0.3)]'
+                                                            : 'border-surface-mid bg-surface-hover/50 hover:border-surface-hover text-text-secondary'
+                                                            }`}
+                                                    >
+                                                        <span className={`text-[11px] font-black tracking-tight text-center leading-tight ${category === option.id ? 'text-primary' : ''}`}>
+                                                            {option.label}
+                                                        </span>
+                                                        {category === option.id && (
+                                                            <motion.div
+                                                                layoutId="active-category"
+                                                                className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-bg shadow-md"
+                                                            >
+                                                                <Check size={12} strokeWidth={4} />
+                                                            </motion.div>
+                                                        )}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </motion.div>
+                            ) : (
+                                <motion.div
+                                    key="system-settings"
+                                    initial={{ opacity: 0, x: 10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="space-y-6"
                                 >
-                                    <Moon size={18} />
-                                </button>
-                            </div>
-                        </div>
+                                    {/* Diğer Ayarlar */}
+                                    <div className="bg-surface-hover/30 border border-surface-mid/50 rounded-2xl divide-y divide-surface-mid/50 overflow-hidden">
+                                        {/* Ses Ayarı */}
+                                        <div className="flex items-center justify-between p-4 px-5">
+                                            <div className="flex items-center gap-4">
+                                                <div className={`w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${isSoundEnabled ? 'bg-primary/20 text-primary' : 'bg-surface-mid text-text-muted'}`}>
+                                                    {isSoundEnabled ? <Volume2 size={20} /> : <VolumeX size={20} />}
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-bold text-text-main text-sm">Oyun Sesleri</h4>
+                                                    <p className="text-[9px] text-text-muted font-bold uppercase tracking-wider mt-0.5">Efektler ve Uyarılar</p>
+                                                </div>
+                                            </div>
+                                            <button
+                                                onClick={toggleSound}
+                                                className={`w-12 h-7 rounded-full p-1 transition-all relative ${isSoundEnabled ? 'bg-primary shadow-[0_0_10px_rgba(34,211,238,0.4)]' : 'bg-surface-mid'}`}
+                                            >
+                                                <motion.div
+                                                    animate={{ x: isSoundEnabled ? 20 : 0 }}
+                                                    className="w-5 h-5 rounded-full bg-white shadow-sm"
+                                                />
+                                            </button>
+                                        </div>
+
+                                        {/* Tema Ayarı */}
+                                        <div className="flex items-center justify-between p-4 px-5">
+                                            <div className="flex items-center gap-4">
+                                                <div className="w-10 h-10 rounded-xl bg-surface-mid/50 flex items-center justify-center text-primary">
+                                                    {mounted && (theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />)}
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-bold text-text-main text-sm">Görünüm</h4>
+                                                    <p className="text-[9px] text-text-muted font-bold uppercase tracking-wider mt-0.5">Koyu / Açık Tema</p>
+                                                </div>
+                                            </div>
+                                            <div className="flex bg-surface border border-surface-mid/50 rounded-lg p-1 gap-1">
+                                                <button
+                                                    onClick={() => setTheme('light')}
+                                                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-all ${theme === 'light' ? 'bg-white text-orange-500 shadow-sm' : 'text-text-muted hover:text-text-main'}`}
+                                                    title="Açık Tema"
+                                                >
+                                                    <Sun size={16} />
+                                                </button>
+                                                <button
+                                                    onClick={() => setTheme('dark')}
+                                                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-all ${theme === 'dark' ? 'bg-surface-hover text-primary shadow-sm' : 'text-text-muted hover:text-text-main'}`}
+                                                    title="Koyu Tema"
+                                                >
+                                                    <Moon size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
                     <button
                         onClick={onClose}
-                        className="w-full mt-10 bg-text-main text-bg font-black py-5 rounded-2xl hover:bg-primary transition-all shadow-xl hover:shadow-primary/20 uppercase tracking-[0.2em] text-sm active:scale-[0.98]"
+                        className="w-full mt-6 bg-text-main text-bg font-black py-4 rounded-xl hover:bg-primary transition-all shadow-xl hover:shadow-primary/20 uppercase tracking-[0.2em] text-sm active:scale-[0.98]"
                     >
                         TAMAM
                     </button>
