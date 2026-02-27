@@ -52,6 +52,35 @@ export const scoreService = {
     },
 
     /**
+     * Boggle için puan hesaplar.
+     * Her kelime uzunluğuna göre puan verir, toplam puanı döner.
+     */
+    getBoggleWordPoints(wordLength: number): number {
+        if (wordLength <= 2) return 0;
+        if (wordLength <= 4) return 1;
+        if (wordLength === 5) return 2;
+        if (wordLength === 6) return 3;
+        if (wordLength === 7) return 5;
+        return 11; // 8+ harfli kelimeler
+    },
+
+    calculateBoggleScore(foundWords: string[], difficulty: number): number {
+        const wordPoints = foundWords.reduce((total, word) => {
+            return total + this.getBoggleWordPoints(word.length);
+        }, 0);
+
+        // Zorluk Çarpanı
+        let multiplier = 1.0;
+        if (difficulty === 2) multiplier = 1.5;
+        if (difficulty === 3) multiplier = 2.0;
+
+        // Kelime sayısı bonusu: her 5 kelimede +10 bonus
+        const wordCountBonus = Math.floor(foundWords.length / 5) * 10;
+
+        return Math.round((wordPoints + wordCountBonus) * multiplier);
+    },
+
+    /**
      * Oyun sonucunu (kazanma/kaybetme) kaydeder.
      * Kullanıcı giriş yapmışsa Supabase'e, misafirse LocalStorage'a kaydeder.
      */

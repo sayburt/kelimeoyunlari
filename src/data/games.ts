@@ -143,5 +143,47 @@ export const GAMES: Game[] = [
                 'Kelimedeki bilinen harflere bakarak Türkçe kelime yapısına göre takı tahmininde bulunun (ör. -LAR, -MEK).'
             ]
         }
+    },
+    {
+        id: 'boggle',
+        title: 'Boggle',
+        description: 'Harfleri birbirine bağlayarak kelimeler oluştur! 3 dakikada en yüksek puanı topla.',
+        href: '/games/boggle',
+        thumbnail: '/games/boggle/card.webp',
+        playCount: 0,
+        likeCount: 0,
+        comingSoon: false,
+        instructions: {
+            basic: '4×4 ızgaradaki harfleri birbirine bağlayarak anlamlı Türkçe kelimeler oluşturun. Yatay, dikey ve çapraz olmak üzere 8 yönde hareket edebilirsiniz. Aynı hücreyi bir kelimede birden fazla kullanamazsınız.',
+            rules: [
+                'Oyun 4×4 (16 harf) bir ızgara üzerinde oynanır. Harfler her oyunda rastgele yerleştirilir.',
+                'Kelime oluşturmak için bitişik (yatay, dikey veya çapraz) karelerdeki harflere sırayla tıklayın veya sürükleyin.',
+                'Bir kelimede aynı kareyi iki kez kullanamazsınız.',
+                'Geçerli bir kelime en az 3 harf uzunluğunda olmalıdır.',
+                'Bulduğunuz her geçerli ve benzersiz kelime puan kazandırır. Daha uzun kelimeler daha fazla puan verir.',
+                'Süreniz 3 dakikadır. Süre dolduğunda oyun sona erer ve toplam puanınız hesaplanır.'
+            ],
+            scoring: {
+                description: 'Boggle puanlama sistemi kelime uzunluğuna bağlıdır. Daha uzun kelimeler çok daha yüksek puan verir:',
+                points: [
+                    { condition: '3 Harfli Kelime', value: '1 Puan' },
+                    { condition: '4 Harfli Kelime', value: '1 Puan' },
+                    { condition: '5 Harfli Kelime', value: '2 Puan' },
+                    { condition: '6 Harfli Kelime', value: '3 Puan' },
+                    { condition: '7 Harfli Kelime', value: '5 Puan' },
+                    { condition: '8+ Harfli Kelime', value: '11 Puan' }
+                ]
+            },
+            footer: 'Harfleri birbirine bağla, kelimeleri keşfet ve en yüksek puanı topla!'
+        },
+        blogContent: {
+            history: 'Boggle, 1972 yılında Allan Turoff tarafından icat edilen ve Parker Brothers tarafından yayımlanan klasik bir kelime oyunudur. Orijinalinde fiziksel harf zarlarının bir tepside çalkalanmasıyla oluşan rastgele ızgara üzerinde oynanır. Dünya genelinde milyonlarca kişi tarafından sevilen Boggle, hem eğlenceli hem de kelime dağarcığını geliştiren bir oyun olarak bilinir.',
+            proTips: [
+                'Önce uzun kelimeleri bulmaya çalışın — 7+ harfli kelimeler çok daha yüksek puan verir.',
+                'Ek ve son ekleri düşünün: -LAR, -LER, -MAK, -MEK gibi ekler yeni kelimeler oluşturabilir.',
+                'Izgaranın tamamını tarayın, sadece bir köşeye odaklanmayın.',
+                'Sık kullanılan harf gruplarını arayın: bir sesli harfin etrafındaki sessiz harfler genellikle kelime oluşturur.'
+            ]
+        }
     }
 ];
