@@ -11,6 +11,8 @@ export interface GameCardProps {
     thumbnail?: string;
     playCount?: number;
     likeCount?: number;
+    isLiked?: boolean;
+    onLike?: () => void;
 }
 
 export function GameCard({
@@ -22,6 +24,8 @@ export function GameCard({
     thumbnail,
     playCount = 0,
     likeCount = 0,
+    isLiked = false,
+    onLike,
 }: GameCardProps) {
     return (
         <div
@@ -62,23 +66,23 @@ export function GameCard({
                             <Users size={14} className="text-text-secondary" />
                             <span>{playCount.toLocaleString('tr-TR')}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-xs font-medium" title="Beğeni Sayısı">
-                            <Heart size={14} className="text-text-secondary" />
-                            <span>{likeCount.toLocaleString('tr-TR')}</span>
-                        </div>
+                        <button
+                            disabled={comingSoon}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onLike?.();
+                            }}
+                            className={`flex items-center gap-1.5 text-xs font-medium cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${isLiked ? 'text-red-500 hover:text-red-400' : 'text-text-secondary hover:text-red-500'}`}
+                            title={isLiked ? "Beğeniyi Geri Al" : "Beğen"}
+                            aria-label={isLiked ? "Beğeniyi Geri Al" : "Beğen"}
+                        >
+                            <Heart size={14} className={isLiked ? "fill-current" : ""} />
+                            <span className={isLiked ? "font-semibold" : ""}>{likeCount.toLocaleString('tr-TR')}</span>
+                        </button>
                     </div>
 
-                    {/* Etkileşim İkonları (Şu an tıklandığında sadece UI, fonksiyonel değil) */}
+                    {/* Etkileşim İkonları */}
                     <div className="flex items-center gap-2">
-                        <button
-                            className="p-1.5 rounded-md hover:bg-surface-mid/50 hover:text-red-400 transition-colors text-text-secondary disabled:opacity-50"
-                            disabled={comingSoon}
-                            onClick={(e) => e.stopPropagation()}
-                            aria-label="Beğen"
-                            title="Beğen"
-                        >
-                            <Heart size={16} />
-                        </button>
                         <button
                             className="p-1.5 rounded-md hover:bg-surface-mid/50 hover:text-primary transition-colors text-text-secondary disabled:opacity-50"
                             disabled={comingSoon}

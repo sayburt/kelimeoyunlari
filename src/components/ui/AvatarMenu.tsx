@@ -43,7 +43,7 @@ export function AvatarMenu() {
         <div className="relative">
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-primary/60 text-bg font-bold text-lg shadow-[0_0_10px_rgba(34,211,238,0.3)] hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
+                className="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer bg-gradient-to-tr from-primary to-primary/60 text-bg font-bold text-lg shadow-[0_0_10px_rgba(34,211,238,0.3)] hover:shadow-[0_0_15px_rgba(34,211,238,0.5)] transition-all focus:outline-none focus:ring-2 focus:ring-primary/50"
             >
                 {avatar ? <span className="text-xl leading-none">{avatar}</span> : initial}
             </button>

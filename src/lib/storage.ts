@@ -15,6 +15,7 @@ const STORAGE_KEYS = {
     SESSION_ID: "kelime_session_id",
     SETTINGS: "kelime_settings",
     GAME_STATE: "kelime_game_state",
+    GUEST_LIKES: "kelime_guest_likes",
 };
 
 export const storage = {
@@ -84,9 +85,30 @@ export const storage = {
     getSettings: () => storage.get<Record<string, unknown>>(STORAGE_KEYS.SETTINGS, { sound: true }),
     setSettings: (settings: Record<string, unknown>) => storage.set(STORAGE_KEYS.SETTINGS, settings),
 
+    getGuestLikes: (): string[] => {
+        return storage.get<string[]>(STORAGE_KEYS.GUEST_LIKES, []);
+    },
+
+    toggleGuestLike: (gameId: string): boolean => {
+        const likes = storage.getGuestLikes();
+        const index = likes.indexOf(gameId);
+        let isLiked = false;
+
+        if (index > -1) {
+            likes.splice(index, 1);
+        } else {
+            likes.push(gameId);
+            isLiked = true;
+        }
+
+        storage.set(STORAGE_KEYS.GUEST_LIKES, likes);
+        return isLiked;
+    },
+
     clearGuestData: () => {
         storage.remove(STORAGE_KEYS.GUEST_STATS);
         storage.remove(STORAGE_KEYS.SESSION_ID);
+        storage.remove(STORAGE_KEYS.GUEST_LIKES);
     },
 
     getGameState: <T>(gameName: string): T | null => {
