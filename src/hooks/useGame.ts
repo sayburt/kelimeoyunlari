@@ -37,7 +37,7 @@ export interface UseGameOptions {
     challengeId?: string | null;
 }
 
-const GAME_NAME = 'wordle';
+import { GAME_NAME } from '@/constants/wordleConstants';
 
 export function useGame(options: UseGameOptions = {}) {
     const {

@@ -26,8 +26,7 @@ export interface UseHangmanOptions {
     isPaused?: boolean;
 }
 
-const GAME_NAME = 'hangman';
-const MAX_LIVES = 6;
+import { GAME_NAME, MAX_LIVES } from '@/constants/hangmanConstants';
 
 export function useHangman(options: UseHangmanOptions = {}) {
     const { isPaused = false } = options;
