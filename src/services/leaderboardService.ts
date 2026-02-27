@@ -42,7 +42,7 @@ export const leaderboardService = {
                 .select('user_id, max_streak, profiles!inner(username, avatar)')
                 .order('max_streak', { ascending: false })
                 .gt('max_streak', 0)
-                .limit(limit);
+                .limit(limit * 5); // Fetch more to deduplicate later
         }
 
         const { data, error } = await query;
@@ -53,15 +53,24 @@ export const leaderboardService = {
         }
 
         if (type === 'best_streak') {
-            return (data ?? []).map((row: Record<string, unknown>) => {
-                const profiles = row.profiles as Record<string, unknown> | null;
-                return {
-                    user_id: row.user_id as string,
-                    username: (profiles?.username as string) ?? null,
-                    avatar: (profiles?.avatar as string) ?? null,
-                    value: row.max_streak as number,
-                };
-            });
+            const uniqueUsers = new Set<string>();
+            const results: LeaderboardEntry[] = [];
+
+            for (const row of ((data ?? []) as Record<string, unknown>[])) {
+                const userId = row.user_id as string;
+                if (!uniqueUsers.has(userId)) {
+                    uniqueUsers.add(userId);
+                    const profiles = row.profiles as Record<string, unknown> | null;
+                    results.push({
+                        user_id: userId,
+                        username: (profiles?.username as string) ?? null,
+                        avatar: (profiles?.avatar as string) ?? null,
+                        value: row.max_streak as number,
+                    });
+                    if (results.length >= limit) break;
+                }
+            }
+            return results;
         }
 
         return (data ?? []).map((row: Record<string, unknown>) => ({

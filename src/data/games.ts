@@ -42,8 +42,8 @@ export const GAMES: Game[] = [
         description: 'Ücretsiz Türkçe Wordle oyunu ile 5 harfli gizli kelimeyi 6 denemede bul!',
         href: '/games/wordle',
         thumbnail: '/games/wordle/card.webp',
-        playCount: 15420,
-        likeCount: 4200,
+        playCount: 0,
+        likeCount: 0,
         comingSoon: false,
         instructions: {
             basic: 'Amacınız ücretsiz Türkçe Wordle oyununda 5 harfli gizli kelimeyi 6 denemede bulmaktır. Her tahmin geçerli 5 harfli bir kelime olmalıdır. Tahmininizi yazdıktan sonra göndermek için Enter tuşuna basın.',
