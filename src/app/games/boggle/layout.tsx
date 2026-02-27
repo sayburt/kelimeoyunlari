@@ -5,11 +5,11 @@ const gameData = GAMES.find(g => g.id === 'boggle');
 
 export const metadata: Metadata = {
     title: 'Boggle Oyna | Kelime Oyunları',
-    description: 'Klasik Boggle oyununu Türkçe oynayın! 4×4 ızgaradaki harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
-    keywords: ['boggle', 'boggle nasıl oynanır', 'kelime oyunu', 'türkçe boggle', 'kelime bulmaca', 'zeka oyunu', 'harf oyunu'],
+    description: 'Ücretsiz Türkçe Boggle oyununu sınırsız oynayın! harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
+    keywords: ['ücretsiz boggle', 'türkçe boggle', 'boggle oyna', 'kelime oyunu', 'harf bağlama oyunu', 'zeka oyunu', 'kelime bulmaca'],
     openGraph: {
         title: 'Boggle Oyna | Kelime Oyunları',
-        description: 'Klasik Boggle oyununu Türkçe oynayın! 4×4 ızgaradaki harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
+        description: 'Ücretsiz Türkçe Boggle oyununu sınırsız oynayın! harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
         images: [
             {
                 url: '/games/boggle/og.jpg',
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Boggle Oyna | Kelime Oyunları',
-        description: 'Klasik Boggle oyununu Türkçe oynayın! 4×4 ızgaradaki harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
+        description: 'Ücretsiz Türkçe Boggle oyununu sınırsız oynayın! harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
         images: ['/games/boggle/og.jpg'],
     },
     alternates: {

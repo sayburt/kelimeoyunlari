@@ -17,6 +17,8 @@ import { HangmanKeyboard } from '@/components/game/HangmanKeyboard';
 import { HangmanWordDisplay } from '@/components/game/HangmanWordDisplay';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useGameModals } from '@/hooks/useGameModals';
+import { GAMES } from '@/data/games';
+import { GameInstructions } from '@/components/game/GameInstructions';
 
 const GAME_NAME = 'adam-asmaca';
 
@@ -182,6 +184,14 @@ function AdamAsmacaPageContent() {
                     />
                 </div>
             </div>
+
+            <section className="w-full max-w-2xl mx-auto px-6 py-12 md:py-16 border-t border-surface/50">
+                <GameInstructions
+                    instructions={GAMES.find(g => g.id === 'adam-asmaca')!.instructions}
+                    title="Adam Asmaca"
+                    gameId="adam-asmaca"
+                />
+            </section>
 
             <GameEndModal
                 isOpen={showResultModal}

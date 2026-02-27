@@ -5,10 +5,10 @@ const gameData = GAMES.find(g => g.id === 'adam-asmaca');
 
 export const metadata: Metadata = {
     title: gameData?.title || 'Adam Asmaca',
-    description: gameData?.description || 'Gizli kelimeyi adam çizilmeden bul!',
+    description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi adam çizilmeden bul!',
     openGraph: {
-        title: `${gameData?.title || 'Adam Asmaca'} - Kelime Oyunları`,
-        description: gameData?.description || 'Gizli kelimeyi adam çizilmeden bul!',
+        title: `${gameData?.title || 'Adam Asmaca'} | Kelime Oyunları`,
+        description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi adam çizilmeden bul!',
         url: 'https://www.kelimeoyunlari.tr/games/adam-asmaca',
         images: [
             {
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: `${gameData?.title || 'Adam Asmaca'} - Kelime Oyunları`,
-        description: gameData?.description || 'Gizli kelimeyi adam çizilmeden bul!',
+        title: `${gameData?.title || 'Adam Asmaca'} | Kelime Oyunları`,
+        description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi adam çizilmeden bul!',
         images: ['/games/adam-asmaca/og.jpg'],
     },
     alternates: {
@@ -46,7 +46,7 @@ export default function AdamAsmacaLayout({
                             '@context': 'https://schema.org',
                             '@type': 'VideoGame',
                             name: 'Adam Asmaca',
-                            description: gameData?.description || 'Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul! Klasik adam asmaca oyunu.',
+                            description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul!',
                             genre: ['Kelime Oyunu', 'Bulmaca'],
                             url: 'https://www.kelimeoyunlari.tr/games/adam-asmaca',
                             image: 'https://www.kelimeoyunlari.tr/games/adam-asmaca/og.jpg',

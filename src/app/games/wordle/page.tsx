@@ -306,6 +306,7 @@ function WordlePageContent() {
                 <GameInstructions
                     instructions={GAMES.find(g => g.id === 'wordle')!.instructions}
                     title="Wordle"
+                    gameId="wordle"
                 />
             </section>
 

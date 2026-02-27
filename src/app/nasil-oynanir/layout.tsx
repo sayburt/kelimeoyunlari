@@ -2,7 +2,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title: "Nasıl Oynanır? | Kelime Oyunları",
-    description: "Tüm Türkçe kelime oyunlarının kurallarını, tarihçesini ve kazanma taktiklerini öğrenin.",
+    description: "Tüm kelime oyunlarının kurallarını, tarihçesini ve kazanma taktiklerini öğrenin.",
 };
 
 export default function HowToPlayLayout({

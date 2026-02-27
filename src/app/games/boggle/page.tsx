@@ -196,6 +196,7 @@ function BogglePageContent() {
                 <GameInstructions
                     instructions={GAMES.find(g => g.id === 'boggle')!.instructions}
                     title="Boggle"
+                    gameId="boggle"
                 />
             </section>
 

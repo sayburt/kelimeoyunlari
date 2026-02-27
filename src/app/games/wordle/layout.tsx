@@ -2,11 +2,11 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
     title: 'Wordle Oyna | Kelime Oyunları',
-    description: 'Popüler Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
-    keywords: ['wordle', 'wordle nasıl oynanır', 'kelime oyunu', 'türkçe wordle', 'kelime bulmaca', 'zeka oyunu', 'kelime tahmin'],
+    description: 'Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
+    keywords: ['ücretsiz wordle', 'türkçe wordle', 'wordle oyna', 'kelime oyunu', 'günlük kelime bulmaca', 'zeka oyunu', 'kelime tahmin oyunu'],
     openGraph: {
         title: 'Wordle Oyna | Kelime Oyunları',
-        description: 'Popüler Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
+        description: 'Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
         images: [
             {
                 url: '/games/wordle/og.jpg',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     twitter: {
         card: 'summary_large_image',
         title: 'Wordle Oyna | Kelime Oyunları',
-        description: 'Popüler Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
+        description: 'Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
         images: ['/games/wordle/og.jpg'],
     },
     alternates: {
@@ -41,7 +41,7 @@ export default function WordleLayout({
         "@context": "https://schema.org",
         "@type": ["VideoGame", "HowTo"],
         "name": "Wordle",
-        "description": "Popüler Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.",
+        "description": "Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.",
         "genre": "Kelime Oyunu",
         "playMode": "SinglePlayer",
         "inLanguage": "tr",

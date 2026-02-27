@@ -39,14 +39,14 @@ export const GAMES: Game[] = [
     {
         id: 'wordle',
         title: 'Wordle',
-        description: '5 harfli gizli kelimeyi 6 denemede bul!',
+        description: 'Ücretsiz Türkçe Wordle oyunu ile 5 harfli gizli kelimeyi 6 denemede bul!',
         href: '/games/wordle',
         thumbnail: '/games/wordle/card.webp',
         playCount: 15420,
         likeCount: 4200,
         comingSoon: false,
         instructions: {
-            basic: 'Amacınız 5 harfli gizli kelimeyi 6 denemede bulmaktır. Her tahmin geçerli 5 harfli bir kelime olmalıdır. Tahmininizi yazdıktan sonra göndermek için Enter tuşuna basın.',
+            basic: 'Amacınız ücretsiz Türkçe Wordle oyununda 5 harfli gizli kelimeyi 6 denemede bulmaktır. Her tahmin geçerli 5 harfli bir kelime olmalıdır. Tahmininizi yazdıktan sonra göndermek için Enter tuşuna basın.',
             rules: [
                 'Her tahminden sonra, harflerin rengi tahmininizin gizli kelimeye ne kadar yakın olduğunu göstermek için değişecektir.',
                 'Doğru harf doğru yerdeyse yeşil, yanlış yerdeyse sarı, kelimede yoksa gri olur.'
@@ -97,14 +97,14 @@ export const GAMES: Game[] = [
     {
         id: 'adam-asmaca',
         title: 'Adam Asmaca',
-        description: 'Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul! Klasik adam asmaca oyunu.',
+        description: 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul! Klasik eğlence.',
         href: '/games/adam-asmaca',
         thumbnail: '/games/adam-asmaca/card.webp',
         playCount: 0,
         likeCount: 0,
         comingSoon: false,
         instructions: {
-            basic: 'Adam Asmaca, gizli kelimeyi harflerini tahmin ederek bulmaya çalıştığınız klasik bir kelime oyunudur. Toplamda 6 hakkınız var.',
+            basic: 'Ücretsiz Türkçe Adam Asmaca, gizli kelimeyi harflerini tahmin ederek bulmaya çalıştığınız klasik bir kelime oyunudur. Toplamda 6 hakkınız var.',
             rules: [
                 'Oyun başladığında ekranda kelimenin harf sayısı kadar boşluk görürsünüz.',
                 'Klavyeden bir harfe tıklayın: harf kelimede varsa ilgili boşluklara yerleşir, yoksa idam sehpasındaki adam bir adım daha çizilir.',
@@ -147,14 +147,14 @@ export const GAMES: Game[] = [
     {
         id: 'boggle',
         title: 'Boggle',
-        description: 'Harfleri birbirine bağlayarak kelimeler oluştur! 3 dakikada en yüksek puanı topla.',
+        description: 'Harfleri birbirine bağlayarak kelimeler oluştur! Ücretsiz Türkçe Boggle oyunu ile sınırsız oyna ve en yüksek puanı topla.',
         href: '/games/boggle',
         thumbnail: '/games/boggle/card.webp',
         playCount: 0,
         likeCount: 0,
         comingSoon: false,
         instructions: {
-            basic: '4×4 ızgaradaki harfleri birbirine bağlayarak anlamlı Türkçe kelimeler oluşturun. Yatay, dikey ve çapraz olmak üzere 8 yönde hareket edebilirsiniz. Aynı hücreyi bir kelimede birden fazla kullanamazsınız.',
+            basic: '4×4 ızgaradaki harfleri birbirine bağlayarak anlamlı Türkçe kelimeler oluşturun. Ücretsiz Türkçe Boggle deneyimi ile yatay, dikey ve çapraz olmak üzere 8 yönde hareket edebilirsiniz. Aynı hücreyi bir kelimede birden fazla kullanamazsınız.',
             rules: [
                 'Oyun 4×4 (16 harf) bir ızgara üzerinde oynanır. Harfler her oyunda rastgele yerleştirilir.',
                 'Kelime oluşturmak için bitişik (yatay, dikey veya çapraz) karelerdeki harflere sırayla tıklayın veya sürükleyin.',

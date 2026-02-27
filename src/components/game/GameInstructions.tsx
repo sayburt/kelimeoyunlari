@@ -1,12 +1,14 @@
 import React from 'react';
 import { GameInstructions as GameInstructionsType } from '@/data/games';
+import Link from 'next/link';
 
 interface GameInstructionsProps {
     instructions: GameInstructionsType;
     title?: string;
+    gameId?: string;
 }
 
-export function GameInstructions({ instructions, title }: GameInstructionsProps) {
+export function GameInstructions({ instructions, title, gameId }: GameInstructionsProps) {
     return (
         <div className="space-y-6 text-text-main/90">
             {title && (
@@ -102,6 +104,19 @@ export function GameInstructions({ instructions, title }: GameInstructionsProps)
                     <p className="mt-8 pt-6 border-t border-surface-hover/30 text-text-muted italic text-sm">
                         {instructions.footer}
                     </p>
+                )}
+
+                {gameId && (
+                    <div className="mt-10 pt-8 border-t border-surface-hover/20 flex justify-center">
+                        <Link
+                            href={`/nasil-oynanir/${gameId}`}
+                            className="group relative inline-flex items-center gap-3 px-8 py-4 bg-primary text-bg font-black rounded-2xl hover:scale-105 transition-all duration-300 shadow-lg shadow-primary/20 overflow-hidden"
+                        >
+                            <span className="relative z-10">DETAYLI BİLGİ İÇİN TIKLA</span>
+                            <span className="relative z-10 group-hover:translate-x-1 transition-transform">➜</span>
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+                        </Link>
+                    </div>
                 )}
             </div>
         </div>

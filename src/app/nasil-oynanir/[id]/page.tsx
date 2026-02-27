@@ -15,7 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
     return {
         title: `${game.title} Nasıl Oynanır? Kurallar ve Taktikler | Kelime Oyunları`,
-        description: `${game.title} oyunu hakkında her şey: Tarihçesi, kuralları ve kazanma taktikleri. Hemen öğren ve oynamaya baş!`,
+        description: `Ücretsiz Türkçe ${game.title} oyunu hakkında her şey: Tarihçesi, kuralları ve kazanma taktikleri. Öğrenin ve oynamaya başlayın.`,
         openGraph: {
             images: [{ url: game.thumbnail }],
         },

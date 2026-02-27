@@ -15,11 +15,11 @@ export const metadata: Metadata = {
     template: "%s | Kelime Oyunları",
     default: "Kelime Oyunları",
   },
-  description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+  description: "Ücretsiz Türkçe kelime oyunlarını bir arada sunan platform.",
   applicationName: "Kelime Oyunları",
   authors: [{ name: "Kelime Oyunları Takımı" }],
   generator: "Next.js",
-  keywords: ["kelime", "oyun", "türkçe", "wordle", "adam asmaca", "anagram", "bulmaca", "zeka", "kelime oyunu"],
+  keywords: ["ücretsiz kelime oyunu", "türkçe kelime oyunları", "bulmaca", "wordle türkçe", "adam asmaca", "boggle türkçe", "zeka oyunları", "online kelime oyunu"],
   referrer: "origin-when-cross-origin",
   creator: "Kelime Oyunları",
   publisher: "Kelime Oyunları",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Kelime Oyunları",
-    description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+    description: "Ücretsiz Türkçe kelime oyunlarını bir arada sunan platform.",
     url: "https://www.kelimeoyunlari.tr",
     siteName: "Kelime Oyunları",
     images: [
@@ -47,7 +47,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Kelime Oyunları",
-    description: "Türkçe kelime oyunlarını bir arada sunan platform.",
+    description: "Ücretsiz Türkçe kelime oyunlarını bir arada sunan platform.",
     creator: "@kelimeoyunlari",
     images: ["/og.jpg"],
   },
