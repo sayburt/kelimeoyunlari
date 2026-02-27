@@ -35,7 +35,41 @@ export const storage = {
     },
 
     // Yardımcı metodlar
-    getGuestStats: () => storage.get<GuestStat[]>(STORAGE_KEYS.GUEST_STATS, []),
+    getGuestStats: () => {
+        const stats = storage.get<GuestStat[]>(STORAGE_KEYS.GUEST_STATS, []);
+        let migrated = false;
+
+        const updatedStats = stats.map(stat => {
+            if (stat.game_name === 'hangman') {
+                migrated = true;
+                return { ...stat, game_name: 'adam-asmaca' };
+            }
+            return stat;
+        });
+
+        if (migrated) {
+            const gamesMap = new Map<string, GuestStat>();
+            for (const stat of updatedStats) {
+                if (gamesMap.has(stat.game_name)) {
+                    const existing = gamesMap.get(stat.game_name)!;
+                    existing.played += stat.played;
+                    existing.won += stat.won;
+                    existing.best_score = existing.best_score === 0 ? stat.best_score : (stat.best_score === 0 ? existing.best_score : Math.min(existing.best_score, stat.best_score));
+                    existing.high_score = Math.max(existing.high_score, stat.high_score);
+                    existing.current_streak = Math.max(existing.current_streak, stat.current_streak);
+                    existing.max_streak = Math.max(existing.max_streak, stat.max_streak);
+                } else {
+                    gamesMap.set(stat.game_name, { ...stat });
+                }
+            }
+
+            const finalStats = Array.from(gamesMap.values());
+            storage.set(STORAGE_KEYS.GUEST_STATS, finalStats);
+            return finalStats;
+        }
+
+        return stats;
+    },
     setGuestStats: (stats: GuestStat[]) => storage.set(STORAGE_KEYS.GUEST_STATS, stats),
 
     getSessionId: () => {
