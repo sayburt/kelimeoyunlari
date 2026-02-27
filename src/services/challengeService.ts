@@ -144,4 +144,49 @@ export const challengeService = {
 
         return true;
     },
+
+    /**
+     * Open Graph veya arayüz gösterimi için sadece gerekli challenge
+     * ve creator (oluşturan kişi) bilgilerini çeker.
+     * Kullanıcının adını almak için public profiles tablosu ile join yapar.
+     */
+    async getChallengeMetadata(challengeId: string): Promise<{
+        creatorName: string | null;
+        wordLength: number;
+        gameName: string;
+    } | null> {
+        try {
+            // "profiles" public view veya table üzerinden join.
+            // projedeki yapıya göre genelde "created_by" foreign key ile bağlanır.
+            const { data, error } = await supabase
+                .from('challenges')
+                .select(`
+                    word_length,
+                    game_name,
+                    profiles!challenges_created_by_fkey(username)
+                `)
+                .eq('id', challengeId)
+                .single();
+
+            if (error || !data) {
+                return null;
+            }
+
+            // Type string array or single object depending on your exact DB structure 
+            // supabase-js v2 returns it as an object for 1-to-1 or many-to-1 if foreign keys are correct.
+            let username = null;
+            if (data.profiles && typeof data.profiles === 'object') {
+                username = (data.profiles as unknown as { username: string | null }).username;
+            }
+
+            return {
+                creatorName: username || 'Bir oyuncu',
+                wordLength: data.word_length,
+                gameName: data.game_name
+            };
+        } catch (err) {
+            console.error('Metadata çekilirken hata:', err);
+            return null;
+        }
+    }
 };

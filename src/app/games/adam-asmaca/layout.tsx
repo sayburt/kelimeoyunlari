@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { GAMES } from '@/data/games';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildBreadcrumbSchema, buildHowToSchema, buildVideoGameSchema } from '@/components/seo/schemaGenerator';
 
-const gameData = GAMES.find(g => g.id === 'adam-asmaca');
+const gameData = GAMES.find(g => g.id === 'adam-asmaca')!;
 
 export const metadata: Metadata = {
     title: gameData?.title || 'Adam Asmaca',
@@ -35,40 +37,26 @@ export default function AdamAsmacaLayout({
 }: {
     children: React.ReactNode;
 }) {
+    const jsonLd = [
+        buildVideoGameSchema(gameData),
+        buildHowToSchema(
+            `${gameData.title} Nasıl Oynanır?`,
+            gameData.instructions.basic,
+            gameData.instructions.rules.map((rule, index) => ({
+                url: `https://www.kelimeoyunlari.tr/games/adam-asmaca#step${index + 1}`,
+                text: rule
+            }))
+        ),
+        buildBreadcrumbSchema([
+            { name: 'Anasayfa', item: '/' },
+            { name: 'Oyunlar' },
+            { name: gameData.title, item: gameData.href }
+        ])
+    ];
+
     return (
         <>
-            {/* JSON-LD Schema For Game */}
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{
-                    __html: JSON.stringify([
-                        {
-                            '@context': 'https://schema.org',
-                            '@type': 'VideoGame',
-                            name: 'Adam Asmaca',
-                            description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul!',
-                            genre: ['Kelime Oyunu', 'Bulmaca'],
-                            url: 'https://www.kelimeoyunlari.tr/games/adam-asmaca',
-                            image: 'https://www.kelimeoyunlari.tr/games/adam-asmaca/og.jpg',
-                            inLanguage: 'tr',
-                            playMode: 'SinglePlayer',
-                            applicationCategory: 'Game',
-                            platform: 'WebBrowser',
-                        },
-                        {
-                            '@context': 'https://schema.org',
-                            '@type': 'HowTo',
-                            name: 'Adam Asmaca Nasıl Oynanır?',
-                            description: 'Gizli kelimeyi 6 hatalı tahmin yapmadan bulma rehberi.',
-                            step: (gameData?.instructions.rules || []).map((rule, index) => ({
-                                '@type': 'HowToStep',
-                                url: `https://www.kelimeoyunlari.tr/games/adam-asmaca#step${index + 1}`,
-                                text: rule
-                            }))
-                        }
-                    ]),
-                }}
-            />
+            <JsonLd data={jsonLd} />
             {children}
         </>
     );

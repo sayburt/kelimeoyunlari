@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildWebSiteSchema, buildOrganizationSchema } from "@/components/seo/schemaGenerator";
 
 const nunito = Nunito({
   subsets: ["latin"],
@@ -13,13 +15,13 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://www.kelimeoyunlari.tr"),
   title: {
     template: "%s | Kelime Oyunları",
-    default: "Kelime Oyunları",
+    default: "Türkçe Kelime Oyunları Platformu",
   },
-  description: "Ücretsiz Türkçe kelime oyunlarını bir arada sunan platform.",
+  description: "En sevdiğiniz Türkçe kelime oyunlarını ücretsiz ve konforlu şekilde oynayın. Arkadaşlarınızla eğlenceli vakit geçirin, kafanızı dağıtın.",
   applicationName: "Kelime Oyunları",
   authors: [{ name: "Kelime Oyunları Takımı" }],
   generator: "Next.js",
-  keywords: ["ücretsiz kelime oyunu", "türkçe kelime oyunları", "bulmaca", "wordle türkçe", "adam asmaca", "boggle türkçe", "zeka oyunları", "online kelime oyunu"],
+  keywords: ["Türkçe", "popüler", "eğlenceli", "sınırsız", "ücretsiz kelime oyunları"],
   referrer: "origin-when-cross-origin",
   creator: "Kelime Oyunları",
   publisher: "Kelime Oyunları",
@@ -29,8 +31,8 @@ export const metadata: Metadata = {
     telephone: false,
   },
   openGraph: {
-    title: "Kelime Oyunları",
-    description: "Ücretsiz Türkçe kelime oyunlarını bir arada sunan platform.",
+    title: "Türkçe Kelime Oyunları Platformu",
+    description: "En sevdiğiniz Türkçe kelime oyunlarını ücretsiz ve konforlu şekilde oynayın. Arkadaşlarınızla eğlenceli vakit geçirin, kafanızı dağıtın.",
     url: "https://www.kelimeoyunlari.tr",
     siteName: "Kelime Oyunları",
     images: [
@@ -46,8 +48,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Kelime Oyunları",
-    description: "Ücretsiz Türkçe kelime oyunlarını bir arada sunan platform.",
+    title: "Türkçe Kelime Oyunları Platformu",
+    description: "En sevdiğiniz Türkçe kelime oyunlarını ücretsiz ve konforlu şekilde oynayın. Arkadaşlarınızla eğlenceli vakit geçirin, kafanızı dağıtın.",
     creator: "@kelimeoyunlari",
     images: ["/og.jpg"],
   },
@@ -79,6 +81,7 @@ export default function RootLayout({
   return (
     <html lang="tr" suppressHydrationWarning>
       <body className={`${nunito.variable} font-sans`} suppressHydrationWarning>
+        <JsonLd data={[buildWebSiteSchema(), buildOrganizationSchema()]} />
         <ClientLayout>
           {children}
         </ClientLayout>

@@ -1,7 +1,9 @@
 import type { Metadata } from 'next';
 import { GAMES } from '@/data/games';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildBreadcrumbSchema, buildHowToSchema, buildVideoGameSchema } from '@/components/seo/schemaGenerator';
 
-const gameData = GAMES.find(g => g.id === 'boggle');
+const gameData = GAMES.find(g => g.id === 'boggle')!;
 
 export const metadata: Metadata = {
     title: 'Boggle Oyna | Kelime Oyunları',
@@ -39,38 +41,25 @@ export default function BoggleLayout({
     children: React.ReactNode;
 }) {
     const jsonLd = [
-        {
-            '@context': 'https://schema.org',
-            '@type': 'VideoGame',
-            name: 'Boggle',
-            description: gameData?.description || 'Harfleri birbirine bağlayarak kelimeler oluştur! 3 dakikada en yüksek puanı topla.',
-            genre: ['Kelime Oyunu', 'Bulmaca'],
-            url: 'https://www.kelimeoyunlari.tr/games/boggle',
-            image: 'https://www.kelimeoyunlari.tr/games/boggle/og.jpg',
-            inLanguage: 'tr',
-            playMode: 'SinglePlayer',
-            applicationCategory: 'Game',
-            platform: 'WebBrowser',
-        },
-        {
-            '@context': 'https://schema.org',
-            '@type': 'HowTo',
-            name: 'Boggle Nasıl Oynanır?',
-            description: '4×4 ızgaradaki harfleri birbirine bağlayarak kelime bulma rehberi.',
-            step: (gameData?.instructions.rules || []).map((rule, index) => ({
-                '@type': 'HowToStep',
+        buildVideoGameSchema(gameData),
+        buildHowToSchema(
+            `${gameData.title} Nasıl Oynanır?`,
+            gameData.instructions.basic,
+            gameData.instructions.rules.map((rule, index) => ({
                 url: `https://www.kelimeoyunlari.tr/games/boggle#step${index + 1}`,
                 text: rule,
-            })),
-        },
+            }))
+        ),
+        buildBreadcrumbSchema([
+            { name: 'Anasayfa', item: '/' },
+            { name: 'Oyunlar' },
+            { name: gameData.title, item: gameData.href }
+        ])
     ];
 
     return (
         <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            <JsonLd data={jsonLd} />
             {children}
         </>
     );

@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Metadata } from "next";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildArticleSchema, buildBreadcrumbSchema, buildHowToSchema } from "@/components/seo/schemaGenerator";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -32,6 +34,27 @@ export default async function GameHowToPage({ params }: Props) {
 
     return (
         <main className="min-h-screen bg-bg hero-glow">
+            <JsonLd data={[
+                buildArticleSchema({
+                    headline: `${game.title} Nasıl Oynanır? Kurallar ve Taktikler`,
+                    description: `Ücretsiz Türkçe ${game.title} oyunu hakkında her şey: Tarihçesi, kuralları ve kazanma taktikleri. Öğrenin ve oynamaya başlayın.`,
+                    image: `https://www.kelimeoyunlari.tr${game.thumbnail}`,
+                    url: `https://www.kelimeoyunlari.tr/nasil-oynanir/${game.id}`
+                }),
+                buildHowToSchema(
+                    `${game.title} Nasıl Oynanır?`,
+                    game.instructions.basic,
+                    game.instructions.rules.map((rule, idx) => ({
+                        text: rule,
+                        url: `https://www.kelimeoyunlari.tr/nasil-oynanir/${game.id}#step${idx + 1}`
+                    }))
+                ),
+                buildBreadcrumbSchema([
+                    { name: 'Anasayfa', item: '/' },
+                    { name: 'Nasıl Oynanır', item: '/nasil-oynanir' },
+                    { name: `${game.title} Nasıl Oynanır?`, item: `/nasil-oynanir/${game.id}` }
+                ])
+            ]} />
             {/* Hero Section */}
             <header className="relative h-[50vh] min-h-[400px] w-full bg-surface/20 flex items-end overflow-hidden">
                 <Image
@@ -127,7 +150,28 @@ export default async function GameHowToPage({ params }: Props) {
                             )}
                         </section>
 
-
+                        {/* Challenge Section */}
+                        {game.instructions.challenge && (
+                            <section>
+                                <h2 className="text-2xl font-black text-text-main mb-6 flex items-center gap-3">
+                                    <span className="w-8 h-1 bg-primary rounded-full" />
+                                    MEYDAN OKUMA <span className="text-primary italic ml-2">⚔️</span>
+                                </h2>
+                                <div className="p-8 rounded-3xl bg-surface/5 border border-surface/10 space-y-6">
+                                    <p className="text-text-muted leading-relaxed text-lg">
+                                        {game.instructions.challenge.description}
+                                    </p>
+                                    <ul className="space-y-4">
+                                        {game.instructions.challenge.features.map((feature, idx) => (
+                                            <li key={idx} className="flex items-start gap-3 text-text-muted">
+                                                <span className="text-primary font-black mt-1">✨</span>
+                                                <span className="leading-relaxed">{feature}</span>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            </section>
+                        )}
                     </div>
 
                     {/* Sidebar / Tips */}
@@ -182,7 +226,7 @@ export default async function GameHowToPage({ params }: Props) {
                         )}
                     </aside>
                 </div>
-            </article>
-        </main>
+            </article >
+        </main >
     );
 }

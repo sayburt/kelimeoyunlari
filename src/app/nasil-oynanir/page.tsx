@@ -5,6 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
+import { JsonLd } from "@/components/seo/JsonLd";
+import { buildBreadcrumbSchema } from "@/components/seo/schemaGenerator";
 
 export default function HowToPlayPage() {
     const [searchQuery, setSearchQuery] = useState("");
@@ -22,6 +24,10 @@ export default function HowToPlayPage() {
 
     return (
         <main className="min-h-screen bg-bg hero-glow py-12 px-6">
+            <JsonLd data={buildBreadcrumbSchema([
+                { name: 'Anasayfa', item: '/' },
+                { name: 'Nasıl Oynanır', item: '/nasil-oynanir' }
+            ])} />
             <div className="max-w-6xl mx-auto">
                 <header className="mb-12 text-center">
                     <h1 className="text-4xl md:text-6xl font-black text-text-main mb-4 tracking-tighter">

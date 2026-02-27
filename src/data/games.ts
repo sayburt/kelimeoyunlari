@@ -16,6 +16,10 @@ export interface GameInstructions {
         }[];
     };
     examples?: GameInstructionExample[];
+    challenge?: {
+        description: string;
+        features: string[];
+    };
     footer?: string;
 }
 
@@ -85,6 +89,15 @@ export const GAMES: Game[] = [
                     description: 'A harfi kelimede hiç yok.'
                 }
             ],
+            challenge: {
+                description: 'Wordle oyununda arkadaşlarına kendi belirlediğin 5 harfli bir kelimeyle Meydan Okuyabilirsin! Kelimeni belirle, özel bağlantıyı kopyala ve arkadaşlarına gönder. Özel kelimeni 6 denemede bulabilecekler mi gör.',
+                features: [
+                    'Sözlükten 5 harfli geçerli bir kelime seçebilirsin.',
+                    'İstersen kurallara uymayan "Özel Kelime" oluşturabilirsin (özel isimler, yabancı kelimeler vb.).',
+                    'Oluşturulan özel bağlantıyı WhatsApp, Telegram veya diğer platformlarda kolayca paylaşabilirsin.',
+                    'Arkadaşların linke tıkladığında tıpkı normal Wordle oynar gibi senin kelimeni bulmaya çalışır.'
+                ]
+            },
             footer: 'Kelime dağarcığınızı test edin ve zihninizi canlı tutun!'
         },
         blogContent: {
@@ -136,6 +149,15 @@ export const GAMES: Game[] = [
                     description: 'Z harfi yanlış, adam figürü 1 parça daha tamamlandı.'
                 }
             ],
+            challenge: {
+                description: 'Adam Asmaca oyununda bir kelime belirleyerek arkadaşlarına Meydan Okuyabilirsin! İster sözlükten, ister kendi uydurduğun bir kelimeyi seç, bağlantıyı kopyala ve arkadaşlarına gönder.',
+                features: [
+                    'Sözlükten herhangi bir kelime seçebilirsin (ipucu: zor kelimeler rakibini zorlar!).',
+                    'Kendi özel kelimeni oluşturabilirsin (argo, özel isim veya dilediğin herhangi bir kelime).',
+                    'Link üzerinden oyuna giren arkadaşların 6 canı bitmeden senin belirlediğin kelimeyi tahmin etmeye çalışır.',
+                    'Meydan Okuma sonuçlarını arkadaşlarınla rekabet etmek için kullanabilirsin.'
+                ]
+            },
             footer: '6 can içinde bul ve darağacından kurtar!'
         },
         blogContent: {

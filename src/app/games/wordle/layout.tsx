@@ -1,4 +1,9 @@
 import { Metadata } from 'next';
+import { GAMES } from '@/data/games';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { buildBreadcrumbSchema, buildHowToSchema, buildVideoGameSchema } from '@/components/seo/schemaGenerator';
+
+const gameData = GAMES.find(g => g.id === 'wordle')!;
 
 export const metadata: Metadata = {
     title: 'Wordle Oyna | Kelime Oyunları',
@@ -36,40 +41,26 @@ export default function WordleLayout({
 }: {
     children: React.ReactNode;
 }) {
-    // Schema Markup (HowTo ve VideoGame birleşimi)
-    const jsonLd = {
-        "@context": "https://schema.org",
-        "@type": ["VideoGame", "HowTo"],
-        "name": "Wordle",
-        "description": "Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.",
-        "genre": "Kelime Oyunu",
-        "playMode": "SinglePlayer",
-        "inLanguage": "tr",
-        "step": [
-            {
-                "@type": "HowToStep",
-                "name": "Kelimeyi Tahmin Et",
-                "text": "5 harfli geçerli bir kelime yazıp Enter tuşuna basın."
-            },
-            {
-                "@type": "HowToStep",
-                "name": "İpuçlarını İncele",
-                "text": "Harflerin renklerine bakarak ipuçlarını değerlendirin. Yeşil harf doğru yerde, sarı harf yanlış yerde, koyu gri harf kelimede yok demektir."
-            },
-            {
-                "@type": "HowToStep",
-                "name": "Doğru Kelimeyi Bul",
-                "text": "İpuçlarını kullanarak doğru kelimeyi bulana kadar (en fazla 6 defa) tahmin etmeye devam edin."
-            }
-        ]
-    };
+    const jsonLd = [
+        buildVideoGameSchema(gameData),
+        buildHowToSchema(
+            `${gameData.title} Nasıl Oynanır?`,
+            gameData.instructions.basic,
+            gameData.instructions.rules.map((rule, index) => ({
+                url: `https://www.kelimeoyunlari.tr/games/wordle#step${index + 1}`,
+                text: rule
+            }))
+        ),
+        buildBreadcrumbSchema([
+            { name: 'Anasayfa', item: '/' },
+            { name: 'Oyunlar' },
+            { name: gameData.title, item: gameData.href }
+        ])
+    ];
 
     return (
         <>
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-            />
+            <JsonLd data={jsonLd} />
             {children}
         </>
     );
