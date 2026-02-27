@@ -9,7 +9,7 @@ Kelime Oyunları, Türkçe kelime oyunlarını bir arada sunan web ve mobil plat
 
 ### Temel Kurallar
 
-- Kelime verisi kök dizindeki `kelime-data.json` dosyasında tutulur, veritabanına taşınmaz.
+- Kelime verisi `public/kelime-data.json` dosyasında tutulur, veritabanına taşınmaz.
 - Misafir modda veriler localStorage / AsyncStorage'da saklanır.
 - Kullanıcı giriş yaptığında misafir verisi Supabase'e aktarılır.
 - Tüm veri okuma/yazma işlemleri `services/` katmanı üzerinden yapılır, doğrudan component'e yazılmaz.
@@ -70,15 +70,15 @@ src/
     layout/               → Navbar, Footer
   games/
     wordle/
-    hangman/
+    adam-asmaca/
     [oyunAdi]/
   services/               → Supabase çağrıları
   hooks/                  → useGame, useScore, useAuth
   lib/
     supabase.ts           → Supabase client
     storage.ts            → localStorage yardımcıları
-  data/
-    kelimeler.json        → Tek JSON dosyası
+  public/
+    kelime-data.json      → Tek JSON dosyası
 ```
 
 ### Mobil (Expo)
@@ -98,8 +98,6 @@ hooks/
 lib/
   supabase.ts
   storage.ts              → AsyncStorage yardımcıları
-assets/data/
-  kelimeler.json          → Tek JSON dosyası
 ```
 
 ---

@@ -16,11 +16,7 @@ Yeni bir oyun eklerken, oyun deneyiminin kesintisiz olması en önemli kuraldır
     *   Sayfaya genel bir scroll (kaydırma) yeteneği verebilmek için en üst sarmalayıcı (wrapper) eleman `overflow-y-auto` kullanmalıdır. İçerisinde oyun modülü bağımsız bir blok (`min-h-[100dvh] shrink-0` gibi), SEO metinleri alt blok olarak yer alabilir.
 
 ## 2. SEO ve Meta Veriler (Teknik)
-Oyunun genel `page.tsx` dosyasının yanında, mutlaka oyunun kendi klasöründe (örneğin `app/games/oyun-adi/layout.tsx`) bir Layout dosyası bulunmalıdır.
-
-*   **Statik Metadata:** Next.js `Metadata` API kullanılarak sayfanın `title`, `description`, `keywords` ve `openGraph`, `twitter` bilgileri eksiksiz tanımlanmalıdır.
-*   **JSON-LD Schema Markup:** Arama motorlarına yönelik zengin sonuçları (rich snippets) aktif etmek için `layout.tsx` içerisinde `application/ld+json` formatında `VideoGame` ve (eğer adım adım oyun kuralları içeriyorsa) `HowTo` şemaları (schema) tanımlanmalı ve sayfaya render edilmelidir.
-*   **Sosyal Medya ve Paylaşım Görselleri (OG Images):** Her oyun için `public/games/oyun-adi/` klasörü altında 1200x630 çözünürlüğünde, PNG formatında bir `og.png` görseli bulunmalıdır. Bu görsel social meta tag'leri ile (og:image ve twitter:image) paylaşılmalıdır.
+Oyun sayfalarının SEO yapılandırması (Metadata API, JSON-LD Schema Markup, OG Görselleri) için `seo-uzmani` skill'indeki kurallara **kesinlikle** uyulmalıdır. Hangi meta verilerin nasıl ekleneceği ve görsel standartları orada detaylandırılmıştır. (Özetle: Her oyuna bir layout.tsx ve metadata, ayrıca JSON-LD `VideoGame` schemaları eklenmelidir).
 
 ## 3. Oyun Bilgi Kartları (GameCard)
 Ana sayfadaki grid sisteminde sergilenmek üzere her oyunun standart görselleri ve verileri bulunmalıdır.

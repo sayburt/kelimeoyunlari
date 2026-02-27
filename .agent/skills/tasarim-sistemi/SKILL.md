@@ -83,3 +83,45 @@ Tüm premium efekt değerleri CSS değişkenleri ile yönetilir (Dark/Light ayr�
 Bu tasarım sistemi projenin görsel kurallarını belirler. Geliştirme yaparken:
 - Oyun arayüzüne özel kullanıcı deneyimi (UX) yerleşimleri ve "Nasıl Oynanır?" görselleri için `oyun-standartlari` yeteneğine bakınız.
 - Projede renk kodları veya metinler (özellikle oyun içi açıklamalar) değiştiğinde, oyun talimatlarının ana kaynağı olan `veri-yonetimi` yeteneğindeki **Oyun İçerikleri (Games Data)** kuralına uygun hareket ediniz.
+
+## 8. Premium Tasarım Standartları (Detay)
+
+Bu bölüm, görsel hiyerarşi, derinlik ve premium deneyim kurallarının detaylarını içerir.
+
+### a) Genel Stil Prensipleri
+Ana konsept: **Soft Depth + Subtle Glow + Controlled Contrast**
+
+- **Işık ve Derinlik:** Uygulama genelinde "katmanlı" bir yapı kullanılır. Arka plan en alt, kartlar orta, modaller ve header en üst katmandadır.
+- **Görsel Hiyerarşi:** Önemli alanlar (header, aktif butonlar) glassmorphism ve gölge ile ayrıştırılır.
+- **Kontrast:** Dark modda sinematik (blur + gradient), Light modda ise editorial (beyaz alan + soft shadow) atmosfer hakimdir.
+
+### b) Bileşen Standartları
+
+**Floating Premium Header (.glass-header)**
+- **Kapsam:** Navbar ve GameHeader.
+- **Özellikler:** 
+    - `rgba(15, 23, 42, 0.75)` (dark) / `rgba(255, 255, 255, 0.8)` (light) arka plan.
+    - `backdrop-blur(16px)` efekti.
+    - `0 8px 24px rgba(0,0,0,0.25)` shadow (border yerine).
+
+**Premium Kartlar (.premium-card)**
+- **Kapsam:** Ana sayfa oyun kartları.
+- **Özellikler:** 
+    - `backdrop-blur(8px)` + glass arka plan.
+    - Hover durumunda `translateY(-4px)` kalkma ve gölge derinleşmesi.
+    - Thumbnail'de hover sırasında `%105` doygunluk (saturation) artışı.
+
+**Modaller ve Yüzeyler (.glass-surface)**
+- **Kapsam:** Ayarlar, Meydan Okuma, Oyun Sonu ve Resume modalları.
+- **Özellikler:**
+    - `backdrop-blur(12px)` + `var(--theme-card-glass)` arka plan.
+    - `border border-[var(--theme-glass-border)]` (ince, 1px sınır).
+
+**Premium Butonlar (.premium-btn)**
+- **Özellikler:**
+    - Hover: `translateY(-1px)`
+    - Active: `translateY(0)` + `scale(0.98)`
+    - Gölge: `shadow-lg shadow-primary/20` (vurgu butonları için).
+
+### c) Mobil Erişilebilirlik
+Tüm interaktif alanlar minimum `48px` yüksekliğinde olmalı ve `active:scale` geri bildirimi vermelidir.

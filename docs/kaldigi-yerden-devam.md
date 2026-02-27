@@ -25,9 +25,8 @@ Kullanıcı **"Yeni Oyun"** seçeneğini seçtiğinde veritabanındaki eski kay�
 - **Tekil kayıt:** Her kullanıcı için her oyun türünde yalnızca bir kayıt tutulur. Kullanıcı ikinci kez "Sonra Devam Et" derse önceki kaydın üzerine yazılır.
 - **Saklanan bilgiler:** Oyunun anlık durumu (tahta, harfler, skor), o ana kadar geçen süre ve kayıt zamanı.
 - **Kayıt silinme koşulları:** Oyun başarıyla tamamlandığında veya kullanıcı "Yeni Oyun" seçtiğinde kayıt silinir.
-- **Çok cihaz desteği:** Veriler kullanıcıya ait olduğundan kullanıcı telefonda bıraktığı oyuna bilgisayardan devam edebilir. Aynı anda iki cihazda oynama engellenmez; bu durumda son kaydeden geçerli sayılır.
+- **Çok cihaz desteği:** Veriler Supabase üzerinde tutulduğu için kullanıcı telefonda bıraktığı oyuna bilgisayardan devam edebilir. Aynı anda iki cihazda oynama engellenmez; bu durumda son kaydeden geçerli sayılır.
 
 ## 6. Kapsam Dışı
 
 - Kullanıcı **"Sonra Devam Et"** butonuna basmadan sayfayı kapatırsa oyun kurtarılmaz; bu bilinçli bir tasarım kararıdır.
-- Aynı anda iki cihazda oynama senaryosu şu aşamada ele alınmamaktadır.

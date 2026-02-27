@@ -6,7 +6,7 @@ description: Kelime verisi ve kullanıcı verisi (Supabase/LocalStorage) yöneti
 # Kelime — Veri Yönetimi
 
 ## 1. Kelime Verisi (kelime-data.json)
-- Köken: Proje kökündeki `kelime-data.json`.
+- Köken: `public/kelime-data.json`.
 - Erişim: Sadece `services/wordService.ts` üzerinden.
 - Mantık: Kelimeler harf sayılarına göre filtrelenir. Karşılaştırmalar Türkçe büyük harf (`toLocaleUpperCase('tr-TR')`) ile yapılır.
 

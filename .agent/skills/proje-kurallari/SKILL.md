@@ -8,16 +8,14 @@ description: Kelime Oyunları projesi temel mimari ve akış kuralları. Her tü
 ## 1. Mimari Prensipler
 - **Yalnızca Türkçe:** Platformda her şey Türkçe karakter desteğiyle inşa edilir.
 - **Servis Katmanı:** Veri okuma/yazma işlemleri (Supabase veya LocalStorage) asla doğrudan bileşen içinde yapılmaz. Mutlaka `services/` altındaki servis fonksiyonları kullanılır.
-- **Veri Kaynağı:** Kelime verisi kök dizindeki `kelime-data.json` dosyasından okunur. Veritabanına (Supabase) taşınmaz.
+- **Veri Kaynağı:** Kelime verisi `public/kelime-data.json` dosyasından okunur. Veritabanına (Supabase) taşınmaz.
 
 ## 2. Teknoloji Stack
 - **Web:** Next.js (App Router) + TypeScript + TailwindCSS + Framer Motion.
 - **Mobil:** React Native + Expo + NativeWind + Reanimated.
 
 ## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
-- **Tüm Supabase işlemleri (yeni tablo oluşturma, RLS politikaları yazma, Auth ayarları, kolon ekleme vb.) YALNIZCA AI (Asistan) tarafından Supabase MCP aracı kullanılarak yapılmalıdır.**
-- **ASLA** kullanıcıya manuel SQL çalıştırma veya dashboard üzerinde işlem yapma talimatı verilemez. AI, gerekli tüm SQL migration'larını kendi `apply_migration` aracı ile doğrudan projeye uygular.
-- Eğer çalışma yetki hatası (privilege error) veriyorsa, önce Proje ID'sinin doğruluğu kontrol edilmeli, ardından MCP üzerinden tekrar denenmelidir.
+- Supabase işlemleri ve MCP kuralları hakkında detaylı bilgi için `veri-yonetimi` skill'ine başvurunuz. (Tüm Supabase işlemleri sadece AI tarafından MCP ile yapılır).
 
 ## 4. Dosya Yapısı (Web)
 ```
@@ -29,8 +27,6 @@ src/
   services/          → Veri ve Mantık (Supabase, LocalStorage, WordService)
   hooks/             → useAuth, useGame, useSound
   lib/               → supabase.ts, storage.ts
-  data/
-    kelimeler.json   → (kelime-data.json buraya taşınacak)
 ```
 
 ## 4. Geliştirme Kontrol Listesi

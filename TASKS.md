@@ -10,20 +10,6 @@ Bu dosya projenin adım adım nasıl geliştirileceğini tanımlar. Geliştirme 
 
 ---
 
-## 🎮 FAZ 5: Gelişmiş Oyun Mekanikleri ve Puanlama (Arşivlendi)
-Referans: TAMAMLANAN GÖREVLER (ARŞİV) içindeki Faz 5 başlığına bakınız.
-
----
-
-## 🏆 FAZ 6: Sosyal ve Rekabetçi Özellikler (Meydan Okuma) (Arşivlendi)
-Referans: TAMAMLANAN GÖREVLER (ARŞİV) içindeki Faz 6 başlığına bakınız.
-
----
-
-## 👤 FAZ 7: Gelişmiş Üye Paneli ve İstatistikler (Arşivlendi)
-Referans: TAMAMLANAN GÖREVLER (ARŞİV) içindeki Faz 7 başlığına bakınız.
-
----
 
 ## 📱 FAZ 8: Mobil Uygulama (Expo)
 
