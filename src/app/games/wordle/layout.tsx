@@ -9,7 +9,7 @@ export const metadata: Metadata = {
         description: 'Popüler Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
         images: [
             {
-                url: '/games/wordle/og.png',
+                url: '/games/wordle/og.jpg',
                 width: 1200,
                 height: 630,
                 alt: 'Wordle Oyun Kartı',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: 'Wordle Oyna | Kelime Oyunları',
         description: 'Popüler Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
-        images: ['/games/wordle/og.png'],
+        images: ['/games/wordle/og.jpg'],
     },
     alternates: {
         canonical: '/games/wordle',

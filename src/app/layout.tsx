@@ -35,7 +35,7 @@ export const metadata: Metadata = {
     siteName: "Kelime Oyunları",
     images: [
       {
-        url: "/og.png",
+        url: "/og.jpg",
         width: 1200,
         height: 630,
         alt: "Kelime Oyunları OG Resmi",
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     title: "Kelime Oyunları",
     description: "Türkçe kelime oyunlarını bir arada sunan platform.",
     creator: "@kelimeoyunlari",
-    images: ["/og.png"],
+    images: ["/og.jpg"],
   },
   alternates: {
     canonical: "/",

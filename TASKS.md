@@ -31,7 +31,7 @@ Adam Asmaca oyununun projenin standartlarına uygun şekilde uçtan uca implemen
 - [x] **9.1. Hazırlık ve Altyapı**
   - [x] `app/games/adam-asmaca/` dizininin (page.tsx, layout.tsx) oluşturulması.
   - [x] `src/data/games.ts` dosyasına Adam Asmaca verilerinin (metadata, instructions, SEO metni) eklenmesi.
-  - [x] Oyun görsellerinin (`card.webp`, `og.png`) yer tutucu veya final hallerinin `public/games/hangman/` altına eklenmesi.
+  - [x] Oyun görsellerinin (`card.webp`, `og.jpg`) yer tutucu veya final hallerinin `public/games/hangman/` altına eklenmesi.
 - [x] **9.2. Oyun Mantığı ve State Yönetimi**
   - [x] `hooks/useHangman.ts` hook'unun oluşturulması: Kelime seçimi, harf tahmini, can takibi (6 hak) ve oyun durum yönetimi.
   - [x] `WordService` entegrasyonu ile Türkçe kelime listesinden veri çekilmesi.
