@@ -8,6 +8,7 @@ import { useGameSettings } from '@/context/GameSettingsContext';
 import { useTimer } from '@/hooks/useTimer';
 import { useGamePersistence } from '@/hooks/useGamePersistence';
 import { GameStatus, JokerState } from '@/types/game';
+import { challengeService } from '@/services/challengeService';
 
 export type { GameStatus, JokerState } from '@/types/game';
 export type LetterState = 'correct' | 'absent' | 'idle';
@@ -24,12 +25,13 @@ export interface PersistedHangmanState {
 
 export interface UseHangmanOptions {
     isPaused?: boolean;
+    challengeId?: string | null;
 }
 
 import { GAME_NAME, MAX_LIVES } from '@/constants/hangmanConstants';
 
 export function useHangman(options: UseHangmanOptions = {}) {
-    const { isPaused = false } = options;
+    const { isPaused = false, challengeId = null } = options;
 
     const { difficulty, category } = useGameSettings();
     const [status, setStatus] = useState<GameStatus>('idle');
@@ -39,6 +41,9 @@ export function useHangman(options: UseHangmanOptions = {}) {
     const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
     const [score, setScore] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
+    const [isChallengeMode, setIsChallengeMode] = useState<boolean>(false);
+    const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
+    const [isCustomWord, setIsCustomWord] = useState<boolean>(false);
 
     const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
     const { playCorrect, playWrong, playError, playWin, playLose, isSoundEnabled, toggleSound } = useSound();
@@ -101,22 +106,30 @@ export function useHangman(options: UseHangmanOptions = {}) {
             const calculatedScore = scoreService.calculateHangmanScore(remainingLives, seconds, difficulty, targetWord.harf_sayisi, joker.count);
             setScore(calculatedScore);
 
-            await scoreService.saveGameResult(GAME_NAME, true, wrongGuesses, {
-                jokersUsed: joker.used ? 1 : 0,
-                calculatedScore,
-                remainingLives
-            });
+            if (isChallengeMode && activeChallengeId) {
+                await challengeService.updateChallengeResult(activeChallengeId, calculatedScore, MAX_LIVES - wrongGuesses, undefined, GAME_NAME, true);
+            } else {
+                await scoreService.saveGameResult(GAME_NAME, true, wrongGuesses, {
+                    jokersUsed: joker.used ? 1 : 0,
+                    calculatedScore,
+                    remainingLives
+                });
+            }
         } else {
             playLose();
             setStatus('lost');
-            await scoreService.saveGameResult(GAME_NAME, false, MAX_LIVES, {
-                jokersUsed: joker.used ? 1 : 0,
-                calculatedScore: 0,
-                remainingLives: 0
-            });
+            if (isChallengeMode && activeChallengeId) {
+                await challengeService.updateChallengeResult(activeChallengeId, 0, MAX_LIVES, undefined, GAME_NAME, false);
+            } else {
+                await scoreService.saveGameResult(GAME_NAME, false, MAX_LIVES, {
+                    jokersUsed: joker.used ? 1 : 0,
+                    calculatedScore: 0,
+                    remainingLives: 0
+                });
+            }
         }
         clearLocal();
-    }, [playWin, playLose, elapsedTime, difficulty, joker, wrongGuesses, targetWord, clearLocal]);
+    }, [playWin, playLose, elapsedTime, difficulty, joker, wrongGuesses, targetWord, clearLocal, isChallengeMode, activeChallengeId]);
 
     // --- Main Actions ---
 
@@ -124,6 +137,42 @@ export function useHangman(options: UseHangmanOptions = {}) {
         setStatus('loading');
         setError(null);
         try {
+            setGuessedLetters(new Set());
+            setWrongGuesses(0);
+            setJoker({ used: false, count: 0, max: 1 });
+            setScore(0);
+            resetTimer();
+            clearLocal();
+
+            if (challengeId) {
+                const challengeData = await challengeService.getChallenge(challengeId);
+                if (challengeData) {
+                    const { challenge, decodedWord } = challengeData;
+                    setTargetWord({
+                        kelime: decodedWord,
+                        harf_sayisi: decodedWord.length,
+                        kategoriler: ['Meydan Okuma'],
+                        zorluk_seviyesi: 1,
+                        anlam: ''
+                    });
+                    setIsChallengeMode(true);
+                    setActiveChallengeId(challenge.id);
+                    setIsCustomWord(challenge.target_word_type === 'custom');
+                    setStatus('playing');
+                    return;
+                } else {
+                    setError('Meydan okuma bulunamadı veya süresi dolmuş.');
+                    // Fall back to normal game
+                    setIsChallengeMode(false);
+                    setActiveChallengeId(null);
+                    setIsCustomWord(false);
+                }
+            } else {
+                setIsChallengeMode(false);
+                setActiveChallengeId(null);
+                setIsCustomWord(false);
+            }
+
             // Sadece zorluk seviyesine veya seçilen kategoriye göre kelime çekiyoruz
             const word = await wordService.getRandomWord({
                 difficulty,
@@ -137,19 +186,13 @@ export function useHangman(options: UseHangmanOptions = {}) {
             }
 
             setTargetWord(word);
-            setGuessedLetters(new Set());
-            setWrongGuesses(0);
-            setJoker({ used: false, count: 0, max: 1 });
-            setScore(0);
-            resetTimer();
-            clearLocal();
             setStatus('playing');
         } catch (err) {
             console.error('Start error:', err);
             setStatus('idle');
             setError('Bir hata oluştu.');
         }
-    }, [difficulty, category, resetTimer, clearLocal]);
+    }, [difficulty, category, resetTimer, clearLocal, challengeId]);
 
     const handleGuess = useCallback(async (letter: string) => {
         if (status !== 'playing' || isProcessingRef.current || !targetWord) return;
@@ -224,6 +267,9 @@ export function useHangman(options: UseHangmanOptions = {}) {
         elapsedTime,
         joker,
         score,
+        isChallengeMode,
+        activeChallengeId,
+        isCustomWord,
         startNewGame,
         handleGuess,
         useJoker,

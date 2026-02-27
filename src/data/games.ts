@@ -33,6 +33,7 @@ export interface Game {
         history?: string;
         proTips?: string[];
     };
+    hasChallenge?: boolean;
 }
 
 export const GAMES: Game[] = [
@@ -45,6 +46,7 @@ export const GAMES: Game[] = [
         playCount: 0,
         likeCount: 0,
         comingSoon: false,
+        hasChallenge: true,
         instructions: {
             basic: 'Amacınız ücretsiz Türkçe Wordle oyununda 5 harfli gizli kelimeyi 6 denemede bulmaktır. Her tahmin geçerli 5 harfli bir kelime olmalıdır. Tahmininizi yazdıktan sonra göndermek için Enter tuşuna basın.',
             rules: [
@@ -103,6 +105,7 @@ export const GAMES: Game[] = [
         playCount: 0,
         likeCount: 0,
         comingSoon: false,
+        hasChallenge: true,
         instructions: {
             basic: 'Ücretsiz Türkçe Adam Asmaca, gizli kelimeyi harflerini tahmin ederek bulmaya çalıştığınız klasik bir kelime oyunudur. Toplamda 6 hakkınız var.',
             rules: [

@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Heart, Users, Info } from 'lucide-react';
+import { Heart, Users, Info, Swords } from 'lucide-react';
 
 export interface GameCardProps {
     title: string;
@@ -13,6 +13,7 @@ export interface GameCardProps {
     likeCount?: number;
     isLiked?: boolean;
     onLike?: () => void;
+    hasChallenge?: boolean;
 }
 
 export function GameCard({
@@ -26,6 +27,7 @@ export function GameCard({
     likeCount = 0,
     isLiked = false,
     onLike,
+    hasChallenge = false,
 }: GameCardProps) {
     return (
         <div
@@ -83,6 +85,26 @@ export function GameCard({
 
                     {/* Etkileşim İkonları */}
                     <div className="flex items-center gap-2">
+                        {hasChallenge && (
+                            <div className="relative group/challenge flex items-center">
+                                <div
+                                    className="p-1.5 rounded-md text-green-500 bg-green-500/10 flex items-center justify-center transition-colors shadow-sm cursor-help"
+                                    aria-label="Meydan Okuma Mevcut"
+                                >
+                                    <Swords size={16} />
+                                </div>
+
+                                {/* Tooltip */}
+                                <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-surface-hover/95 backdrop-blur-md text-text-main text-[11px] leading-relaxed rounded-xl shadow-xl border border-surface-mid opacity-0 invisible group-hover/challenge:opacity-100 group-hover/challenge:visible transition-all duration-200 z-50 pointer-events-none text-center">
+                                    <div className="font-bold text-green-500 mb-1.5 flex items-center justify-center gap-1.5">
+                                        <Swords size={12} /> Meydan Okuma
+                                    </div>
+                                    Bu oyunda arkadaşlarınıza meydan okuyabilirsiniz! Oyuna girdikten sonra üst menüdeki kılıç ikonuna tıklayarak link oluşturun.
+                                    {/* Küçük ok (arrow) */}
+                                    <div className="absolute top-full right-3 border-4 border-transparent border-t-surface-hover/95" />
+                                </div>
+                            </div>
+                        )}
                         <button
                             className="p-1.5 rounded-md hover:bg-surface-mid/50 hover:text-primary transition-colors text-text-secondary disabled:opacity-50"
                             disabled={comingSoon}

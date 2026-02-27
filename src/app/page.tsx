@@ -128,6 +128,7 @@ export default function Home() {
                 likeCount={likeCounts[game.id] ?? game.likeCount}
                 isLiked={userLikes.includes(game.id)}
                 onLike={() => handleLike(game.id)}
+                hasChallenge={game.hasChallenge}
               />
             </motion.div>
           ))}

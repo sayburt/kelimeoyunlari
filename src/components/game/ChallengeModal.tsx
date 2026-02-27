@@ -11,12 +11,12 @@ interface ChallengeModalProps {
     isOpen: boolean;
     onClose: () => void;
     gameName: string;
-    wordLength: number;
+    wordLength?: number; // Optional. If 0 or undefined, unlimited/variable length up to max
 }
 
 type TabType = 'dictionary' | 'custom';
 
-export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: ChallengeModalProps) {
+export function ChallengeModal({ isOpen, onClose, gameName, wordLength = 0 }: ChallengeModalProps) {
     const [activeTab, setActiveTab] = useState<TabType>('dictionary');
     const [dictionaryWord, setDictionaryWord] = useState('');
     const [customWord, setCustomWord] = useState('');
@@ -36,8 +36,12 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
         const word = activeTab === 'dictionary' ? dictionaryWord : customWord;
         const wordType = activeTab;
 
-        if (!word || word.length !== wordLength) {
-            setErrorMessage(`Kelime tam olarak ${wordLength} harf olmalıdır.`);
+        const isFixedLength = wordLength > 0;
+        const minLength = isFixedLength ? wordLength : 3;
+        const maxLength = isFixedLength ? wordLength : 15;
+
+        if (!word || word.length < minLength || word.length > maxLength) {
+            setErrorMessage(isFixedLength ? `Kelime tam olarak ${wordLength} harf olmalıdır.` : `Kelime en az ${minLength}, en fazla ${maxLength} harf olmalıdır.`);
             return;
         }
 
@@ -53,7 +57,8 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
         setIsCreating(true);
         setErrorMessage(null);
         try {
-            const challengeId = await challengeService.createChallenge(gameName, word, wordType, wordLength);
+            const actualWordLength = word.length;
+            const challengeId = await challengeService.createChallenge(gameName, word, wordType, actualWordLength);
             if (challengeId) {
                 const url = `${window.location.origin}/games/${gameName}?challengeId=${challengeId}`;
                 setChallengeUrl(url);
@@ -151,23 +156,24 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
                                 /* Sözlükten Kelime */
                                 <div>
                                     <p className="text-text-secondary text-sm mb-4">
-                                        Sözlükteki {wordLength} harfli bir kelime yaz. Sistem kelimeyi kontrol edecek.
+                                        {wordLength > 0 ? `Sözlükteki ${wordLength} harfli bir kelime yaz.` : `Sözlükten bir kelime yaz (en az 3 harf).`} Sistem kelimeyi kontrol edecek.
                                     </p>
                                     <input
                                         type="text"
                                         value={dictionaryWord}
                                         onChange={(e) => {
-                                            setDictionaryWord(sanitizeInput(e.target.value).slice(0, wordLength));
+                                            const val = sanitizeInput(e.target.value);
+                                            setDictionaryWord(wordLength > 0 ? val.slice(0, wordLength) : val.slice(0, 15));
                                             setErrorMessage(null);
                                         }}
-                                        placeholder={`${wordLength} harfli kelime yaz...`}
-                                        maxLength={wordLength}
+                                        placeholder={wordLength > 0 ? `${wordLength} harfli kelime yaz...` : `Kelime yaz...`}
+                                        maxLength={wordLength > 0 ? wordLength : 15}
                                         className="w-full bg-bg border border-surface-hover rounded-xl px-4 py-3 text-text-main text-center font-mono font-bold text-xl tracking-[0.3em] uppercase placeholder:text-text-muted placeholder:text-sm placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition"
                                         autoFocus
                                     />
                                     <div className="flex justify-between items-center mt-2">
-                                        <span className={`text-xs ${dictionaryWord.length === wordLength ? 'text-green-500' : 'text-text-muted'}`}>
-                                            {dictionaryWord.length}/{wordLength} harf
+                                        <span className={`text-xs ${(wordLength > 0 && dictionaryWord.length === wordLength) || (wordLength === 0 && dictionaryWord.length >= 3) ? 'text-green-500' : 'text-text-muted'}`}>
+                                            {wordLength > 0 ? `${dictionaryWord.length}/${wordLength} harf` : `${dictionaryWord.length} harf`}
                                         </span>
                                         {errorMessage && (
                                             <span className="text-xs text-red-400">{errorMessage}</span>
@@ -184,17 +190,18 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
                                         type="text"
                                         value={customWord}
                                         onChange={(e) => {
-                                            setCustomWord(sanitizeInput(e.target.value).slice(0, wordLength));
+                                            const val = sanitizeInput(e.target.value);
+                                            setCustomWord(wordLength > 0 ? val.slice(0, wordLength) : val.slice(0, 15));
                                             setErrorMessage(null);
                                         }}
-                                        placeholder={`${wordLength} harfli kelime gir...`}
-                                        maxLength={wordLength}
+                                        placeholder={wordLength > 0 ? `${wordLength} harfli kelime gir...` : `Kelime gir...`}
+                                        maxLength={wordLength > 0 ? wordLength : 15}
                                         className="w-full bg-bg border border-surface-hover rounded-xl px-4 py-3 text-text-main text-center font-mono font-bold text-xl tracking-[0.3em] uppercase placeholder:text-text-muted placeholder:text-sm placeholder:tracking-normal focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary/50 transition"
                                         autoFocus
                                     />
                                     <div className="flex justify-between items-center mt-2">
-                                        <span className={`text-xs ${customWord.length === wordLength ? 'text-green-500' : 'text-text-muted'}`}>
-                                            {customWord.length}/{wordLength} harf
+                                        <span className={`text-xs ${(wordLength > 0 && customWord.length === wordLength) || (wordLength === 0 && customWord.length >= 3) ? 'text-green-500' : 'text-text-muted'}`}>
+                                            {wordLength > 0 ? `${customWord.length}/${wordLength} harf` : `${customWord.length} harf`}
                                         </span>
                                         {errorMessage && (
                                             <span className="text-xs text-red-400">{errorMessage}</span>
@@ -208,8 +215,10 @@ export function ChallengeModal({ isOpen, onClose, gameName, wordLength }: Challe
                                 onClick={handleCreate}
                                 disabled={
                                     isCreating ||
-                                    (activeTab === 'dictionary' && dictionaryWord.length !== wordLength) ||
-                                    (activeTab === 'custom' && customWord.length !== wordLength)
+                                    (wordLength > 0 && activeTab === 'dictionary' && dictionaryWord.length !== wordLength) ||
+                                    (wordLength > 0 && activeTab === 'custom' && customWord.length !== wordLength) ||
+                                    (wordLength === 0 && activeTab === 'dictionary' && dictionaryWord.length < 3) ||
+                                    (wordLength === 0 && activeTab === 'custom' && customWord.length < 3)
                                 }
                                 className="w-full mt-6 bg-primary text-bg font-black py-4 rounded-2xl premium-btn hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 active:scale-[0.98]"
                             >

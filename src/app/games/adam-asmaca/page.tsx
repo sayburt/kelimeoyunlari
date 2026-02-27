@@ -19,20 +19,28 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useGameModals } from '@/hooks/useGameModals';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
+import { ChallengeModal } from '@/components/game/ChallengeModal';
+import { useSearchParams, useRouter } from 'next/navigation';
 
 const GAME_NAME = 'adam-asmaca';
 
 function AdamAsmacaPageContent() {
+    const searchParams = useSearchParams();
+    const challengeId = searchParams.get('challengeId');
     const {
         showInfoModal, setShowInfoModal,
         showStatsModal, setShowStatsModal,
         showSettingsModal, setShowSettingsModal,
         showResultModal, setShowResultModal,
-        isPaused,
+        isPaused: baseIsPaused,
     } = useGameModals();
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+    const [showChallengeModal, setShowChallengeModal] = React.useState(false);
 
     const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    const isPaused = baseIsPaused || showChallengeModal;
 
     const {
         status,
@@ -45,11 +53,13 @@ function AdamAsmacaPageContent() {
         elapsedTime,
         joker,
         score,
+        isChallengeMode,
         startNewGame,
         handleGuess,
         useJoker,
     } = useHangman({
         isPaused,
+        challengeId
     });
 
     const hasStartedRef = useRef(false);
@@ -70,7 +80,11 @@ function AdamAsmacaPageContent() {
 
     const handleRestart = () => {
         setShowResultModal(false);
-        startNewGame();
+        if (isChallengeMode && router) {
+            router.push('/games/adam-asmaca');
+        } else {
+            startNewGame();
+        }
     };
 
     const handleResultShare = async () => {
@@ -109,7 +123,9 @@ function AdamAsmacaPageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onChallenge={() => setShowChallengeModal(true)}
                     isLoggedIn={isAuthenticated}
+                    isChallengeMode={isChallengeMode}
                     gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
@@ -131,12 +147,20 @@ function AdamAsmacaPageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onChallenge={() => setShowChallengeModal(true)}
                     isLoggedIn={isAuthenticated}
+                    isChallengeMode={isChallengeMode}
                     gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
+
+                {isChallengeMode && (
+                    <div className="mx-4 mt-1 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-center">
+                        <p className="text-primary text-sm font-bold flex items-center justify-center gap-2">⚔️ Bir meydan okuma oynuyorsunuz!</p>
+                    </div>
+                )}
 
                 <ErrorToast message={error || toastMessage || ''} />
 
@@ -199,10 +223,17 @@ function AdamAsmacaPageContent() {
                 guessesCount={wrongGuesses}
                 maxGuesses={maxLives}
                 targetWord={targetWord}
-                isChallenge={false}
+                isChallenge={isChallengeMode}
                 onRestart={handleRestart}
                 onShare={handleResultShare}
                 score={score}
+            />
+
+            <ChallengeModal
+                isOpen={showChallengeModal}
+                onClose={() => setShowChallengeModal(false)}
+                gameName={GAME_NAME}
+                wordLength={0}
             />
 
             {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
@@ -226,7 +257,47 @@ export default function AdamAsmacaPage() {
                 </div>
             </div>
         }>
-            <AdamAsmacaPageContent />
+            <ChallengeAuthGate />
         </Suspense>
     );
+}
+
+function ChallengeAuthGate() {
+    const searchParams = useSearchParams();
+    const challengeId = searchParams.get('challengeId');
+    const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
+    if (challengeId && !isAuthenticated) {
+        const redirectUrl = `/games/adam-asmaca?challengeId=${challengeId}`;
+        return (
+            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg items-center justify-center px-6 text-center">
+                <div className="max-w-sm w-full">
+                    <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <span className="text-4xl">⚔️</span>
+                    </div>
+                    <h2 className="text-2xl font-black text-text-main mb-3 tracking-tight">Meydan Okuma!</h2>
+                    <p className="text-text-secondary text-sm mb-8 leading-relaxed">
+                        Bir arkadaşın sana meydan okudu! Oynayabilmek için giriş yapman veya üye olman gerekiyor.
+                    </p>
+                    <div className="flex flex-col gap-3">
+                        <button
+                            onClick={() => router.push(`/login?redirect=${encodeURIComponent(redirectUrl)}`)}
+                            className="w-full bg-primary text-bg font-black py-3.5 rounded-2xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
+                        >
+                            GİRİŞ YAP
+                        </button>
+                        <button
+                            onClick={() => router.push(`/register?redirect=${encodeURIComponent(redirectUrl)}`)}
+                            className="w-full bg-surface-hover text-text-main font-bold py-3.5 rounded-2xl hover:bg-surface-mid transition-colors border border-surface-hover"
+                        >
+                            ÜYE OL
+                        </button>
+                        <button onClick={() => router.push('/')} className="text-text-muted text-sm mt-2 hover:text-text-main transition-colors">Ana Sayfaya Dön</button>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    return <AdamAsmacaPageContent />;
 }
