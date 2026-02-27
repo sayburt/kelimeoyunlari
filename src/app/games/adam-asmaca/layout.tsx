@@ -12,7 +12,7 @@ export const metadata: Metadata = {
         url: 'https://www.kelimeoyunlari.tr/games/adam-asmaca',
         images: [
             {
-                url: '/games/hangman/og.jpg',
+                url: '/games/adam-asmaca/og.jpg',
                 width: 1200,
                 height: 630,
                 alt: 'Adam Asmaca Oyunu',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
         card: 'summary_large_image',
         title: `${gameData?.title || 'Adam Asmaca'} - Kelime Oyunları`,
         description: gameData?.description || 'Gizli kelimeyi adam çizilmeden bul!',
-        images: ['/games/hangman/og.jpg'],
+        images: ['/games/adam-asmaca/og.jpg'],
     },
     alternates: {
         canonical: 'https://www.kelimeoyunlari.tr/games/adam-asmaca',
@@ -49,7 +49,7 @@ export default function AdamAsmacaLayout({
                             description: gameData?.description || 'Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul! Klasik adam asmaca oyunu.',
                             genre: ['Kelime Oyunu', 'Bulmaca'],
                             url: 'https://www.kelimeoyunlari.tr/games/adam-asmaca',
-                            image: 'https://www.kelimeoyunlari.tr/games/hangman/og.jpg',
+                            image: 'https://www.kelimeoyunlari.tr/games/adam-asmaca/og.jpg',
                             inLanguage: 'tr',
                             playMode: 'SinglePlayer',
                             applicationCategory: 'Game',

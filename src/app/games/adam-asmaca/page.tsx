@@ -18,7 +18,7 @@ import { HangmanWordDisplay } from '@/components/game/HangmanWordDisplay';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { useGameModals } from '@/hooks/useGameModals';
 
-const GAME_NAME = 'hangman';
+const GAME_NAME = 'adam-asmaca';
 
 function AdamAsmacaPageContent() {
     const {

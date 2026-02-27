@@ -99,7 +99,7 @@ export const GAMES: Game[] = [
         title: 'Adam Asmaca',
         description: 'Gizli kelimeyi 6 hatalı tahmin yapmadan önce bul! Klasik adam asmaca oyunu.',
         href: '/games/adam-asmaca',
-        thumbnail: '/games/hangman/card.webp',
+        thumbnail: '/games/adam-asmaca/card.webp',
         playCount: 0,
         likeCount: 0,
         comingSoon: false,
