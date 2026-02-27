@@ -1,6 +1,6 @@
 import React from 'react';
 import Image from 'next/image';
-import { Heart, Bookmark, Users, Info } from 'lucide-react';
+import { Heart, Users, Info } from 'lucide-react';
 
 export interface GameCardProps {
     title: string;
@@ -94,15 +94,6 @@ export function GameCard({
                             title="Nasıl Oynanır"
                         >
                             <Info size={16} />
-                        </button>
-                        <button
-                            className="p-1.5 rounded-md hover:bg-surface-mid/50 hover:text-primary transition-colors text-text-secondary disabled:opacity-50"
-                            disabled={comingSoon}
-                            onClick={(e) => e.stopPropagation()}
-                            aria-label="Favorilere ekle"
-                            title="Favorilere Ekle"
-                        >
-                            <Bookmark size={16} />
                         </button>
                     </div>
                 </div>

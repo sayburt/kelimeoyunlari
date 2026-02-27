@@ -141,22 +141,22 @@ function AdamAsmacaPageContent() {
                 <ErrorToast message={error || toastMessage || ''} />
 
                 {/* Oyun İçeriği — Alt Hiza Klavyeye Dayalı (Scroll olmaması için esneyebilir) */}
-                <div className="flex-1 min-h-0 flex flex-row w-full max-w-4xl mx-auto px-2 sm:px-4 mt-2 sm:mt-4 mb-2 sm:mb-4 gap-2 sm:gap-4 items-end justify-center">
+                <div className="flex-1 min-h-0 flex flex-col sm:flex-row w-full max-w-2xl mx-auto px-1 sm:px-2 mt-2 sm:mt-4 mb-4 sm:mb-4 gap-2 sm:gap-4 items-center justify-center">
                     {/* Sol Sütun (Figür) */}
-                    <div className="w-1/2 h-full flex justify-end items-end pb-2">
-                        <div className="w-full h-full max-w-[320px] max-h-full flex items-end">
+                    <div className="w-full sm:w-1/2 h-full flex justify-center items-end bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-2 sm:p-4 shadow-sm min-h-[220px] sm:min-h-0">
+                        <div className="w-full h-full max-w-[280px] max-h-full flex items-end justify-center">
                             <HangmanDrawing wrongGuesses={wrongGuesses} />
                         </div>
                     </div>
 
                     {/* Sağ Sütun (Can ve Gizli Kelime) */}
-                    <div className="w-1/2 flex flex-col justify-between self-stretch py-4 sm:py-6 pl-2 sm:pl-8">
+                    <div className="w-full sm:w-1/2 flex flex-col justify-between bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-3 sm:p-6 shadow-sm min-h-[90px] h-auto sm:min-h-0 sm:h-full mb-2 sm:mb-0">
                         {/* Can göstergesi (Üstte) */}
-                        <div className="flex gap-1.5 sm:gap-2 items-center mb-auto pt-4 sm:pt-8 min-h-[32px]">
+                        <div className="flex flex-wrap gap-1 sm:gap-2 justify-center items-center pb-2 sm:pb-0 sm:mb-auto min-h-[20px] sm:min-h-[32px]">
                             {Array.from({ length: maxLives }).map((_, i) => (
                                 <Heart
                                     key={i}
-                                    className={`w-5 h-5 sm:w-7 sm:h-7 ${i < maxLives - wrongGuesses
+                                    className={`w-4 h-4 sm:w-6 sm:h-6 ${i < maxLives - wrongGuesses
                                         ? 'fill-red-500 text-red-500'
                                         : 'text-muted-foreground opacity-20'
                                         }`}
@@ -165,7 +165,7 @@ function AdamAsmacaPageContent() {
                         </div>
 
                         {/* Gizli Kelime (Altta) */}
-                        <div className="flex items-end mt-auto pb-4 sm:pb-6">
+                        <div className="flex justify-center items-end mt-auto pt-2 sm:mt-4">
                             <HangmanWordDisplay
                                 targetWord={targetWord}
                                 guessedLetters={guessedLetters}
