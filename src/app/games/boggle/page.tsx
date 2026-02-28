@@ -127,7 +127,7 @@ function BogglePageContent() {
 
     return (
         <div className="min-h-[100dvh] flex flex-col bg-bg text-text-main overflow-y-auto w-full">
-            <div className="flex flex-col min-h-[100dvh] shrink-0">
+            <div className="flex flex-col h-[100dvh] lg:h-auto lg:min-h-[100dvh] shrink-0">
                 <GameHeader
                     title="BOGGLE"
                     onHelp={() => setShowInfoModal(true)}
@@ -142,25 +142,12 @@ function BogglePageContent() {
                 <ErrorToast message={error || toastMessage || ''} />
 
                 {/* Oyun içeriği */}
-                <div className="flex-1 flex flex-col lg:flex-row items-center lg:items-start justify-center gap-3 px-3 sm:px-4 py-2 sm:py-3 max-w-4xl mx-auto w-full">
-                    {/* Sol: Izgara */}
-                    <div className="w-full max-w-[320px] sm:max-w-[360px] flex-shrink-0">
-                        <BoggleGrid
-                            grid={grid}
-                            gridSize={gridSize}
-                            selectedPath={selectedPath}
-                            lastWordResult={lastWordResult}
-                            onSelectCell={selectCell}
-                            onSubmitWord={submitWord}
-                            onClearSelection={clearSelection}
-                            disabled={status !== 'playing'}
-                        />
-                    </div>
+                <div className="flex-1 flex flex-col lg:flex-row items-stretch justify-center gap-4 lg:gap-6 px-3 sm:px-4 py-2 sm:py-3 max-w-4xl mx-auto w-full min-h-0 pb-4 lg:pb-8">
 
-                    {/* Sağ: Seçili kelime + Kelime Listesi */}
-                    <div className="w-full lg:w-64 flex-shrink-0 flex flex-col gap-2">
+                    {/* Sol/Üst: Seçili Kelime, Izgara & Timer */}
+                    <div className="w-full max-w-[320px] sm:max-w-[360px] flex-shrink-0 flex flex-col justify-between">
                         {/* Seçili kelime göstergesi — sabit yükseklik */}
-                        <div className="h-11 flex items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-primary/5">
+                        <div className="h-11 shrink-0 flex items-center justify-center rounded-xl border-2 border-dashed border-primary/30 bg-primary/5 mb-3 lg:mb-4">
                             {currentWord ? (
                                 <span className="text-primary font-black text-lg tracking-widest">
                                     {currentWord}
@@ -172,22 +159,39 @@ function BogglePageContent() {
                             )}
                         </div>
 
-                        {/* Bulunan kelimeler */}
-                        <div className="min-h-[120px] max-h-[180px] lg:max-h-[320px] overflow-hidden bg-surface/20 rounded-2xl border border-surface-active/20 p-3">
-                            <BoggleWordList
-                                foundWords={foundWords}
-                                totalPoints={totalPoints}
+                        <div className="my-auto">
+                            <BoggleGrid
+                                grid={grid}
+                                gridSize={gridSize}
+                                selectedPath={selectedPath}
+                                lastWordResult={lastWordResult}
+                                onSelectCell={selectCell}
+                                onSubmitWord={submitWord}
+                                onClearSelection={clearSelection}
+                                disabled={status !== 'playing'}
+                            />
+                        </div>
+
+                        <div className="w-full shrink-0 mt-3 lg:mt-4">
+                            <BoggleTimer
+                                remainingTime={remainingTime}
+                                gameDuration={gameDuration}
                             />
                         </div>
                     </div>
-                </div>
 
-                {/* Timer Progress */}
-                <div className="px-4 sm:px-6 pb-4 sm:pb-6 shrink-0 max-w-md mx-auto w-full">
-                    <BoggleTimer
-                        remainingTime={remainingTime}
-                        gameDuration={gameDuration}
-                    />
+                    {/* Sağ/Alt: Bulunan Kelimeler Listesi */}
+                    <div className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-none lg:w-72 flex-1 lg:flex-none flex flex-col items-stretch">
+                        {/* Bulunan kelimeler kutusu: mobilde min-h, desktop'taki items-stretch divi içinde h-full ile dış konteynıra yapışır */}
+                        <div className="flex-1 lg:h-full flex flex-col min-h-[200px] overflow-hidden bg-surface/20 rounded-2xl border border-surface-active/20 p-2 sm:p-3">
+                            <div className="flex-1 overflow-y-auto pr-1">
+                                <BoggleWordList
+                                    foundWords={foundWords}
+                                    totalPoints={totalPoints}
+                                />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 

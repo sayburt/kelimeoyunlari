@@ -20,6 +20,61 @@ export function shuffleArray<T>(arr: T[]): T[] {
     return shuffled;
 }
 
+const VOWELS_SET = new Set(['A', 'E', 'I', 'İ', 'O', 'Ö', 'U', 'Ü']);
+
+function hasClumpedVowels(grid: string[]): boolean {
+    const isVowel = (char: string) => VOWELS_SET.has(char);
+
+    // Check rows for 3 adjacent vowels
+    for (let r = 0; r < 4; r++) {
+        for (let c = 0; c < 2; c++) {
+            if (isVowel(grid[r * 4 + c]) && isVowel(grid[r * 4 + c + 1]) && isVowel(grid[r * 4 + c + 2])) {
+                return true;
+            }
+        }
+    }
+
+    // Check columns for 3 adjacent vowels
+    for (let c = 0; c < 4; c++) {
+        for (let r = 0; r < 2; r++) {
+            if (isVowel(grid[r * 4 + c]) && isVowel(grid[(r + 1) * 4 + c]) && isVowel(grid[(r + 2) * 4 + c])) {
+                return true;
+            }
+        }
+    }
+
+    // Check diagonals for 3 adjacent vowels
+    for (let r = 0; r < 2; r++) {
+        // Top-left to bottom-right
+        for (let c = 0; c < 2; c++) {
+            if (isVowel(grid[r * 4 + c]) && isVowel(grid[(r + 1) * 4 + c + 1]) && isVowel(grid[(r + 2) * 4 + c + 2])) {
+                return true;
+            }
+        }
+        // Top-right to bottom-left
+        for (let c = 2; c < 4; c++) {
+            if (isVowel(grid[r * 4 + c]) && isVowel(grid[(r + 1) * 4 + c - 1]) && isVowel(grid[(r + 2) * 4 + c - 2])) {
+                return true;
+            }
+        }
+    }
+
+    // Check 2x2 blocks for 3 or more vowels
+    for (let r = 0; r < 3; r++) {
+        for (let c = 0; c < 3; c++) {
+            const vCount = (isVowel(grid[r * 4 + c]) ? 1 : 0) +
+                (isVowel(grid[r * 4 + c + 1]) ? 1 : 0) +
+                (isVowel(grid[(r + 1) * 4 + c]) ? 1 : 0) +
+                (isVowel(grid[(r + 1) * 4 + c + 1]) ? 1 : 0);
+            if (vCount >= 3) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
 export function generateGrid(): string[] {
     // 5-7 arası rastgele sesli harf sayısı belirle
     const vowelCount = MIN_VOWELS + Math.floor(Math.random() * (MAX_VOWELS - MIN_VOWELS + 1));
@@ -27,9 +82,20 @@ export function generateGrid(): string[] {
 
     const vowels = pickRandom(VOWEL_POOL, vowelCount);
     const consonants = pickRandom(CONSONANT_POOL, consonantCount);
+    const letters = [...vowels, ...consonants];
 
-    // Birleştir ve karıştır
-    return shuffleArray([...vowels, ...consonants]);
+    // Birleştir ve karıştır, ardından sesli harf öbekleşmesini (clumping) kontrol et
+    let grid = shuffleArray(letters);
+    let attempts = 0;
+    const MAX_ATTEMPTS = 100;
+
+    // Mümkün olduğunca sesli harflerin yan yana (3'lü veya 2x2 blokta 3'ten fazla) gelmesini engelle
+    while (hasClumpedVowels(grid) && attempts < MAX_ATTEMPTS) {
+        grid = shuffleArray(letters);
+        attempts++;
+    }
+
+    return grid;
 }
 
 export function getNeighbors(index: number): number[] {
