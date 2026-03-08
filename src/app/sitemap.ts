@@ -2,7 +2,6 @@ import { MetadataRoute } from 'next';
 import { GAMES } from "@/data/games";
 import { getWordlePseoFilters } from '@/lib/wordData';
 import { generateSlug } from '@/lib/pseo/slugGenerator';
-import { PSEO_GAME_IDS } from '@/lib/pseo/config';
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const baseUrl = 'https://www.kelimeoyunlari.tr';
@@ -46,7 +45,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.9,
         },
         {
-            url: `${baseUrl}/sozluk/es-anlamli-kelimeler`,
+            url: `${baseUrl}/kelimeler`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
+            url: `${baseUrl}/kelimeler/es-anlamli-kelimeler`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.75,
@@ -73,16 +78,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
     // --- pSEO sayfalari ---
     const pseoFilters = getWordlePseoFilters();
-    const pseoGameIds = PSEO_GAME_IDS;
-
-    const pseoPages: MetadataRoute.Sitemap = pseoGameIds.flatMap(gameId =>
-        pseoFilters.map(filter => ({
-            url: `${baseUrl}/games/${gameId}/p/${generateSlug(filter)}`,
-            lastModified: new Date(),
-            changeFrequency: 'monthly' as const,
-            priority: 0.6,
-        }))
-    );
+    const pseoPages: MetadataRoute.Sitemap = pseoFilters.map(filter => ({
+        url: `${baseUrl}/kelimeler/${generateSlug(filter)}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+    }));
 
     return [...staticPages, ...pseoPages];
 }

@@ -67,7 +67,7 @@ export function RelatedLinks({
                         {TURKISH_ALPHABET.map((letter) => {
                             const isCurrent = letter === currentLetter;
                             const isAvailable = !availableLetters || availableLetters.includes(letter);
-                            const path = generatePseoPath(gameId, {
+                            const path = generatePseoPath({
                                 startsWith: letter,
                                 length: currentLength,
                             });

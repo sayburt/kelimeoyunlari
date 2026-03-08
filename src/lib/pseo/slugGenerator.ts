@@ -1,5 +1,4 @@
 import { type WordFilter, getAllPilotFilters } from '@/lib/wordData';
-import type { ValidGameId } from './slugParser';
 import { generateSlugFromRules } from './slugRules';
 
 /**
@@ -24,12 +23,12 @@ export function generateSlug(filter: WordFilter): string {
 
 /**
  * Tam pSEO URL path'ini uretir.
- * Ornek: generatePseoPath('wordle', { startsWith: 'a', length: 5 })
- *        -> "/games/wordle/p/a-ile-baslayan-5-harfli-kelimeler"
+ * Ornek: generatePseoPath({ startsWith: 'a', length: 5 })
+ *        -> "/kelimeler/a-ile-baslayan-5-harfli-kelimeler"
  */
-export function generatePseoPath(gameId: ValidGameId, filter: WordFilter): string {
+export function generatePseoPath(filter: WordFilter): string {
     const slug = generateSlug(filter);
-    return `/games/${gameId}/p/${slug}`;
+    return `/kelimeler/${slug}`;
 }
 
 /**

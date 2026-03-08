@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getFilteredWords, calculateWordStats, getWordlePseoFilters, TURKISH_ALPHABET } from '@/lib/wordData';
-import { parseSlug, isValidGameId } from '@/lib/pseo/slugParser';
+import { parseSlug, type ValidGameId } from '@/lib/pseo/slugParser';
 import { generateSlug } from '@/lib/pseo/slugGenerator';
 import {
     generateMetaDescription,
@@ -23,55 +23,31 @@ import { PseoHero } from '@/components/pseo/PseoHero';
 import { FaqSection } from '@/components/pseo/FaqSection';
 import Navbar from '@/components/layout/Navbar';
 import { buildPseoSchemas } from '@/lib/pseo/pageSchemas';
-import { isIndexableWordCount, PSEO_GAME_IDS } from '@/lib/pseo/config';
-
-// ---------- Types ----------
+import { isIndexableWordCount } from '@/lib/pseo/config';
 
 interface PageProps {
-    params: Promise<{ gameId: string; slug: string }>;
+    params: Promise<{ slug: string }>;
 }
 
-// ---------- Oyun bilgileri ----------
+const DEFAULT_GAME_ID: ValidGameId = 'wordle';
 
-const GAME_HREFS: Record<string, string> = {
+const GAME_HREFS: Record<ValidGameId, string> = {
     wordle: '/games/wordle',
     'adam-asmaca': '/games/adam-asmaca',
     boggle: '/games/boggle',
     'kelime-arama': '/games/kelime-arama',
 };
 
-// ---------- Static Params (SSG - Build Time) ----------
-
-/**
- * Build time'da uretilecek tum sayfa kombinasyonlari.
- * Faz-2 kapsam:
- * - Harf + 5 harfli (pilot)
- * - 5 harfli hub
- * - Sonu XX ile biten 5 harfli (top 20)
- * - Icinde J ve Z olmayan 5 harfli
- */
 export function generateStaticParams() {
-    const params: { gameId: string; slug: string }[] = [];
     const pseoFilters = getWordlePseoFilters();
-    const gameIds = PSEO_GAME_IDS;
-
-    for (const gameId of gameIds) {
-        for (const filter of pseoFilters) {
-            params.push({
-                gameId,
-                slug: generateSlug(filter),
-            });
-        }
-    }
-
-    return params;
+    return pseoFilters.map((filter) => ({
+        slug: generateSlug(filter),
+    }));
 }
 
-// ---------- Metadata ----------
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-    const { gameId, slug } = await params;
-    const parsed = parseSlug(slug, gameId);
+    const { slug } = await params;
+    const parsed = parseSlug(slug, DEFAULT_GAME_ID);
 
     if (!parsed.isValid) {
         return { title: 'Sayfa Bulunamadi' };
@@ -82,9 +58,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
     const title = generatePageTitle(parsed);
     const description = generateMetaDescription(parsed, stats);
-    const canonicalPath = `/games/${gameId}/p/${slug}`;
-
-    // Thin content korumasi: 3'ten az kelime varsa noindex
+    const canonicalPath = `/kelimeler/${slug}`;
     const shouldIndex = isIndexableWordCount(words.length);
 
     return {
@@ -112,31 +86,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
 }
 
-// ---------- Page Component ----------
-
-export default async function PseoPage({ params }: PageProps) {
-    const { gameId, slug } = await params;
-
-    // Gecerlilik kontrolleri
-    if (!isValidGameId(gameId)) {
-        notFound();
-    }
-
+export default async function KelimelerPseoPage({ params }: PageProps) {
+    const { slug } = await params;
+    const gameId = DEFAULT_GAME_ID;
     const parsed = parseSlug(slug, gameId);
+
     if (!parsed.isValid) {
         notFound();
     }
 
-    // Veri cek
     const words = getFilteredWords(parsed.filter);
     const stats = calculateWordStats(words);
 
-    // Thin content korumasi: Hicbir kelime yoksa 404
     if (words.length === 0) {
         notFound();
     }
 
-    // Icerik uret
     const gameName = getGameName(gameId);
     const gameHref = GAME_HREFS[gameId] || '/';
     const description = generatePageDescription(parsed, stats);
@@ -158,13 +123,13 @@ export default async function PseoPage({ params }: PageProps) {
             : parsed.filter.excludeLetters
                 ? `${parsed.filter.excludeLetters.map((letter) => letter.toLocaleUpperCase('tr-TR')).join(' ve ')} harflerini icermeyen`
                 : `${parsed.filter.length || ''} harfli`;
+    const canonicalPath = `/kelimeler/${slug}`;
 
     const schemas = buildPseoSchemas({
         gameName,
         gameHref,
         displayTitle: parsed.displayTitle,
-        gameId,
-        slug,
+        canonicalPath,
         words,
         description: generateMetaDescription(parsed, stats),
         faqItems,
@@ -184,15 +149,11 @@ export default async function PseoPage({ params }: PageProps) {
                 categoryCount={categoryCount}
             />
 
-            {/* Content */}
             <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-                    {/* Ana icerik (sol - 2/3) */}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* Dinamik aciklama */}
                         <PageDescription description={description} />
 
-                        {/* Istatistikler */}
                         <section>
                             <h2 className="text-xl font-black text-text-main mb-4 flex items-center gap-3">
                                 <span className="w-8 h-1 bg-primary rounded-full" />
@@ -201,7 +162,6 @@ export default async function PseoPage({ params }: PageProps) {
                             <WordStatsCards stats={stats} />
                         </section>
 
-                        {/* Kelime listesi */}
                         <section id="kelime-listesi">
                             <h2 className="text-xl font-black text-text-main mb-4 flex items-center gap-3">
                                 <span className="w-8 h-1 bg-primary rounded-full" />
@@ -213,19 +173,16 @@ export default async function PseoPage({ params }: PageProps) {
                         <FaqSection items={faqItems} />
                     </div>
 
-                    {/* Sidebar (sag - 1/3) */}
                     <aside className="space-y-6">
-                        {/* Oyuna yonlendirme ve ilgili linkler */}
                         <RelatedLinks
                             currentLetter={parsed.filter.startsWith}
                             currentLength={parsed.filter.length}
-                            gameId={gameId as 'wordle' | 'adam-asmaca' | 'boggle' | 'kelime-arama'}
+                            gameId={gameId}
                             gameHref={gameHref}
                             gameName={gameName}
                             availableLetters={availableLetters}
                         />
 
-                        {/* Strateji ipuclari */}
                         <StrategyCard tips={strategyTips} gameName={gameName} />
                     </aside>
                 </div>

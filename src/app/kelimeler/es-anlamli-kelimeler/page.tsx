@@ -4,7 +4,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { buildBreadcrumbSchema } from '@/components/seo/schemaGenerator';
 import { getSynonymPairs, getSynonymSummary } from '@/lib/sozluk/synonyms';
 
-const PAGE_PATH = '/sozluk/es-anlamli-kelimeler';
+const PAGE_PATH = '/kelimeler/es-anlamli-kelimeler';
 const DISPLAY_LIMIT = 250;
 
 export const metadata: Metadata = {
@@ -34,6 +34,7 @@ export default function EsAnlamliKelimelerPage() {
             <JsonLd
                 data={buildBreadcrumbSchema([
                     { name: 'Anasayfa', item: '/' },
+                    { name: 'Kelimeler', item: '/kelimeler' },
                     { name: 'Es Anlamli Kelimeler', item: PAGE_PATH },
                 ])}
             />

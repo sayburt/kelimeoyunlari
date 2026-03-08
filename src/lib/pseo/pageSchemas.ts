@@ -10,8 +10,7 @@ interface BuildPseoSchemasParams {
     gameName: string;
     gameHref: string;
     displayTitle: string;
-    gameId: string;
-    slug: string;
+    canonicalPath: string;
     words: WordEntry[];
     description: string;
     faqItems: FAQItem[];
@@ -22,8 +21,7 @@ export function buildPseoSchemas(params: BuildPseoSchemasParams): Record<string,
         gameName,
         gameHref,
         displayTitle,
-        gameId,
-        slug,
+        canonicalPath,
         words,
         description,
         faqItems,
@@ -39,7 +37,7 @@ export function buildPseoSchemas(params: BuildPseoSchemasParams): Record<string,
         buildItemListSchema({
             name: displayTitle,
             description,
-            url: `/games/${gameId}/p/${slug}`,
+            url: canonicalPath,
             items: words.slice(0, 100).map((word) => word.kelime.toLocaleUpperCase('tr-TR')),
         }),
     ];
