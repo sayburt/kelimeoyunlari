@@ -142,7 +142,7 @@ function BogglePageContent() {
                 <ErrorToast message={error || toastMessage || ''} />
 
                 {/* Oyun içeriği */}
-                <div className="flex-1 flex flex-col lg:flex-row items-stretch justify-center gap-4 lg:gap-6 px-3 sm:px-4 py-2 sm:py-3 max-w-4xl mx-auto w-full min-h-0 pb-4 lg:pb-8">
+                <div className="flex-1 flex flex-col lg:flex-row items-stretch justify-start lg:justify-center gap-4 lg:gap-6 px-3 sm:px-4 py-2 sm:py-3 max-w-4xl mx-auto w-full min-h-0 pb-4 lg:pb-8">
 
                     {/* Sol/Üst: Seçili Kelime, Izgara & Timer */}
                     <div className="w-full max-w-[320px] sm:max-w-[360px] flex-shrink-0 flex flex-col justify-between">
@@ -181,9 +181,9 @@ function BogglePageContent() {
                     </div>
 
                     {/* Sağ/Alt: Bulunan Kelimeler Listesi */}
-                    <div className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-none lg:w-72 flex-1 lg:flex-none flex flex-col items-stretch">
+                    <div className="w-full max-w-[320px] sm:max-w-[360px] lg:max-w-none lg:w-72 flex-1 lg:flex-none min-h-0 flex flex-col items-stretch">
                         {/* Bulunan kelimeler kutusu: mobilde min-h, desktop'taki items-stretch divi içinde h-full ile dış konteynıra yapışır */}
-                        <div className="flex-1 lg:h-full flex flex-col min-h-[200px] overflow-hidden bg-surface/20 rounded-2xl border border-surface-active/20 p-2 sm:p-3">
+                        <div className="flex-1 lg:h-full flex flex-col min-h-[140px] sm:min-h-[200px] overflow-hidden bg-surface/20 rounded-2xl border border-surface-active/20 p-2 sm:p-3">
                             <div className="flex-1 overflow-y-auto pr-1">
                                 <BoggleWordList
                                     foundWords={foundWords}
