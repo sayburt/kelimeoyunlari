@@ -60,7 +60,7 @@ function WordSearchPageContent() {
         handleSelection,
         useJoker,
     } = useWordSearch({ isPaused });
-    const { elementRef: gridPanelRef, height: gridPanelHeight } = useSyncedElementHeight<HTMLDivElement>();
+    const { elementRef: gridPanelRef, height: gridPanelHeight } = useSyncedElementHeight<HTMLDivElement>(status === 'playing' || status === 'won');
 
     const hasStartedRef = useRef(false);
     const rightPanelStyle = useMemo(

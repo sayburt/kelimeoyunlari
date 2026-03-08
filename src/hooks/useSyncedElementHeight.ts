@@ -2,11 +2,15 @@
 
 import { useEffect, useRef, useState } from 'react';
 
-export function useSyncedElementHeight<T extends HTMLElement>() {
+export function useSyncedElementHeight<T extends HTMLElement>(isActive: boolean) {
     const elementRef = useRef<T | null>(null);
     const [height, setHeight] = useState<number | null>(null);
 
     useEffect(() => {
+        if (!isActive) {
+            return;
+        }
+
         const element = elementRef.current;
         if (!element) {
             return;
@@ -33,7 +37,7 @@ export function useSyncedElementHeight<T extends HTMLElement>() {
         return () => {
             window.removeEventListener('resize', updateHeight);
         };
-    }, []);
+    }, [isActive]);
 
     return { elementRef, height };
 }
