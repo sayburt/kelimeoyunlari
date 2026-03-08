@@ -51,6 +51,14 @@ Adam Asmaca oyununun projenin standartlarına uygun şekilde uçtan uca implemen
 
 ---
 
+## 🧹 FAZ 10: Kelime Arama Refactor
+
+- [x] `useWordSearch` içindeki kelime seçim yardımcılarının `src/utils/wordSearchSelectionUtils.ts` dosyasına taşınması.
+- [x] Grid ve sağ panel yükseklik senkronizasyonunun `src/hooks/useSyncedElementHeight.ts` hook'una ayrılması.
+- [x] `WordSearchWordList` içinde sıralama hesaplarının `useMemo` ile optimize edilmesi.
+
+---
+
 ## ✅ TAMAMLANAN GÖREVLER (ARŞİV)
 
 <details>

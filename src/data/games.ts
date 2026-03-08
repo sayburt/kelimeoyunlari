@@ -210,5 +210,45 @@ export const GAMES: Game[] = [
                 'Sık kullanılan harf gruplarını arayın: bir sesli harfin etrafındaki sessiz harfler genellikle kelime oluşturur.'
             ]
         }
+    },
+    {
+        id: 'kelime-arama',
+        title: 'Kelime Arama',
+        description: 'Ücretsiz Türkçe Kelime Arama oyununda gizlenen kelimeleri tabloda bul, joker kullan ve tüm listeyi tamamla.',
+        href: '/games/kelime-arama',
+        thumbnail: '/games/kelime-arama/card.webp',
+        playCount: 0,
+        likeCount: 0,
+        comingSoon: false,
+        instructions: {
+            basic: 'Kelime Arama oyununda amaç, harf tablosunda saklanan tüm kelimeleri bulmaktır. Kelimeler yatay, dikey ve çapraz yönlerde; düz veya ters şekilde yerleştirilebilir.',
+            rules: [
+                'Izgara tüm seviyelerde 10x10 kalır; zorluk seviyesi bulunacak kelime sayısını artırır.',
+                'Bir kelimeyi seçmek için harfler üzerinde sürükleyebilir veya ilk harf ile son harfi ardışık olarak seçebilirsiniz.',
+                'Seçim mutlaka düz bir hatta olmalıdır (yatay, dikey veya çapraz).',
+                'Doğru kelime bulunduğunda tabloda işaretlenir ve listede tamamlandı olarak görünür.',
+                'Her oyunda bir joker hakkı vardır. Joker, bulunmamış bir kelimenin yerini kısa süreli vurgular.',
+                'Tüm kelimeleri bulduğunuzda oyun tamamlanır ve bitiş bonusu ile birlikte toplam puan hesaplanır.'
+            ],
+            scoring: {
+                description: 'Kelime Arama puanlaması kelime uzunluğu, zorluk seviyesi, joker kullanımı ve bitiş bonusuna göre hesaplanır:',
+                points: [
+                    { condition: 'Kısa Kelimeler', value: 'Temel Puan' },
+                    { condition: 'Uzun Kelimeler', value: 'Daha Fazla Puan' },
+                    { condition: 'Zorluk Çarpanı', value: 'Kolay/Orta/Zor' },
+                    { condition: 'Bulmacayı Tamamlama', value: 'Ek Bonus' },
+                    { condition: 'Joker Kullanımı', value: 'Puan Cezası' }
+                ]
+            },
+            footer: 'Doğru doğrultuyu yakala, tüm kelimeleri bul ve bulmacayı temizle!'
+        },
+        blogContent: {
+            history: 'Kelime Arama (Word Search), 1968 yılında Norman E. Gibat tarafından popülerleştirilen klasik bir harf bulmaca türüdür. Basılı gazetelerden dijital oyunlara uzanan bu format, hızlı tarama ve dikkat becerilerini geliştirmesiyle öne çıkar.',
+            proTips: [
+                'Önce uzun kelimeleri ara; uzun kelime bulunduğunda tablo daha hızlı sadeleşir.',
+                'Köşelerden merkeze doğru sistematik tarama yaparak göz kaçırmayı azalt.',
+                'Bir kelimeyi bulamadığında çapraz yönleri özellikle kontrol et.'
+            ]
+        }
     }
 ];

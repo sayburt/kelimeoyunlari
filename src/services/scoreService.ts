@@ -81,6 +81,41 @@ export const scoreService = {
     },
 
     /**
+     * Kelime Arama için kelime başına puan hesaplar.
+     * Uzun kelimeler daha fazla puan getirir.
+     */
+    getWordSearchWordPoints(wordLength: number): number {
+        if (wordLength <= 3) return 6;
+        if (wordLength === 4) return 10;
+        if (wordLength === 5) return 14;
+        if (wordLength === 6) return 18;
+        if (wordLength === 7) return 24;
+        return 30;
+    },
+
+    /**
+     * Kelime Arama puanını ortak skor servisi üzerinden hesaplar.
+     */
+    calculateWordSearchScore(
+        foundWords: string[],
+        difficulty: number,
+        jokersUsed: number = 0,
+        completionBonus: number = 0
+    ): number {
+        const basePoints = foundWords.reduce((total, word) => {
+            return total + this.getWordSearchWordPoints(word.length);
+        }, 0);
+
+        let multiplier = 1.0;
+        if (difficulty === 2) multiplier = 1.5;
+        if (difficulty === 3) multiplier = 2.0;
+
+        const jokerPenalty = jokersUsed * 30;
+        const totalScore = Math.max(0, Math.round((basePoints * multiplier) + completionBonus - jokerPenalty));
+        return totalScore;
+    },
+
+    /**
      * Oyun sonucunu (kazanma/kaybetme) kaydeder.
      * Kullanıcı giriş yapmışsa Supabase'e, misafirse LocalStorage'a kaydeder.
      */
