@@ -34,7 +34,9 @@ export const metadata: Metadata = {
     "sözcük avı",
     "kelime gezmece",
     "harf oyunları",
-    "günlük kelime oyunu"
+    "günlük kelime oyunu",
+    "wordle",
+    "türkçe wordle"
   ],
   referrer: "origin-when-cross-origin",
   creator: "Kelime Oyunları",
