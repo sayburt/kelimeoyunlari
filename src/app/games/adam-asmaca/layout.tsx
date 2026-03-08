@@ -8,6 +8,7 @@ const gameData = GAMES.find(g => g.id === 'adam-asmaca')!;
 export const metadata: Metadata = {
     title: gameData?.title || 'Adam Asmaca',
     description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi adam çizilmeden bul!',
+    keywords: ['adam asmaca', 'türkçe adam asmaca', 'ücretsiz adam asmaca', 'kelime oyunu', 'harf tahmin oyunu', 'bulmaca oyunu', 'zeka oyunları'],
     openGraph: {
         title: `${gameData?.title || 'Adam Asmaca'} | Kelime Oyunları`,
         description: gameData?.description || 'Ücretsiz Türkçe Adam Asmaca oyunu. Gizli kelimeyi adam çizilmeden bul!',

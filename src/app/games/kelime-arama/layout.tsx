@@ -8,7 +8,7 @@ const gameData = GAMES.find(g => g.id === 'kelime-arama')!;
 export const metadata: Metadata = {
     title: 'Kelime Arama Oyna | Kelime Oyunları',
     description: 'Ücretsiz Türkçe Kelime Arama oyunu ile gizli kelimeleri bul, joker kullan ve bulmacayı tamamlayarak puan topla.',
-    keywords: ['kelime arama', 'word search', 'türkçe kelime bulmaca', 'kelime bul oyunu', 'zeka oyunu', 'ücretsiz bulmaca'],
+    keywords: ['kelime arama', 'sözcük avı', 'türkçe kelime arama', 'ücretsiz kelime arama', 'kelime bul oyunu', 'zeka oyunu', 'ücretsiz bulmaca', 'türkçe bulmacalar', 'kelime oyunları'],
     openGraph: {
         title: 'Kelime Arama Oyna | Kelime Oyunları',
         description: 'Ücretsiz Türkçe Kelime Arama oyunu ile gizli kelimeleri bul, joker kullan ve bulmacayı tamamlayarak puan topla.',

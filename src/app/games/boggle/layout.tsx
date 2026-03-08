@@ -8,7 +8,7 @@ const gameData = GAMES.find(g => g.id === 'boggle')!;
 export const metadata: Metadata = {
     title: 'Boggle Oyna | Kelime Oyunları',
     description: 'Ücretsiz Türkçe Boggle oyununu sınırsız oynayın! harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',
-    keywords: ['ücretsiz boggle', 'türkçe boggle', 'boggle oyna', 'kelime oyunu', 'harf bağlama oyunu', 'zeka oyunu', 'kelime bulmaca'],
+    keywords: ['boggle', 'ücretsiz boggle', 'türkçe boggle', 'boggle oyna', 'kelime oyunu', 'harf bağlama oyunu', 'zeka oyunu', 'kelime bulmaca', 'ücretsiz kelime oyunları'],
     openGraph: {
         title: 'Boggle Oyna | Kelime Oyunları',
         description: 'Ücretsiz Türkçe Boggle oyununu sınırsız oynayın! harfleri birbirine bağlayarak 3 dakikada mümkün olduğunca çok kelime bulun.',

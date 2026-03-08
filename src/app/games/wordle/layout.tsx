@@ -8,7 +8,7 @@ const gameData = GAMES.find(g => g.id === 'wordle')!;
 export const metadata: Metadata = {
     title: 'Wordle Oyna | Kelime Oyunları',
     description: 'Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
-    keywords: ['ücretsiz wordle', 'türkçe wordle', 'wordle oyna', 'kelime oyunu', 'günlük kelime bulmaca', 'zeka oyunu', 'kelime tahmin oyunu'],
+    keywords: ['wordle', 'türkçe wordle', 'ücretsiz wordle', 'wordle oyna', 'günlük kelime oyunu', 'kelime tahmin oyunu', 'zeka oyunu', 'ücretsiz kelime oyunları', 'türkçe bulmacalar'],
     openGraph: {
         title: 'Wordle Oyna | Kelime Oyunları',
         description: 'Ücretsiz Türkçe Wordle oyununu sınırsız oynayın. 5 harfli gizli kelimeyi 6 denemede bulmaya çalışın.',
