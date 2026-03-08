@@ -117,3 +117,63 @@ export function buildVideoGameSchema(game: Game) {
         platform: 'WebBrowser',
     };
 }
+
+// ---------- pSEO Schemalari ----------
+
+export interface ItemListSchemaData {
+    name: string;
+    description: string;
+    url: string;
+    items: string[];
+    /** Maksimum schema'ya eklenecek item sayisi (varsayilan: 50) */
+    maxItems?: number;
+}
+
+/**
+ * pSEO kelime listesi sayfalari icin ItemList schema uretir.
+ * Google SERP'te zengin sonuclar icin kullanilir.
+ */
+export function buildItemListSchema(data: ItemListSchemaData) {
+    const maxItems = data.maxItems ?? 50;
+    const displayItems = data.items.slice(0, maxItems);
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'ItemList',
+        name: data.name,
+        description: data.description,
+        url: `${SITE_URL}${data.url}`,
+        numberOfItems: data.items.length,
+        itemListElement: displayItems.map((item, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: item,
+        })),
+    };
+}
+
+export interface FAQSchemaItem {
+    question: string;
+    answer: string;
+}
+
+/**
+ * pSEO sayfalari icin FAQPage schema uretir.
+ * Google SERP'te "Sik Sorulan Sorular" zengin sonucu gosterir.
+ */
+export function buildFAQSchema(items: FAQSchemaItem[]) {
+    if (items.length === 0) return null;
+
+    return {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        mainEntity: items.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: item.answer,
+            },
+        })),
+    };
+}
