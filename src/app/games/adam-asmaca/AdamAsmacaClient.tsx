@@ -133,8 +133,26 @@ function AdamAsmacaPageContent() {
                     jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
-                <div className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner />
+                <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                    {error ? (
+                        <div className="max-w-xs animate-in fade-in slide-in-from-bottom-4 duration-500">
+                            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <span className="text-2xl text-red-500">⚠️</span>
+                            </div>
+                            <h3 className="text-lg font-bold text-text-main mb-2">Eyvah! Bir sorun çıktı</h3>
+                            <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+                                {error}
+                            </p>
+                            <button
+                                onClick={() => startNewGame()}
+                                className="w-full bg-primary text-bg font-black py-3 rounded-xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
+                            >
+                                YENİDEN DENE
+                            </button>
+                        </div>
+                    ) : (
+                        <LoadingSpinner />
+                    )}
                 </div>
             </div>
         );

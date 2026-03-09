@@ -3,7 +3,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type DifficultyLevel = 1 | 2 | 3; // 1: Kolay, 2: Orta, 3: Zor
-export type CategoryOption = 'rastgele' | 'araçlar' | 'bilim' | 'bitki' | 'coğrafya' | 'eşya' | 'hayvan' | 'meslek' | 'sanat' | 'spor' | 'şehir' | 'yemek';
+export const VALID_CATEGORIES = ['rastgele', 'araçlar', 'bilim', 'bitki', 'coğrafya', 'eşya', 'hayvan', 'meslek', 'sanat', 'spor', 'şehir', 'yemek'] as const;
+export type CategoryOption = typeof VALID_CATEGORIES[number];
 
 interface GameSettingsContextType {
     difficulty: DifficultyLevel;
@@ -31,7 +32,14 @@ export function GameSettingsProvider({ children }: { children: React.ReactNode }
 
             const savedCategory = localStorage.getItem('game_category') as CategoryOption;
             if (savedCategory) {
-                setCategoryState(savedCategory);
+                // Kategori silinmiş veya değiştirilmiş olabilir, kontrol et
+                if (VALID_CATEGORIES.includes(savedCategory)) {
+                    setCategoryState(savedCategory);
+                } else {
+                    // Geçersiz kategoriyi temizle ve varsayılana dön
+                    localStorage.removeItem('game_category');
+                    setCategoryState('rastgele');
+                }
             }
 
             const savedSound = localStorage.getItem('sound_enabled');

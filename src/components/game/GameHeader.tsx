@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { ArrowLeft, Info, BarChart2, Settings, Share2, Menu, X, Save, Swords } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { VisitorAuthModal } from './VisitorAuthModal';
 
 export interface GameHeaderProps {
     title: string;
@@ -42,6 +43,7 @@ export function GameHeader({
 }: GameHeaderProps) {
     const router = useRouter();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [showVisitorModal, setShowVisitorModal] = useState(false);
 
     const handleBack = () => {
         if (onBack) {
@@ -53,6 +55,14 @@ export function GameHeader({
 
     const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
+    const handleChallengeClick = () => {
+        if (!isLoggedIn) {
+            setShowVisitorModal(true);
+        } else if (onChallenge) {
+            onChallenge();
+        }
+    };
+
     interface MenuItem {
         icon: React.ElementType;
         label: string;
@@ -62,7 +72,7 @@ export function GameHeader({
 
     const menuItems: MenuItem[] = [
         ...(isLoggedIn && gameStatus === 'playing' && onSave ? [{ icon: Save, label: 'Sonra Devam Et', onClick: onSave }] : []),
-        ...(isLoggedIn && !isChallengeMode && onChallenge ? [{ icon: Swords, label: 'Meydan Oku', onClick: onChallenge }] : []),
+        ...(!isChallengeMode && onChallenge ? [{ icon: Swords, label: 'Meydan Oku', onClick: handleChallengeClick }] : []),
         { icon: Info, label: 'Nasıl Oynanır?', onClick: onHelp },
         { icon: BarChart2, label: 'İstatistikler', onClick: onStats },
         { icon: Settings, label: 'Ayarlar', onClick: onSettings },
@@ -185,6 +195,11 @@ export function GameHeader({
                     </AnimatePresence>
                 </div>
             </div>
+
+            <VisitorAuthModal
+                isOpen={showVisitorModal}
+                onClose={() => setShowVisitorModal(false)}
+            />
         </header>
     );
 }
