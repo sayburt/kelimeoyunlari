@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Nunito } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import ClientLayout from "./ClientLayout";
 import { JsonLd } from "@/components/seo/JsonLd";
@@ -103,6 +104,7 @@ export default function RootLayout({
           {children}
         </ClientLayout>
         <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );
