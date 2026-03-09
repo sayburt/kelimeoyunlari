@@ -32,20 +32,17 @@ export function SettingsModal({ isOpen, onClose, showCategory }: SettingsModalPr
 
     const categoryOptions: { id: CategoryOption; label: string }[] = [
         { id: 'rastgele', label: 'RASTGELE' },
-        { id: 'hayvan', label: 'HAYVANLAR' },
+        { id: 'araçlar', label: 'ARAÇLAR' },
+        { id: 'bilim', label: 'BİLİM' },
         { id: 'bitki', label: 'BİTKİLER' },
+        { id: 'coğrafya', label: 'COĞRAFYA' },
+        { id: 'eşya', label: 'EŞYA' },
+        { id: 'hayvan', label: 'HAYVANLAR' },
+        { id: 'meslek', label: 'MESLEKLER' },
+        { id: 'sanat', label: 'SANAT' },
+        { id: 'spor', label: 'SPOR' },
         { id: 'şehir', label: 'ŞEHİRLER' },
         { id: 'yemek', label: 'YEMEKLER' },
-        { id: 'spor', label: 'SPOR' },
-        { id: 'meslek', label: 'MESLEKLER' },
-        { id: 'isim', label: 'İSİM' },
-        { id: 'sıfat', label: 'SIFAT' },
-        { id: 'zarf', label: 'ZARF' },
-        { id: 'ünlem', label: 'ÜNLEM' },
-        { id: 'edat', label: 'EDAT' },
-        { id: 'bağlaç', label: 'BAĞLAÇ' },
-        { id: 'zamir', label: 'ZAMİR' },
-        { id: 'diğer', label: 'DİĞER' },
     ];
 
     if (!isOpen) return null;

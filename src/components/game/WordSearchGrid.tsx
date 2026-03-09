@@ -34,6 +34,7 @@ export function WordSearchGrid({
     const [dragCurrent, setDragCurrent] = useState<number | null>(null);
     const [clickAnchor, setClickAnchor] = useState<number | null>(null);
     const didDragRef = useRef(false);
+    const cellRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
     const resetDrag = () => {
         setIsDragging(false);
@@ -67,15 +68,39 @@ export function WordSearchGrid({
         onPreviewSelection(index, index);
     };
 
-    const handlePointerEnter = (index: number) => {
+    const handlePointerMove = (e: React.PointerEvent) => {
         if (!isDragging || dragStart === null || disabled) return;
 
-        if (index !== dragStart) {
-            didDragRef.current = true;
+        let bestIndex: number | null = null;
+        let bestDist = Infinity;
+
+        for (let i = 0; i < grid.length; i++) {
+            const cell = cellRefs.current[i];
+            if (!cell) continue;
+
+            const rect = cell.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const dist = Math.sqrt((e.clientX - centerX) ** 2 + (e.clientY - centerY) ** 2);
+            // Çapraz seçimlerde komşu hücreye taşmayı önlemek için hitbox'ı %45 ile sınırla
+            const threshold = Math.max(rect.width, rect.height) * 0.45;
+
+            if (dist < threshold && dist < bestDist) {
+                bestDist = dist;
+                bestIndex = i;
+            }
         }
 
-        setDragCurrent(index);
-        onPreviewSelection(dragStart, index);
+        if (bestIndex !== null) {
+            if (bestIndex !== dragStart) {
+                didDragRef.current = true;
+            }
+            if (bestIndex !== dragCurrent) {
+                setDragCurrent(bestIndex);
+                onPreviewSelection(dragStart, bestIndex);
+            }
+        }
     };
 
     const handleCellClick = (index: number) => {
@@ -141,7 +166,7 @@ export function WordSearchGrid({
                         e.preventDefault();
                         handlePointerDown(index);
                     }}
-                    onPointerEnter={() => handlePointerEnter(index)}
+                    ref={(el) => { cellRefs.current[index] = el; }}
                     onClick={() => handleCellClick(index)}
                 >
                     {letter}
@@ -155,6 +180,7 @@ export function WordSearchGrid({
             <div
                 className="grid gap-1 sm:gap-1.5"
                 style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
+                onPointerMove={handlePointerMove}
             >
                 {renderGrid()}
             </div>

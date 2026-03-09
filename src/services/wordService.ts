@@ -56,7 +56,10 @@ class WordService {
         }
 
         if (filters?.category) {
-            filteredWords = filteredWords.filter(w => w.kategoriler.includes(filters.category!));
+            const filterCategoryUpper = filters.category.toLocaleUpperCase('tr-TR');
+            filteredWords = filteredWords.filter(w =>
+                w.kategoriler.some(cat => cat.toLocaleUpperCase('tr-TR') === filterCategoryUpper)
+            );
         }
 
         if (filters?.difficulty) {

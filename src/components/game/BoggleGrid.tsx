@@ -89,8 +89,8 @@ export function BoggleGrid({
             const cell = cellRefs.current[n];
             if (!cell) continue;
             const rect = cell.getBoundingClientRect();
-            // Hücre boyutunun %70'i kadar yarıçap — merkeze yakın olmalı
-            const threshold = Math.max(rect.width, rect.height) * 0.7;
+            // Hücre boyutunun %40'ı kadar yarıçap — çapraz kaymaları önlemek için merkeze yakın olmalı
+            const threshold = Math.max(rect.width, rect.height) * 0.40;
             if (dist < threshold && dist < bestDist) {
                 bestDist = dist;
                 bestIndex = n;
@@ -103,7 +103,7 @@ export function BoggleGrid({
             const prevCell = cellRefs.current[prevIndex];
             if (prevCell) {
                 const prevRect = prevCell.getBoundingClientRect();
-                const prevThreshold = Math.max(prevRect.width, prevRect.height) * 0.5;
+                const prevThreshold = Math.max(prevRect.width, prevRect.height) * 0.40;
                 if (prevDist < prevThreshold && prevDist < bestDist) {
                     // Bir önceki hücreye geri dön
                     onSelectCell(prevIndex);

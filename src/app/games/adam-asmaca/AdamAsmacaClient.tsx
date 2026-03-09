@@ -12,6 +12,7 @@ import { StatsModal } from '@/components/game/StatsModal';
 import { useAuth } from '@/hooks/useAuth';
 import { formatTime } from '@/utils/timeUtils';
 import { shareContent } from '@/utils/shareUtils';
+import { useGameSettings } from '@/context/GameSettingsContext';
 import { HangmanDrawing } from '@/components/game/HangmanDrawing';
 import { HangmanKeyboard } from '@/components/game/HangmanKeyboard';
 import { HangmanWordDisplay } from '@/components/game/HangmanWordDisplay';
@@ -39,6 +40,7 @@ function AdamAsmacaPageContent() {
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
+    const { category, difficulty } = useGameSettings();
 
     const isPaused = baseIsPaused || showChallengeModal;
 
@@ -175,6 +177,19 @@ function AdamAsmacaPageContent() {
 
                     {/* Sağ Sütun (Can ve Gizli Kelime) */}
                     <div className="w-full sm:w-1/2 flex flex-col justify-between bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-3 sm:p-6 shadow-sm min-h-[90px] h-auto sm:min-h-0 sm:h-full mb-2 sm:mb-0">
+                        {/* Kategori ve Zorluk Bilgileri */}
+                        {!isChallengeMode && (
+                            <div className="flex justify-center items-center gap-2 mb-2 sm:mb-4">
+                                <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 capitalize tracking-wide">
+                                    {category === 'rastgele' ? 'Rastgele' : category}
+                                </span>
+                                <span className="w-1 h-1 rounded-full bg-surface-hover/80"></span>
+                                <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 tracking-wide">
+                                    {difficulty === 1 ? 'Kolay Seviye' : difficulty === 2 ? 'Orta Seviye' : 'Zor Seviye'}
+                                </span>
+                            </div>
+                        )}
+
                         {/* Can göstergesi (Üstte) */}
                         <div className="flex flex-wrap gap-1 sm:gap-2 justify-center items-center pb-2 sm:pb-0 sm:mb-auto min-h-[20px] sm:min-h-[32px]">
                             {Array.from({ length: maxLives }).map((_, i) => (
