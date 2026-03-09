@@ -1,51 +1,120 @@
-import { supabase } from "@/lib/supabase";
+import { hasSupabaseEnv, supabase } from "@/lib/supabase";
 import { storage } from "@/lib/storage";
 
-export const likeService = {
-    /**
-     * Tüm oyunların toplam beğeni sayılarını döner.
-     */
-    async getGlobalLikeCounts(): Promise<Record<string, number>> {
-        try {
-            const { data, error } = await supabase
-                .from('global_game_likes')
-                .select('game_name, total_likes');
+type ToggleLikeResult = { isLiked: boolean; error?: unknown };
 
-            if (error) throw error;
+function normalizeGameId(gameId: string): string {
+    if (gameId === "hangman") {
+        return "adam-asmaca";
+    }
+    return gameId;
+}
 
-            const counts: Record<string, number> = {};
+function getEquivalentGameIds(gameId: string): string[] {
+    const normalized = normalizeGameId(gameId);
+    if (normalized === "adam-asmaca") {
+        return ["adam-asmaca", "hangman"];
+    }
+    return [normalized];
+}
 
-            data?.forEach(row => {
-                counts[row.game_name] = Number(row.total_likes || 0);
-            });
+async function getAuthenticatedUserLikes(userId: string): Promise<string[]> {
+    const { data, error } = await supabase
+        .from("game_likes")
+        .select("game_name")
+        .eq("user_id", userId);
 
-            return counts;
-        } catch (error) {
-            console.error("Global beğeni sayıları alınırken hata:", error);
-            return {};
+    if (error) {
+        throw error;
+    }
+
+    return Array.from(new Set((data ?? []).map((row) => normalizeGameId(row.game_name))));
+}
+
+async function toggleAuthenticatedLike(
+    normalizedGameId: string,
+    equivalentGameIds: string[],
+    userId: string,
+): Promise<ToggleLikeResult> {
+    const { data: existingRows, error: existingError } = await supabase
+        .from("game_likes")
+        .select("id")
+        .eq("user_id", userId)
+        .in("game_name", equivalentGameIds);
+
+    if (existingError) {
+        throw existingError;
+    }
+
+    if ((existingRows ?? []).length > 0) {
+        const idsToDelete = (existingRows ?? []).map((row) => row.id);
+        const { error } = await supabase
+            .from("game_likes")
+            .delete()
+            .in("id", idsToDelete);
+
+        if (error) {
+            throw error;
         }
-    },
 
+        return { isLiked: false };
+    }
+
+    const { error } = await supabase
+        .from("game_likes")
+        .insert({
+            user_id: userId,
+            session_id: storage.getSessionId(),
+            game_name: normalizedGameId,
+        });
+
+    if (error) {
+        throw error;
+    }
+
+    return { isLiked: true };
+}
+
+async function syncGuestLike(
+    normalizedGameId: string,
+    equivalentGameIds: string[],
+    isLiked: boolean,
+): Promise<void> {
+    if (!hasSupabaseEnv) {
+        return;
+    }
+
+    const sessionId = storage.getSessionId();
+
+    if (isLiked) {
+        await supabase.from("game_likes").insert({
+            session_id: sessionId,
+            game_name: normalizedGameId,
+        });
+        return;
+    }
+
+    await supabase.from("game_likes").delete()
+        .is("user_id", null)
+        .eq("session_id", sessionId)
+        .in("game_name", equivalentGameIds);
+}
+
+export const likeService = {
     /**
      * Kullanıcının beğendiği oyunların id'lerini (game_name) döner.
      */
     async getUserLikes(userId?: string): Promise<string[]> {
         if (userId) {
             try {
-                const { data, error } = await supabase
-                    .from('game_likes')
-                    .select('game_name')
-                    .eq('user_id', userId);
-
-                if (error) throw error;
-                return data?.map(row => row.game_name) || [];
+                return await getAuthenticatedUserLikes(userId);
             } catch (error) {
                 console.error("Kullanıcı beğenileri alınırken hata:", error);
                 return storage.getGuestLikes();
             }
-        } else {
-            return storage.getGuestLikes();
         }
+
+        return storage.getGuestLikes();
     },
 
     /**
@@ -53,67 +122,32 @@ export const likeService = {
      * Güncel beğeni durumunu (true = beğenildi, false = beğenilmedi) döner.
      */
     async toggleLike(gameId: string, userId?: string): Promise<{ isLiked: boolean; error?: unknown }> {
+        const normalizedGameId = normalizeGameId(gameId);
+        const equivalentGameIds = getEquivalentGameIds(normalizedGameId);
+
         if (userId) {
+            if (!hasSupabaseEnv) {
+                return { isLiked: storage.getGuestLikes().includes(normalizedGameId) };
+            }
+
             try {
-                // Önce var mı kontrol et
-                const { data: existing } = await supabase
-                    .from('game_likes')
-                    .select('id')
-                    .eq('user_id', userId)
-                    .eq('game_name', gameId)
-                    .maybeSingle();
-
-                if (existing) {
-                    // Varsa sil (unlike)
-                    const { error } = await supabase
-                        .from('game_likes')
-                        .delete()
-                        .eq('user_id', userId)
-                        .eq('game_name', gameId);
-
-                    if (error) throw error;
-                    return { isLiked: false };
-                } else {
-                    // Yoksa ekle (like)
-                    const { error } = await supabase
-                        .from('game_likes')
-                        .insert({
-                            user_id: userId,
-                            session_id: storage.getSessionId(),
-                            game_name: gameId
-                        });
-
-                    if (error) throw error;
-                    return { isLiked: true };
-                }
+                return await toggleAuthenticatedLike(normalizedGameId, equivalentGameIds, userId);
             } catch (error) {
                 console.error("Beğeni işlemi sırasında hata:", error);
                 return { isLiked: false, error };
             }
-        } else {
-            // Misafir modunda
-            const isLiked = storage.toggleGuestLike(gameId);
-
-            // Supabase'e misafir beğeni işlemini senkronize etmeyi deneyelim
-            try {
-                const sessionId = storage.getSessionId();
-                if (isLiked) {
-                    await supabase.from('game_likes').insert({
-                        session_id: sessionId,
-                        game_name: gameId
-                    });
-                } else {
-                    await supabase.from('game_likes').delete()
-                        .is('user_id', null)
-                        .eq('session_id', sessionId)
-                        .eq('game_name', gameId);
-                }
-            } catch (error) {
-                console.error("Misafir beğenisi Supabase ile senkronize edilemedi:", error);
-                // Locale yazdığımız için hatayı yoksayabiliriz.
-            }
-
-            return { isLiked };
         }
+
+        const isLiked = storage.toggleGuestLike(normalizedGameId);
+
+        try {
+            await syncGuestLike(normalizedGameId, equivalentGameIds, isLiked);
+        } catch (error) {
+            if (process.env.NODE_ENV === "development") {
+                console.error("Misafir beğenisi Supabase ile senkronize edilemedi:", error);
+            }
+        }
+
+        return { isLiked };
     }
 };

@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { GameCard } from '@/components/game/GameCard';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { motion, AnimatePresence } from 'framer-motion';
 import { GAMES, Game } from '@/data/games';
 import { X } from 'lucide-react';
-import { statsService } from '@/services/statsService';
-import { likeService } from '@/services/likeService';
-import { supabase } from '@/lib/supabase';
+import { useAuth } from '@/hooks/useAuth';
+import { usePublicStats } from '@/hooks/usePublicStats';
+import { useGameLikes } from '@/hooks/useGameLikes';
 
 const containerVariants = {
   hidden: {},
@@ -25,70 +25,14 @@ const itemVariants = {
 
 export default function Home() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const [playCounts, setPlayCounts] = useState<Record<string, number>>({});
-  const [likeCounts, setLikeCounts] = useState<Record<string, number>>({});
-  const [userLikes, setUserLikes] = useState<string[]>([]);
-  const [userId, setUserId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      setUserId(session?.user?.id || null);
-    });
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserId(session?.user?.id || null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    async function fetchStats() {
-      const pCounts = await statsService.getGlobalPlayCounts();
-      setPlayCounts(pCounts);
-
-      const lCounts = await likeService.getGlobalLikeCounts();
-      setLikeCounts(lCounts);
-    }
-    fetchStats();
-  }, []);
-
-  useEffect(() => {
-    async function fetchUserLikes() {
-      const likes = await likeService.getUserLikes(userId || undefined);
-      setUserLikes(likes);
-    }
-    fetchUserLikes();
-  }, [userId]);
-
-  const handleLike = async (gameId: string) => {
-    // Optimistic update
-    const isCurrentlyLiked = userLikes.includes(gameId);
-
-    setUserLikes(prev =>
-      isCurrentlyLiked ? prev.filter(id => id !== gameId) : [...prev, gameId]
-    );
-
-    setLikeCounts(prev => ({
-      ...prev,
-      [gameId]: (prev[gameId] || 0) + (isCurrentlyLiked ? -1 : 1)
-    }));
-
-    // Server Call
-    const { isLiked, error } = await likeService.toggleLike(gameId, userId || undefined);
-
-    if (error || isLiked === isCurrentlyLiked) {
-      // Revert in case of an error
-      setUserLikes(prev =>
-        isLiked ? [...prev, gameId] : prev.filter(id => id !== gameId)
-      );
-      setLikeCounts(prev => ({
-        ...prev,
-        [gameId]: Math.max(0, (prev[gameId] || 0) + (isLiked ? 1 : -1))
-      }));
-    }
-  };
+  const { playCounts, likeCounts, applyLikeDelta } = usePublicStats();
+  const { userLikes, toggleLike } = useGameLikes({
+    userId: user?.id,
+    authLoading,
+    applyLikeDelta,
+  });
 
   return (
     <div className="min-h-screen bg-bg hero-glow px-4 py-12 sm:py-20 flex flex-col">
@@ -127,7 +71,7 @@ export default function Home() {
                 playCount={playCounts[game.id] || game.playCount}
                 likeCount={likeCounts[game.id] ?? game.likeCount}
                 isLiked={userLikes.includes(game.id)}
-                onLike={() => handleLike(game.id)}
+                onLike={() => void toggleLike(game.id)}
                 hasChallenge={game.hasChallenge}
               />
             </motion.div>

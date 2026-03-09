@@ -86,7 +86,26 @@ export const storage = {
     setSettings: (settings: Record<string, unknown>) => storage.set(STORAGE_KEYS.SETTINGS, settings),
 
     getGuestLikes: (): string[] => {
-        return storage.get<string[]>(STORAGE_KEYS.GUEST_LIKES, []);
+        const likes = storage.get<string[]>(STORAGE_KEYS.GUEST_LIKES, []);
+        if (!Array.isArray(likes) || likes.length === 0) {
+            return [];
+        }
+
+        let migrated = false;
+        const normalized = likes.map((id) => {
+            if (id === 'hangman') {
+                migrated = true;
+                return 'adam-asmaca';
+            }
+            return id;
+        });
+
+        const deduped = Array.from(new Set(normalized));
+        if (migrated || deduped.length !== likes.length) {
+            storage.set(STORAGE_KEYS.GUEST_LIKES, deduped);
+        }
+
+        return deduped;
     },
 
     toggleGuestLike: (gameId: string): boolean => {
