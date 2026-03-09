@@ -12,6 +12,7 @@ import {
 // Yeni bileşenler
 import { ProfileInfo } from '@/components/profile/ProfileInfo';
 import { StatsCards } from '@/components/profile/StatsCards';
+import { CareerSummary } from '@/components/profile/CareerSummary';
 import { GameStatsTab } from '@/components/profile/GameStatsTab';
 import { ChallengeStatsTab } from '@/components/profile/ChallengeStatsTab';
 import { BadgesSection } from '@/components/profile/BadgesSection';
@@ -93,6 +94,11 @@ export default function ProfilePage() {
 
                     {/* ─── Özet Kartlar ─── */}
                     <StatsCards profile={profile} itemVariants={itemVariants} />
+
+                    {/* ─── Kariyer Özeti ─── */}
+                    <motion.div variants={itemVariants}>
+                        <CareerSummary profile={profile} />
+                    </motion.div>
 
                     {/* ─── Sekmeler ─── */}
                     <motion.div variants={itemVariants}>

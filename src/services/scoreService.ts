@@ -124,19 +124,48 @@ export const scoreService = {
             const { data: { session } } = await supabase.auth.getSession();
             const user = session?.user;
 
-            // Wordle için 'score' parametresi deneme sayısı olarak geliyor.
-            // Ama yeni sistemde 'calculatedScore' da gerekiyor.
-            const calculatedScore = metadata?.calculatedScore as number || 0;
+            const calculatedScore = Number(metadata?.calculatedScore ?? 0);
 
+            let saved = false;
             if (user) {
-                return await this.saveToSupabase(user.id, gameName, won, score, calculatedScore);
+                saved = await this.saveToSupabase(user.id, gameName, won, score, calculatedScore, metadata);
             } else {
-                return this.saveToLocalStorage(gameName, won, score, calculatedScore);
+                saved = this.saveToLocalStorage(gameName, won, score, calculatedScore);
             }
+
+            if (saved && typeof window !== "undefined") {
+                window.dispatchEvent(new CustomEvent("game-score-updated", {
+                    detail: {
+                        gameName,
+                    },
+                }));
+            }
+
+            return saved;
         } catch (error) {
             console.error("Skor kaydedilirken hata oluştu:", error);
-            return this.saveToLocalStorage(gameName, won, 1, 0); // Hata durumunda güvenli fallback
+            return this.saveToLocalStorage(gameName, won, score, 0);
         }
+    },
+
+    isLowerBestMetricGame(gameName: string): boolean {
+        return ["wordle", "adam-asmaca", "hangman"].includes(gameName);
+    },
+
+    computeUpdatedBestScore(currentBest: number, candidateScore: number, gameName: string): number {
+        if (candidateScore <= 0) {
+            return currentBest;
+        }
+
+        if (currentBest <= 0) {
+            return candidateScore;
+        }
+
+        if (this.isLowerBestMetricGame(gameName)) {
+            return Math.min(currentBest, candidateScore);
+        }
+
+        return Math.max(currentBest, candidateScore);
     },
 
     saveToLocalStorage(gameName: string, won: boolean, attempts: number, calculatedScore: number): boolean {
@@ -164,10 +193,7 @@ export const scoreService = {
                     stat.max_streak = stat.current_streak;
                 }
 
-                // Wordle'da düşük deneme sayısı (attempts) daha iyidir
-                if (stat.best_score === 0 || attempts < stat.best_score) {
-                    stat.best_score = attempts;
-                }
+                stat.best_score = this.computeUpdatedBestScore(stat.best_score, attempts, gameName);
 
                 // Yüksek puan takibi
                 if (calculatedScore > (stat.high_score || 0)) {
@@ -183,7 +209,41 @@ export const scoreService = {
         return true;
     },
 
-    async saveToSupabase(userId: string, gameName: string, won: boolean, attempts: number, calculatedScore: number): Promise<boolean> {
+    async insertScoreEvent(
+        userId: string,
+        gameName: string,
+        won: boolean,
+        score: number,
+        metadata?: Record<string, unknown>,
+    ): Promise<boolean> {
+        const safeScore = Math.max(0, Math.round(score));
+
+        const { error } = await supabase
+            .from("game_score_events")
+            .insert({
+                user_id: userId,
+                game_name: gameName,
+                score: safeScore,
+                won,
+                metadata: metadata ?? {},
+            });
+
+        if (error) {
+            console.error("Skor event kaydedilirken hata:", error);
+            return false;
+        }
+
+        return true;
+    },
+
+    async saveToSupabase(
+        userId: string,
+        gameName: string,
+        won: boolean,
+        attempts: number,
+        calculatedScore: number,
+        metadata?: Record<string, unknown>,
+    ): Promise<boolean> {
         try {
             // 1. Oyun istatistiğini güncelle/ekle
             const { data: currentStat, error: fetchError } = await supabase
@@ -220,8 +280,8 @@ export const scoreService = {
                 const maxStreak = Math.max(currentStat.max_streak, currentStreak);
 
                 let bestScore = currentStat.best_score;
-                if (won && (bestScore === 0 || attempts < bestScore)) {
-                    bestScore = attempts;
+                if (won) {
+                    bestScore = this.computeUpdatedBestScore(bestScore, attempts, gameName);
                 }
 
                 const highScore = won ? Math.max(currentStat.high_score || 0, calculatedScore) : (currentStat.high_score || 0);
@@ -243,25 +303,10 @@ export const scoreService = {
                 if (updateError) throw updateError;
             }
 
-            // 2. Profildeki toplam puanı güncelle
-            if (won && calculatedScore > 0) {
-                const { data: profile, error: profileError } = await supabase
-                    .from("profiles")
-                    .select("total_score")
-                    .eq("id", userId)
-                    .single();
-
-                if (!profileError && profile) {
-                    const newTotalScore = (profile.total_score || 0) + calculatedScore;
-
-                    await supabase
-                        .from("profiles")
-                        .update({ total_score: newTotalScore })
-                        .eq("id", userId);
-
-                    // 3. Rozet kontrolü
-                    await this.checkAndAwardBadges(userId, newTotalScore);
-                }
+            // 2. Haftalık liderlik için event kaydı
+            const eventInserted = await this.insertScoreEvent(userId, gameName, won, calculatedScore, metadata);
+            if (!eventInserted) {
+                return false;
             }
 
             return true;
@@ -270,29 +315,4 @@ export const scoreService = {
             return false;
         }
     },
-
-    async checkAndAwardBadges(userId: string, totalScore: number) {
-        const badgeThresholds = [
-            { name: "Binlik Kulübü", threshold: 5000, desc: "İlk adımı attınız, artık bir oyuncusunuz!" },
-            { name: "Acemi Dilci", threshold: 25000, desc: "Kelimeler dünyasında kendinizi kanıtlamaya başladınız." },
-            { name: "Kelime Avcısı", threshold: 100000, desc: "Keskin bir zeka ve hızın birleşimi." },
-            { name: "Puan Ustası", threshold: 250000, desc: "Platformun elit oyuncuları arasına girdiniz." },
-            { name: "Kelime Efsanesi", threshold: 1000000, desc: "İsminiz kelime oyunları tarihine yazılmaya aday." },
-            { name: "Ölümsüz Dilbilimci", threshold: 2500000, desc: "Kelimelerin efendisi, aşılması güç bir rekor!" }
-        ];
-
-        for (const badge of badgeThresholds) {
-            if (totalScore >= badge.threshold) {
-                // Upsert kullanarak mükerrer kaydı önle (RLS ve Unique constraint sayesinde)
-                await supabase
-                    .from("badges")
-                    .upsert({
-                        user_id: userId,
-                        name: badge.name,
-                        description: badge.desc,
-                        earned_at: new Date().toISOString()
-                    }, { onConflict: 'user_id, name' });
-            }
-        }
-    }
 };

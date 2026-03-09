@@ -1,28 +1,18 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { leaderboardService, LeaderboardEntry, LeaderboardType } from '@/services/leaderboardService';
+import { leaderboardService, LeaderboardEntry, LeaderboardPeriod } from '@/services/leaderboardService';
+import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/hooks/useAuth';
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import {
-    Trophy,
-    Crown,
-    Medal,
-    Swords,
-    BarChart3,
-    Star,
-    Flame,
-    ArrowLeft,
-} from 'lucide-react';
+import { ArrowLeft, CalendarDays, Crown, Infinity, Medal, Trophy } from 'lucide-react';
+import { GAMES } from '@/data/games';
+import { GAME_LABELS } from '@/constants/games';
 
-type Category = 'normal' | 'challenge';
-
-const NORMAL_TABS: { key: LeaderboardType; label: string; icon: React.ReactNode }[] = [
-    { key: 'total_score', label: 'Toplam Puan', icon: <Star size={16} /> },
-    { key: 'total_wins', label: 'Galibiyet', icon: <Trophy size={16} /> },
-    { key: 'best_streak', label: 'En İyi Seri', icon: <Flame size={16} /> },
-];
+const LEADERBOARD_GAMES = GAMES
+    .filter((game) => !game.comingSoon)
+    .map((game) => game.id);
 
 const containerVariants = {
     hidden: {},
@@ -41,50 +31,76 @@ function getRankStyle(rank: number): { icon: React.ReactNode; bg: string } {
     return { icon: null, bg: 'from-transparent to-transparent border-surface-mid' };
 }
 
-function formatValue(value: number, type: LeaderboardType | 'challenge'): string {
-    if (type === 'total_score') {
-        if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
-        if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
-        return value.toLocaleString('tr-TR');
-    }
+function formatValue(value: number): string {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
     return value.toLocaleString('tr-TR');
 }
 
 export default function LeaderboardPage() {
     const { user } = useAuth();
-    const [category, setCategory] = useState<Category>('normal');
-    const [normalType, setNormalType] = useState<LeaderboardType>('total_score');
+    const [period, setPeriod] = useState<LeaderboardPeriod>('weekly');
+    const [selectedGame, setSelectedGame] = useState<string>(LEADERBOARD_GAMES[0] ?? 'wordle');
     const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         let cancelled = false;
-        async function load() {
-            setLoading(true);
-            let data: LeaderboardEntry[];
-            if (category === 'challenge') {
-                data = await leaderboardService.getChallengeLeaderboard(20);
-            } else {
-                data = await leaderboardService.getNormalLeaderboard(normalType, 20);
+
+        async function load(showLoader = true) {
+            if (showLoader) {
+                setLoading(true);
             }
+
+            const data = await leaderboardService.getGameLeaderboard(selectedGame, period, 20);
+
             if (!cancelled) {
                 setEntries(data);
-                setLoading(false);
+                if (showLoader) {
+                    setLoading(false);
+                }
             }
         }
+
+        const handleScoreUpdated = (event: Event) => {
+            const customEvent = event as CustomEvent<{ gameName?: string }>;
+            if (customEvent.detail?.gameName === selectedGame) {
+                load(false);
+            }
+        };
+
+        const realtimeChannel = supabase
+            .channel(`leaderboard-score-events-${selectedGame}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'game_score_events',
+                    filter: `game_name=eq.${selectedGame}`,
+                },
+                () => {
+                    load(false);
+                }
+            )
+            .subscribe();
+
         load();
-        return () => { cancelled = true; };
-    }, [category, normalType]);
+        window.addEventListener('game-score-updated', handleScoreUpdated as EventListener);
+
+        return () => {
+            cancelled = true;
+            window.removeEventListener('game-score-updated', handleScoreUpdated as EventListener);
+            void supabase.removeChannel(realtimeChannel);
+        };
+    }, [selectedGame, period]);
 
     const currentUserId = user?.id;
-    const valueLabel = category === 'challenge'
-        ? 'Kazanılan'
-        : NORMAL_TABS.find(t => t.key === normalType)?.label ?? 'Puan';
+    const valueLabel = period === 'weekly' ? 'Haftalık Puan' : 'En Yüksek Puan';
 
     return (
         <div className="min-h-screen bg-bg hero-glow px-4 py-10 sm:py-16">
             <div className="max-w-2xl mx-auto">
-                {/* Header */}
                 <div className="flex items-center gap-3 mb-8">
                     <Link
                         href="/"
@@ -95,56 +111,53 @@ export default function LeaderboardPage() {
                     <div>
                         <h1 className="text-2xl sm:text-3xl font-black text-text-main tracking-tight flex items-center gap-2">
                             <Trophy size={28} className="text-primary" />
-                            Liderlik Tablosu
+                            Oyun Liderlikleri
                         </h1>
-                        <p className="text-sm text-text-secondary mt-0.5">En iyi oyuncuları keşfet</p>
+                        <p className="text-sm text-text-secondary mt-0.5">Her oyun kendi puan sistemiyle sıralanır</p>
                     </div>
                 </div>
 
-                {/* Kategori Sekmeleri */}
-                <div className="flex gap-1 p-1 bg-[var(--theme-card-glass)] backdrop-blur-md border border-[var(--theme-glass-border)] rounded-2xl mb-6">
-                    <button
-                        onClick={() => setCategory('normal')}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 ${category === 'normal'
-                            ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
-                            : 'text-text-secondary hover:text-text-main'
-                            }`}
-                    >
-                        <BarChart3 size={16} />
-                        Normal Oyunlar
-                    </button>
-                    <button
-                        onClick={() => setCategory('challenge')}
-                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 ${category === 'challenge'
-                            ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
-                            : 'text-text-secondary hover:text-text-main'
-                            }`}
-                    >
-                        <Swords size={16} />
-                        Meydan Okumalar
-                    </button>
-                </div>
-
-                {/* Normal Oyun Alt Sekmeleri */}
-                {category === 'normal' && (
-                    <div className="flex gap-2 mb-6">
-                        {NORMAL_TABS.map(tab => (
+                <div className="mb-6">
+                    <p className="text-xs font-bold text-text-secondary uppercase tracking-wider mb-2">Oyun Seç</p>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                        {LEADERBOARD_GAMES.map((gameId) => (
                             <button
-                                key={tab.key}
-                                onClick={() => setNormalType(tab.key)}
-                                className={`flex-1 flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold transition-all border ${normalType === tab.key
-                                    ? 'bg-surface border-primary/30 text-primary shadow-sm'
-                                    : 'bg-transparent border-surface-mid text-text-secondary hover:text-text-main hover:border-surface-mid/80'
+                                key={gameId}
+                                onClick={() => setSelectedGame(gameId)}
+                                className={`px-3 py-2 rounded-xl text-sm font-bold border transition-colors ${selectedGame === gameId
+                                    ? 'bg-primary/10 border-primary/40 text-primary'
+                                    : 'bg-surface border-surface-mid text-text-secondary hover:text-text-main'
                                     }`}
                             >
-                                {tab.icon}
-                                {tab.label}
+                                {GAME_LABELS[gameId] ?? gameId}
                             </button>
                         ))}
                     </div>
-                )}
+                </div>
 
-                {/* Tablo */}
+                <div className="flex gap-1 p-1 bg-[var(--theme-card-glass)] backdrop-blur-md border border-[var(--theme-glass-border)] rounded-2xl mb-6">
+                    <button
+                        onClick={() => setPeriod('weekly')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 ${period === 'weekly'
+                            ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
+                            : 'text-text-secondary hover:text-text-main'
+                            }`}
+                    >
+                        <CalendarDays size={16} />
+                        Haftalık En İyiler
+                    </button>
+                    <button
+                        onClick={() => setPeriod('all_time')}
+                        className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold transition-all duration-200 ${period === 'all_time'
+                            ? 'bg-primary text-bg shadow-[0_0_12px_rgba(34,211,238,0.3)]'
+                            : 'text-text-secondary hover:text-text-main'
+                            }`}
+                    >
+                        <Infinity size={16} />
+                        Tüm Zamanlar
+                    </button>
+                </div>
+
                 {loading ? (
                     <div className="flex items-center justify-center py-20">
                         <div className="w-10 h-10 border-4 border-primary/30 border-t-primary rounded-full animate-spin" />
@@ -153,7 +166,7 @@ export default function LeaderboardPage() {
                     <div className="bg-surface border border-surface-mid rounded-2xl p-10 text-center">
                         <Trophy size={44} className="text-text-secondary mx-auto mb-3 opacity-40" />
                         <p className="text-text-secondary text-sm">
-                            Henüz sıralama verisi yok. İlk sen ol!
+                            Seçili oyunda henüz sıralama verisi yok. İlk sen ol!
                         </p>
                     </div>
                 ) : (
@@ -163,7 +176,6 @@ export default function LeaderboardPage() {
                         animate="visible"
                         className="space-y-2"
                     >
-                        {/* Tablo Başlığı */}
                         <div className="flex items-center px-4 py-2 text-[10px] uppercase tracking-wider font-bold text-text-secondary">
                             <span className="w-10 text-center">#</span>
                             <span className="flex-1 ml-3">Oyuncu</span>
@@ -184,14 +196,12 @@ export default function LeaderboardPage() {
                                         : ''
                                         }`}
                                 >
-                                    {/* Sıra */}
                                     <div className="w-10 flex items-center justify-center">
                                         {rankIcon ?? (
                                             <span className="text-sm font-black text-text-secondary">{rank}</span>
                                         )}
                                     </div>
 
-                                    {/* Avatar + İsim */}
                                     <div className="flex items-center gap-3 flex-1 ml-3 min-w-0">
                                         <div className="w-10 h-10 rounded-xl bg-surface border border-surface-mid flex items-center justify-center text-xl shrink-0">
                                             {entry.avatar ?? '😎'}
@@ -204,10 +214,9 @@ export default function LeaderboardPage() {
                                         </span>
                                     </div>
 
-                                    {/* Değer */}
                                     <div className="w-24 text-right">
                                         <span className={`text-base font-black ${rank <= 3 ? 'text-primary' : 'text-text-main'}`}>
-                                            {formatValue(entry.value, category === 'challenge' ? 'challenge' : normalType)}
+                                            {formatValue(entry.value)}
                                         </span>
                                     </div>
                                 </motion.div>

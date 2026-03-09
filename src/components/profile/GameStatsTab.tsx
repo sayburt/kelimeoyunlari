@@ -68,7 +68,7 @@ export function GameStatsTab({ profile }: GameStatsTabProps) {
                                 />
                             </div>
 
-                            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3 text-center">
+                            <div className="grid grid-cols-2 sm:grid-cols-6 gap-3 text-center">
                                 <div>
                                     <p className="text-lg font-black text-text-main">{stat.played}</p>
                                     <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">Oynanan</p>
@@ -78,14 +78,18 @@ export function GameStatsTab({ profile }: GameStatsTabProps) {
                                     <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">Kazanılan</p>
                                 </div>
                                 <div>
-                                    <p className="text-lg font-black text-text-main">{stat.best_score > 0 ? stat.best_score : '—'}</p>
-                                    <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">En İyi Skor</p>
+                                    <p className="text-lg font-black text-primary">{stat.high_score > 0 ? stat.high_score.toLocaleString('tr-TR') : '—'}</p>
+                                    <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">En Yüksek Puan</p>
                                 </div>
-                                <div className="hidden sm:block">
+                                <div>
+                                    <p className="text-lg font-black text-text-main">{stat.best_score > 0 ? stat.best_score : '—'}</p>
+                                    <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">Oyuna Özel En İyi</p>
+                                </div>
+                                <div>
                                     <p className="text-lg font-black text-primary">{stat.current_streak}</p>
                                     <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">Mevcut Seri</p>
                                 </div>
-                                <div className="hidden sm:block">
+                                <div>
                                     <p className="text-lg font-black text-primary">{stat.max_streak}</p>
                                     <p className="text-[10px] text-text-secondary uppercase tracking-wider font-bold">En İyi Seri</p>
                                 </div>

@@ -12,12 +12,6 @@ const BADGE_LABELS: Record<string, { label: string; criteria: string; icon: Reac
     games_10: { label: 'Acemi', criteria: '10 oyun oynandı', icon: <Gamepad2 size={20} /> },
     games_50: { label: 'Müdavim', criteria: '50 oyun oynandı', icon: <Target size={20} /> },
     perfect_score: { label: 'Kusursuz', criteria: 'İlk denemede bildin', icon: <Award size={20} /> },
-    points_1k: { label: 'Binlik Kulübü', criteria: '1,000 puan', icon: <Trophy size={20} className="text-yellow-600" /> },
-    points_10k: { label: 'Acemi Dilci', criteria: '10,000 puan', icon: <Target size={20} className="text-blue-500" /> },
-    points_50k: { label: 'Kelime Avcısı', criteria: '50,000 puan', icon: <Zap size={20} className="text-purple-500" /> },
-    points_100k: { label: 'Puan Ustası', criteria: '100,000 puan', icon: <Trophy size={20} className="text-yellow-400" /> },
-    points_250k: { label: 'Kelime Efsanesi', criteria: '250,000 puan', icon: <Flame size={20} className="text-orange-500" /> },
-    points_500k: { label: 'Ölümsüz Dilbilimci', criteria: '500,000 puan', icon: <Award size={20} className="text-red-500" /> },
 };
 
 interface BadgesSectionProps {

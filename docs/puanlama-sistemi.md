@@ -1,97 +1,77 @@
-# Puanlama Sistemi ve Algoritmaları
+# Puanlama Sistemi ve Liderlik Mantığı
 
-Bu doküman, Kelime Oyunları platformundaki oyunların puanlama mantığını ve adil bir rekabet ortamı sağlamak için kullanılan algoritmaları açıklar. Her oyunun zorluk derecesi, gereken zaman ve stratejik derinliği farklı olduğundan, her oyun için özel bir puanlama mekanizması uygulanmaktadır.
+Bu doküman, platformdaki puanlamanın tamamen oyun bazlı (per-game) modele geçirilmiş halini açıklar.
 
-## Evrensel Puanlama Çerçevesi (Standardizasyon)
+## Mimari Özeti
 
-Farklı oyunların (hızlı Anagram vs. uzun Wordle) yarışabilmesi için her oyun sonunda üretilen puanlar şu standart formülle normalize edilir:
+- Her oyun kendi skor algoritmasını kullanır (`scoreService`).
+- Skorlar iki katmanda tutulur:
+  - `game_stats`: kullanıcı + oyun bazlı kümülatif istatistik (high score, best score, streak vb.).
+  - `game_score_events`: her oyun bitişi için immutable event kaydı (weekly leaderboard kaynağı).
+- Global profil puanı (`profiles.total_score`) leaderboard akışlarında kullanılmaz.
 
-`Sonuç Puan = (Taban + Performans + Hız) x Oyun Ağırlığı (GW) x Zorluk Çarpanı`
+## Veritabanı Tabloları
 
-### Oyun Ağırlıkları (Game Weights)
-Her oyunun global puan tablosundaki etkisi "Oyun Ağırlığı" ile dengelenir:
-*   **Wordle:** 1.0 (Referans)
-*   **Anagram:** 0.6 (Hızlı döngü olduğu için puan dengelenir)
-*   **Adam Asmaca:** 0.8
-*   **Kelime Bilgi (Quiz):** 1.2 (Yüksek bilgi gereksinimi ödüllendirilir)
+## `game_stats`
 
-Bu sayede, 10 tane hızlı Anagram oynayan biriyle, 3 tane zor seviye Wordle bitiren birinin puanları adaleti sarsmayacak şekilde birbirine yakın olur.
+Kullanıcının oyun bazlı özet istatistiğini tutar.
 
----
+- `played`: oynanan toplam oyun
+- `won`: kazanılan oyun
+- `best_score`: oyuna özel en iyi metrik
+  - Wordle/Adam Asmaca: düşük değer daha iyi
+  - Boggle/Kelime Arama: yüksek değer daha iyi
+- `high_score`: puan bazında en yüksek skor
+- `current_streak`, `max_streak`: seri metrikleri
 
-## 1. Wordle Puanlama Mantığı
+## `game_score_events`
 
-Wordle oyununda amaç kelimeyi en az denemede ve en kısa sürede bulmaktır.
+Haftalık sıralama için oyun sonu event kaydı.
 
-### Puan Hesaplama Formülü
-`Toplam Puan = (Taban Puan + Deneme Bonusu + Zaman Bonusu) x Zorluk Çarpanı`
+- `id uuid pk`
+- `user_id uuid`
+- `game_name text`
+- `score integer (>= 0)`
+- `won boolean`
+- `played_at timestamptz`
+- `metadata jsonb`
 
-#### A. Taban Puan
-Oyunu her kazandığınızda (kelimeyi bulduğunuzda) sabit bir puan alırsınız.
-*   **Win:** 1000 Puan
+RLS:
+- `SELECT`: açık (`using true`) leaderboard okunabilirliği için
+- `INSERT`: sadece event sahibi (`auth.uid() = user_id`)
+- `UPDATE/DELETE`: policy yok (immutable event yaklaşımı)
 
-#### B. Deneme Bonusu (Trial Bonus)
-Kelimeyi ne kadar erken bulursanız o kadar yüksek bonus kazanırsınız.
-*   1. Deneme: +1000 Puan
-*   2. Deneme: +800 Puan
-*   3. Deneme: +600 Puan
-*   4. Deneme: +400 Puan
-*   5. Deneme: +200 Puan
-*   6. Deneme: +0 Puan
+## Leaderboard Dönemleri
 
-#### C. Zaman Bonusu (Time Bonus)
-Hızlı düşünen oyuncuları ödüllendirmek için kullanılır. 5 dakika (300 saniye) baz alınır.
-*   **Bonus:** `max(0, (300 - harcanan_saniye) x 2)`
-*   *Örnek:* 30 saniyede bilen bir oyuncu: `(300 - 30) x 2 = 540` ek puan kazanır.
+Liderlik tablosu her oyun için bağımsızdır ve iki dönemde çalışır:
 
-#### D. Zorluk Çarpanı (Difficulty Multiplier)
-Oyun ayarlarında seçilen zorluk seviyesine göre toplam puan çarpılır.
-*   **Kolay (Easy):** 1.0x (İpucu kullanımı serbest, yaygın kelimeler)
-*   **Orta (Medium):** 1.5x (Standart mod)
-*   **Zor (Hard):** 2.0x (Bulunan yeşil harflerin kullanımı zorunlu, nadir kelimeler)
+1. `weekly`
+   - Kaynak: `game_score_events`
+   - Aralık: mevcut hafta (UTC pazartesi başlangıcı)
+   - Metrik: kullanıcı bazında `SUM(score)`
 
-### Örnek Senaryo
-Oyuncu **Orta** zorlukta, **3. denemede** ve **45 saniyede** kelimeyi bildi:
-- Taban: 1000
-- Deneme: 600
-- Zaman: (300 - 45) * 2 = 510
-- Çarpan: 1.5x
-- **Toplam:** (1000 + 600 + 510) x 1.5 = **3165 Puan**
+2. `all_time`
+   - Kaynak: `game_stats`
+   - Metrik: `high_score`
 
----
+Not: Global `total_score`, `total_wins`, `best_streak` akışları kaldırılmıştır.
 
-## 2. Diğer Oyunlar (Planlanan)
+## Profil ve UI Metrikleri
 
-### Anagram
-- Her doğru kelime için uzunluk çarpanı.
-- Kombo sistemi (ardışık hızlı bildirimler).
+Profil ekranı global puan yerine kariyer özeti gösterir:
 
-### Adam Asmaca (Hangman)
-- Kalan can sayısı üzerinden yüksek bonus.
-- Kelime uzunluğu çarpanı.
+- `{ game_name, high_score, level }[]`
+- Örnek: `Wordle: 1200`, `Kelime Arama: 850`
 
-### Kelime Bilgi (Quiz)
-- Soru başı sabit puan + kalan süre bonusu.
-- Yanlış cevaplarda puan eksiltme (Cezalandırma sistemi).
+`GameStatsTab` metrik ayrımı:
 
----
+- `En Yüksek Puan` = `high_score`
+- `Oyuna Özel En İyi` = `best_score`
 
-## 3. Rozet Sistem ve Puan Eşikleri
+## Oyun Sonu Veri Akışı
 
-Oyuncuların başarılarını onurlandırmak için puan tabanlı bir rozet sistemi uygulanmaktadır. Toplam puanınız belirli eşikleri aştığında bu rozetler otomatik olarak profilinize eklenir.
-
-| Rozet Adı | Puan Eşiği | Tahmini Oyun | Kullanıcı Profili | Açıklama |
-| :--- | :--- | :--- | :--- | :--- |
-| **Binlik Kulübü** | 5.000 | ~2-3 | Yeni Oyuncu | İlk adımı attınız, artık bir oyuncusunuz! |
-| **Acemi Dilci** | 25.000 | ~8-10 | Meraklı | Kelimeler dünyasında kendinizi kanıtlamaya başladınız. |
-| **Kelime Avcısı** | 100.000 | ~35 | Düzenli | Keskin bir zeka ve hızın birleşimi. |
-| **Puan Ustası** | 250.000 | ~80 | Deneyimli | Platformun elit oyuncuları arasına girdiniz. |
-| **Kelime Efsanesi** | 1.000.000 | ~330 | Bağlı | İsminiz kelime oyunları tarihine yazılmaya aday. |
-| **Ölümsüz Dilbilimci** | 2.500.000 | ~800+ | Üstat / Efsane | Kelimelerin efendisi, aşılması güç bir rekor! |
-
----
-
-## Teknik Uygulama Notları
-- Puanlar her oyun sonunda `scoreService` aracılığıyla veritabanına işlenir.
-- Hile koruması için sunucu tarafında zaman doğrulaması yapılır.
-- Skorlar "En İyi Skor" olarak profilde tutulur ve global sıralamada (Leaderboard) kullanılır.
+1. Oyun kendi algoritmasıyla `calculatedScore` üretir.
+2. `scoreService.saveGameResult(...)` çağrılır.
+3. `game_stats` kaydı insert/update edilir.
+4. `game_score_events` tablosuna event insert edilir.
+5. UI tarafında leaderboard tekrar fetch edilerek anlık sıralama güncellenir.

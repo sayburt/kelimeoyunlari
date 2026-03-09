@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Trophy, BarChart3, Loader2, LogIn, Gamepad2 } from 'lucide-react';
-import { leaderboardService, LeaderboardEntry } from '@/services/leaderboardService';
+import { leaderboardService, LeaderboardEntry, LeaderboardPeriod } from '@/services/leaderboardService';
 import { useAuth } from '@/hooks/useAuth';
 import { supabase } from '@/lib/supabase';
 import { storage, GuestStat } from '@/lib/storage';
@@ -30,30 +30,72 @@ type TabId = 'leaderboard' | 'personal';
 export function StatsModal({ gameName, onClose }: StatsModalProps) {
     const [activeTab, setActiveTab] = useState<TabId>('leaderboard');
     const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
+    const [leaderboardPeriod, setLeaderboardPeriod] = useState<LeaderboardPeriod>('weekly');
     const [personalStats, setPersonalStats] = useState<PersonalStats | null>(null);
     const [loadingLeaderboard, setLoadingLeaderboard] = useState(true);
     const [loadingPersonal, setLoadingPersonal] = useState(true);
     const { user, isAuthenticated } = useAuth();
 
-    // Global skor tablosunu çek
+    // Oyun bazlı leaderboard verisini çek
     useEffect(() => {
         let cancelled = false;
-        const fetchLeaderboard = async () => {
-            const data = await leaderboardService.getGameLeaderboard(gameName, 20);
+
+        const fetchLeaderboard = async (showLoader = true) => {
+            if (showLoader) {
+                setLoadingLeaderboard(true);
+            }
+
+            const data = await leaderboardService.getGameLeaderboard(gameName, leaderboardPeriod, 20);
             if (!cancelled) {
                 setLeaderboard(data);
-                setLoadingLeaderboard(false);
+                if (showLoader) {
+                    setLoadingLeaderboard(false);
+                }
             }
         };
+
+        const handleScoreUpdated = (event: Event) => {
+            const customEvent = event as CustomEvent<{ gameName?: string }>;
+            if (customEvent.detail?.gameName === gameName) {
+                fetchLeaderboard(false);
+            }
+        };
+
+        const realtimeChannel = supabase
+            .channel(`stats-modal-score-events-${gameName}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'game_score_events',
+                    filter: `game_name=eq.${gameName}`,
+                },
+                () => {
+                    fetchLeaderboard(false);
+                }
+            )
+            .subscribe();
+
         fetchLeaderboard();
-        return () => { cancelled = true; };
-    }, [gameName]);
+        window.addEventListener('game-score-updated', handleScoreUpdated as EventListener);
+
+        return () => {
+            cancelled = true;
+            window.removeEventListener('game-score-updated', handleScoreUpdated as EventListener);
+            void supabase.removeChannel(realtimeChannel);
+        };
+    }, [gameName, leaderboardPeriod]);
 
     // Kişisel istatistikleri çek
     useEffect(() => {
         let cancelled = false;
 
         const fetchPersonalStats = async () => {
+            if (!cancelled) {
+                setLoadingPersonal(true);
+            }
+
             if (isAuthenticated && user) {
                 const { data } = await supabase
                     .from('game_stats')
@@ -186,6 +228,8 @@ export function StatsModal({ gameName, onClose }: StatsModalProps) {
                                     data={leaderboard}
                                     loading={loadingLeaderboard}
                                     currentUserId={user?.id}
+                                    period={leaderboardPeriod}
+                                    onPeriodChange={setLeaderboardPeriod}
                                 />
                             </motion.div>
                         ) : (
@@ -212,25 +256,72 @@ export function StatsModal({ gameName, onClose }: StatsModalProps) {
 
 /* ─── Leaderboard Tab ────────────────────────────────── */
 
-function LeaderboardTab({ data, loading, currentUserId }: { data: LeaderboardEntry[]; loading: boolean; currentUserId?: string }) {
+function LeaderboardTab({
+    data,
+    loading,
+    currentUserId,
+    period,
+    onPeriodChange,
+}: {
+    data: LeaderboardEntry[];
+    loading: boolean;
+    currentUserId?: string;
+    period: LeaderboardPeriod;
+    onPeriodChange: (period: LeaderboardPeriod) => void;
+}) {
+    const periodTabs: { id: LeaderboardPeriod; label: string }[] = [
+        { id: 'weekly', label: 'Haftalık' },
+        { id: 'all_time', label: 'Tüm Zamanlar' },
+    ];
+
+    const scoreLabel = period === 'weekly' ? 'Haftalık Puan' : 'En Yüksek Puan';
+
     if (loading) {
         return (
-            <div className="flex items-center justify-center py-16">
-                <Loader2 size={28} className="animate-spin text-primary" />
+            <div>
+                <div className="flex items-center justify-center py-16">
+                    <Loader2 size={28} className="animate-spin text-primary" />
+                </div>
             </div>
         );
     }
 
-    if (data.length === 0) {
-        return (
-            <div className="text-center py-12">
-                <Trophy size={36} className="text-text-secondary mx-auto mb-3 opacity-30" />
-                <p className="text-text-secondary text-sm">Henüz skor kaydedilmemiş.</p>
-                <p className="text-text-muted text-xs mt-1">İlk sen ol!</p>
+    return (
+        <div className="space-y-3">
+            <div className="flex bg-bg/50 p-1 rounded-xl border border-surface-mid">
+                {periodTabs.map((tab) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => onPeriodChange(tab.id)}
+                        className={`flex-1 py-2 text-xs font-bold rounded-lg transition-colors ${period === tab.id
+                            ? 'bg-surface text-primary'
+                            : 'text-text-secondary hover:text-text-main'
+                            }`}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
-        );
-    }
 
+            <div className="flex items-center justify-between px-1">
+                <p className="text-[10px] uppercase tracking-wider text-text-secondary font-bold">Oyuncular</p>
+                <p className="text-[10px] uppercase tracking-wider text-text-secondary font-bold">{scoreLabel}</p>
+            </div>
+
+            {data.length === 0 ? (
+                <div className="text-center py-12">
+                    <Trophy size={36} className="text-text-secondary mx-auto mb-3 opacity-30" />
+                    <p className="text-text-secondary text-sm">Henüz skor kaydedilmemiş.</p>
+                    <p className="text-text-muted text-xs mt-1">İlk sen ol!</p>
+                </div>
+            ) : (
+                <LeaderboardRows data={data} currentUserId={currentUserId} />
+            )}
+        </div>
+    );
+}
+
+function LeaderboardRows({ data, currentUserId }: { data: LeaderboardEntry[]; currentUserId?: string }) {
     const medalEmojis = ['🥇', '🥈', '🥉'];
 
     return (
@@ -303,7 +394,7 @@ function PersonalTab({ stats, loading, isAuthenticated }: { stats: PersonalStats
         { label: 'Oynanan', value: stats.played, color: 'text-text-main' },
         { label: 'Kazanılan', value: stats.won, color: 'text-correct' },
         { label: 'Başarı', value: `%${stats.winRate}`, color: 'text-primary' },
-        { label: 'En İyi Deneme', value: stats.bestScore > 0 ? stats.bestScore : '—', color: 'text-text-main' },
+        { label: 'Oyuna Özel En İyi', value: stats.bestScore > 0 ? stats.bestScore : '—', color: 'text-text-main' },
         { label: 'En Yüksek Puan', value: stats.highScore > 0 ? stats.highScore.toLocaleString('tr-TR') : '—', color: 'text-primary' },
         { label: 'Mevcut Seri', value: stats.currentStreak, color: 'text-text-main' },
         { label: 'En İyi Seri', value: stats.maxStreak, color: 'text-primary' },

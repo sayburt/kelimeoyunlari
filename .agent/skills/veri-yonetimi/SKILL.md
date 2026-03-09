@@ -13,7 +13,9 @@ description: Kelime verisi ve kullanıcı verisi (Supabase/LocalStorage) yöneti
 ## 2. Kullanıcı Verisi ve Auth
 - **Misafir Mod:** Veriler `localStorage` (Web) veya `AsyncStorage` (Mobil) üzerinde tutulur.
 - **Aktarım:** Kullanıcı giriş yaptığında yerel veriler `services/migrationService.ts` üzerinden Supabase'e taşınır.
-- **Supabase Tabloları:** `profiles`, `game_stats`, `badges`, `game_likes`.
+- **Supabase Tabloları:** `profiles`, `game_stats`, `game_score_events`, `badges`, `game_likes`.
+- **Haftalık Puan:** `game_score_events` tablosundaki o hafta içindeki tüm skorların toplamıdır.
+- **En Yüksek Puan (High Score):** `game_stats.high_score` kolonu her oyun için en yüksek tekil skoru tutar.
 
 ## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
 - **Tüm Supabase işlemleri (yeni tablo oluşturma, RLS politikaları yazma, Auth ayarları, kolon ekleme vb.) YALNIZCA AI (Asistan) tarafından Supabase MCP aracı kullanılarak yapılmalıdır.**
@@ -33,3 +35,10 @@ Supabase tarafında her tabloda RLS aktif olmalı; kullanıcılar sadece kendi v
 ## 6. Yetenek (Skill) Koordinasyonu
 - **"Nasıl Oynanır?" Bileşen Bağlantısı:** Verinin UI tarafında nasıl render edileceği ve SEO yapısı için `oyun-standartlari` yeteneğinin "Nasıl Oynanır?" bölümüne bakınız.
 - **Tasarım Standartları:** Supabase'den veya lokalden dönen hata mesajları, uyarılar ve renkler için `tasarim-sistemi` referans alınmalıdır.
+
+## 7. Puanlama ve Liderlik Mantığı
+- **Puan Kaydı:** Her oyun bittiğinde `scoreService.saveGameResult` çağrılmalıdır. Bu servis hem `game_stats` tablosunu (en yüksek puan ve istatistikler) hem de `game_score_events` tablosunu (haftalık toplam için) otomatik günceller.
+- **Liderlik Sorguları:**
+    - **Haftalık (Weekly):** O hafta başına (`getCurrentWeekStartISO`) göre `game_score_events` tablosunda `sum(score)` yapılarak hesaplanır.
+    - **Tüm Zamanlar (All-Time):** `game_stats` tablosunda `high_score` kolonuna göre azalan sırada (`order by high_score desc`) listelenir.
+- **Eş Zamanlı Güncelleme:** Liderlik tablosu `supabase.channel('game_score_events')` üzerinden `INSERT` olaylarını dinleyerek real-time güncellenmelidir.

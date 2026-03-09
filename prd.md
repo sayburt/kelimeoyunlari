@@ -112,11 +112,12 @@ Supabase Auth tarafından yönetilir — id, email, created_at
 - username
 - total_games_played
 - total_wins
+- total_score (Legacy - artık game_score_events üzerinden hesaplanıyor)
 - created_at, updated_at
 
 ### game_stats
 - id, user_id, game_name
-- played, won, best_score
+- played, won, best_score, high_score
 - current_streak, max_streak
 - updated_at
 
@@ -127,6 +128,16 @@ Supabase Auth tarafından yönetilir — id, email, created_at
 - id, game_name
 - user_id (giriş yapılmışsa) veya session_id (misafir)
 - created_at
+
+### game_score_events
+Haftalık liderlik tablosu için her oyunun skorunu tutan immutable tablo.
+- id (uuid)
+- user_id (profiles referansı)
+- game_name (text)
+- score (integer)
+- won (boolean)
+- played_at (timestamptz)
+- metadata (jsonb)
 
 ---
 
@@ -165,6 +176,11 @@ Giriş yapılmadan oynandığında skor, istatistik ve joker bilgileri localStor
 
 ### Servis Katmanı
 Tüm veri işlemleri `services/` klasörü altındaki fonksiyonlar üzerinden yapılır. Misafir modda localStorage'a yazar, giriş yapılmışsa Supabase'e yazar. Component bu ayrımı bilmez.
+
+### Puanlama ve Liderlik
+- **Oyun Bazlı Puanlama:** Her oyunun (Wordle, Adam Asmaca vb.) kendine has bir puan hesaplama formülü (`scoreService.ts`) vardır. Evrensel bir puanlama yerine oyun bazlı başarı ölçülür.
+- **Haftalık Liderlik (Weekly):** `game_score_events` tablosundaki o hafta içindeki tüm skorların toplamıdır. Aktif oyuncuları ödüllendirir.
+- **Tüm Zamanlar (All-Time):** `game_stats` tablosundaki `high_score` (en yüksek tekil skor) değerine göre sıralanır. En iyi performansı ölçer.
 
 ---
 

@@ -8,6 +8,7 @@ description: Kelime Oyunları projesi temel mimari ve akış kuralları. Her tü
 ## 1. Mimari Prensipler
 - **Yalnızca Türkçe:** Platformda her şey Türkçe karakter desteğiyle inşa edilir.
 - **Servis Katmanı:** Veri okuma/yazma işlemleri (Supabase veya LocalStorage) asla doğrudan bileşen içinde yapılmaz. Mutlaka `services/` altındaki servis fonksiyonları kullanılır.
+- **Oyun Bazlı Puanlama:** Projede evrensel bir toplam puanlama sistemi yoktur. Her oyunun (Wordle, Boggle vb.) kendi puanlama formülü ve liderlik tablosu bulunur. Başarı oyun bazında takip edilir.
 - **Veri Kaynağı:** Kelime verisi `public/kelime-data.json` dosyasından okunur. Veritabanına (Supabase) taşınmaz.
 
 ## 2. Teknoloji Stack

@@ -6,8 +6,15 @@ export interface GameStat {
     played: number;
     won: number;
     best_score: number;
+    high_score: number;
     current_streak: number;
     max_streak: number;
+}
+
+export interface CareerSummaryItem {
+    game_name: string;
+    high_score: number;
+    level: string;
 }
 
 export interface ChallengeStat {
@@ -32,11 +39,32 @@ export interface ProfileData {
     stats: GameStat[];
     challengeStats: ChallengeStat[];
     badges: Badge[];
+    careerSummary: CareerSummaryItem[];
     totalPlayed: number;
     totalWon: number;
     winRate: number;
     bestStreak: number;
     isGuest: boolean;
+}
+
+function getCareerLevel(highScore: number): string {
+    if (highScore >= 5000) return "Usta";
+    if (highScore >= 2500) return "Uzman";
+    if (highScore >= 1000) return "İleri";
+    if (highScore >= 250) return "Gelişen";
+    if (highScore > 0) return "Başlangıç";
+    return "Başlamadı";
+}
+
+function buildCareerSummary(stats: GameStat[]): CareerSummaryItem[] {
+    return stats
+        .filter((stat) => stat.high_score > 0)
+        .map((stat) => ({
+            game_name: stat.game_name,
+            high_score: stat.high_score,
+            level: getCareerLevel(stat.high_score),
+        }))
+        .sort((a, b) => b.high_score - a.high_score);
 }
 
 function computeAggregates(stats: GameStat[]): Pick<ProfileData, "totalPlayed" | "totalWon" | "winRate" | "bestStreak"> {
@@ -53,6 +81,7 @@ function mapGuestStats(guestStats: GuestStat[]): GameStat[] {
         played: s.played,
         won: s.won,
         best_score: s.best_score,
+        high_score: s.high_score,
         current_streak: s.current_streak,
         max_streak: s.max_streak,
     }));
@@ -82,6 +111,7 @@ export const profileService = {
             stats,
             challengeStats: [],
             badges: [],
+            careerSummary: buildCareerSummary(stats),
             ...aggregates,
             isGuest: true,
         };
@@ -92,7 +122,7 @@ export const profileService = {
             // Profil, istatistikler, challenge istatistikleri ve rozetleri paralel çek
             const [profileRes, statsRes, challengeStatsRes, badgesRes] = await Promise.all([
                 supabase.from("profiles").select("username, avatar, created_at").eq("id", userId).single(),
-                supabase.from("game_stats").select("game_name, played, won, best_score, current_streak, max_streak").eq("user_id", userId),
+                supabase.from("game_stats").select("game_name, played, won, best_score, high_score, current_streak, max_streak").eq("user_id", userId),
                 supabase.from("challenge_stats").select("game_name, sent_count, received_count, won_count, best_score, total_score, last_played_at").eq("user_id", userId),
                 supabase.from("badges").select("badge_key, earned_at").eq("user_id", userId),
             ]);
@@ -103,6 +133,7 @@ export const profileService = {
                 played: s.played ?? 0,
                 won: s.won ?? 0,
                 best_score: s.best_score ?? 0,
+                high_score: s.high_score ?? 0,
                 current_streak: s.current_streak ?? 0,
                 max_streak: s.max_streak ?? 0,
             }));
@@ -133,6 +164,7 @@ export const profileService = {
                 stats: rawStats,
                 challengeStats: rawChallengeStats,
                 badges,
+                careerSummary: buildCareerSummary(rawStats),
                 ...aggregates,
                 isGuest: false,
             };

@@ -4,144 +4,126 @@ export interface LeaderboardEntry {
     user_id: string;
     username: string | null;
     avatar: string | null;
-    value: number; // total_score veya best_score
+    value: number;
 }
 
-export type LeaderboardType = 'total_score' | 'total_wins' | 'best_streak';
-export type LeaderboardCategory = 'normal' | 'challenge';
+export type LeaderboardPeriod = "weekly" | "all_time";
+
+type ProfileJoin = {
+    username?: string | null;
+    avatar?: string | null;
+} | {
+    username?: string | null;
+    avatar?: string | null;
+}[] | null;
+
+function extractProfile(joinedProfile: ProfileJoin): { username: string | null; avatar: string | null } {
+    if (!joinedProfile) {
+        return { username: null, avatar: null };
+    }
+
+    if (Array.isArray(joinedProfile)) {
+        const first = joinedProfile[0];
+        return {
+            username: first?.username ?? null,
+            avatar: first?.avatar ?? null,
+        };
+    }
+
+    return {
+        username: joinedProfile.username ?? null,
+        avatar: joinedProfile.avatar ?? null,
+    };
+}
+
+function getCurrentWeekStartISO(): string {
+    const now = new Date();
+    const day = now.getUTCDay();
+    const diffToMonday = (day + 6) % 7;
+
+    return new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate() - diffToMonday,
+        0,
+        0,
+        0,
+        0,
+    )).toISOString();
+}
 
 export const leaderboardService = {
     /**
-     * Normal oyun liderlik tablosunu getirir.
-     * `game_stats` + `profiles` tablosundan çeker.
-     */
-    async getNormalLeaderboard(
-        type: LeaderboardType,
-        limit = 20
-    ): Promise<LeaderboardEntry[]> {
-        let query;
-
-        if (type === 'total_score') {
-            query = supabase
-                .from('profiles')
-                .select('id, username, avatar, total_score')
-                .order('total_score', { ascending: false })
-                .gt('total_score', 0)
-                .limit(limit);
-        } else if (type === 'total_wins') {
-            query = supabase
-                .from('profiles')
-                .select('id, username, avatar, total_wins')
-                .order('total_wins', { ascending: false })
-                .gt('total_wins', 0)
-                .limit(limit);
-        } else {
-            // best_streak → game_stats tablosundan max_streak
-            query = supabase
-                .from('game_stats')
-                .select('user_id, max_streak, profiles!inner(username, avatar)')
-                .order('max_streak', { ascending: false })
-                .gt('max_streak', 0)
-                .limit(limit * 5); // Fetch more to deduplicate later
-        }
-
-        const { data, error } = await query;
-
-        if (error) {
-            console.error('Liderlik tablosu hatası:', error);
-            return [];
-        }
-
-        if (type === 'best_streak') {
-            const uniqueUsers = new Set<string>();
-            const results: LeaderboardEntry[] = [];
-
-            for (const row of ((data ?? []) as Record<string, unknown>[])) {
-                const userId = row.user_id as string;
-                if (!uniqueUsers.has(userId)) {
-                    uniqueUsers.add(userId);
-                    const profiles = row.profiles as Record<string, unknown> | null;
-                    results.push({
-                        user_id: userId,
-                        username: (profiles?.username as string) ?? null,
-                        avatar: (profiles?.avatar as string) ?? null,
-                        value: row.max_streak as number,
-                    });
-                    if (results.length >= limit) break;
-                }
-            }
-            return results;
-        }
-
-        return (data ?? []).map((row: Record<string, unknown>) => ({
-            user_id: row.id as string,
-            username: (row.username as string) ?? null,
-            avatar: (row.avatar as string) ?? null,
-            value: (type === 'total_score'
-                ? row.total_score
-                : row.total_wins) as number,
-        }));
-    },
-
-    /**
-     * Meydan okuma liderlik tablosunu getirir.
-     * `challenge_stats` + `profiles` tablosundan çeker.
-     */
-    async getChallengeLeaderboard(
-        limit = 20
-    ): Promise<LeaderboardEntry[]> {
-        const { data, error } = await supabase
-            .from('challenge_stats')
-            .select('user_id, won_count, profiles!inner(username, avatar)')
-            .order('won_count', { ascending: false })
-            .gt('won_count', 0)
-            .limit(limit);
-
-        if (error) {
-            console.error('Meydan okuma liderlik tablosu hatası:', error);
-            return [];
-        }
-
-        return (data ?? []).map((row: Record<string, unknown>) => {
-            const profiles = row.profiles as Record<string, unknown> | null;
-            return {
-                user_id: row.user_id as string,
-                username: (profiles?.username as string) ?? null,
-                avatar: (profiles?.avatar as string) ?? null,
-                value: row.won_count as number,
-            };
-        });
-    },
-
-    /**
      * Belirli bir oyun için liderlik tablosunu getirir.
-     * `game_stats` tablosundan `high_score` sıralı, `profiles` join'li.
+     * - weekly: game_score_events tablosunda mevcut hafta toplam puan
+     * - all_time: game_stats tablosunda high_score
      */
     async getGameLeaderboard(
         gameName: string,
-        limit = 20
+        period: LeaderboardPeriod = "all_time",
+        limit = 20,
     ): Promise<LeaderboardEntry[]> {
+        if (period === "all_time") {
+            const { data, error } = await supabase
+                .from("game_stats")
+                .select("user_id, high_score, profiles!inner(username, avatar)")
+                .eq("game_name", gameName)
+                .order("high_score", { ascending: false })
+                .gt("high_score", 0)
+                .limit(limit);
+
+            if (error) {
+                console.error("All-time liderlik tablosu hatası:", error);
+                return [];
+            }
+
+            return (data ?? []).map((row: Record<string, unknown>) => {
+                const profile = extractProfile((row.profiles ?? null) as ProfileJoin);
+                return {
+                    user_id: row.user_id as string,
+                    username: profile.username,
+                    avatar: profile.avatar,
+                    value: (row.high_score as number) ?? 0,
+                };
+            });
+        }
+
+        const weekStartISO = getCurrentWeekStartISO();
         const { data, error } = await supabase
-            .from('game_stats')
-            .select('user_id, high_score, profiles!inner(username, avatar)')
-            .eq('game_name', gameName)
-            .order('high_score', { ascending: false })
-            .gt('high_score', 0)
-            .limit(limit);
+            .from("game_score_events")
+            .select("user_id, score, profiles!inner(username, avatar)")
+            .eq("game_name", gameName)
+            .gte("played_at", weekStartISO);
 
         if (error) {
-            console.error('Oyun liderlik tablosu hatası:', error);
+            console.error("Haftalık liderlik tablosu hatası:", error);
             return [];
         }
 
-        return (data ?? []).map((row: Record<string, unknown>) => {
-            const profiles = row.profiles as Record<string, unknown> | null;
-            return {
-                user_id: row.user_id as string,
-                username: (profiles?.username as string) ?? null,
-                avatar: (profiles?.avatar as string) ?? null,
-                value: row.high_score as number,
-            };
-        });
+        const aggregateByUser = new Map<string, LeaderboardEntry>();
+
+        for (const row of data ?? []) {
+            const profile = extractProfile((row.profiles ?? null) as ProfileJoin);
+            const score = Number(row.score ?? 0);
+            const userId = row.user_id as string;
+
+            const existing = aggregateByUser.get(userId);
+            if (existing) {
+                existing.value += score;
+                continue;
+            }
+
+            aggregateByUser.set(userId, {
+                user_id: userId,
+                username: profile.username,
+                avatar: profile.avatar,
+                value: score,
+            });
+        }
+
+        return Array.from(aggregateByUser.values())
+            .filter((entry) => entry.value > 0)
+            .sort((a, b) => b.value - a.value)
+            .slice(0, limit);
     },
 };
