@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { X, Trophy, Swords } from 'lucide-react';
+import { X, Swords } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 

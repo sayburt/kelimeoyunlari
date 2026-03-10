@@ -174,21 +174,18 @@ export function useHangman(options: UseHangmanOptions = {}) {
             }
 
             // Sadece zorluk seviyesine veya seçilen kategoriye göre kelime çekiyoruz
-            let word = await wordService.getRandomWord({
+            const word = await wordService.getRandomWord({
                 difficulty,
                 category: category === 'rastgele' ? undefined : category
             });
 
-            // Fallback: Eğer seçilen kategoride kelime yoksa (data değişmiş olabilir)
-            // rastgele kategorisinden tekrar dene
-            if (!word && category !== 'rastgele') {
-                console.warn(`Category ${category} returned no words, falling back to random.`);
-                word = await wordService.getRandomWord({ difficulty });
-            }
-
             if (!word) {
                 setStatus('idle');
-                setError('Kelime bulunamadı. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.');
+                if (category !== 'rastgele') {
+                    setError('Seçtiğiniz kategori ve zorluk seviyesinde uygun kelime bulunamadı. Lütfen ayarlar menüsünden farklı bir kategori veya zorluk seçin.');
+                } else {
+                    setError('Kelime bulunamadı. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.');
+                }
                 return;
             }
 
