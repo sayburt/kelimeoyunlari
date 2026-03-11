@@ -27,6 +27,7 @@ export default function Footer() {
                     </div>
 
                     <div className="flex gap-4 md:gap-8 text-sm font-bold">
+                        <Link href="/ozellikler" className="hover:text-text-main transition-colors">Özellikler</Link>
                         <Link href="/privacy" className="hover:text-text-main transition-colors">Gizlilik</Link>
                         <Link href="/kvkk" className="hover:text-text-main transition-colors">KVKK</Link>
                         <button

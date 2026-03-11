@@ -7,7 +7,7 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AvatarMenu } from "@/components/ui/AvatarMenu";
 import { shareContent } from "@/utils/shareUtils";
 import { useState } from "react";
-import { Share2, User, Menu, X, Trophy } from "lucide-react";
+import { Share2, User, Menu, X, Trophy, Home, HelpCircle, Star } from "lucide-react";
 
 export default function Navbar() {
     const { isAuthenticated } = useAuth();
@@ -51,24 +51,34 @@ export default function Navbar() {
                 <div className="hidden md:flex items-center gap-6 mr-4">
                     <Link
                         href="/"
-                        className={`text-sm font-bold transition-colors hover:text-primary ${pathname === "/" ? "text-primary" : "text-text-main"
+                        className={`text-sm font-bold flex items-center gap-1.5 transition-colors hover:text-primary ${pathname === "/" ? "text-primary" : "text-text-main"
                             }`}
                     >
+                        <Home size={16} />
                         Ana Sayfa
                     </Link>
                     <Link
                         href="/nasil-oynanir"
-                        className={`text-sm font-bold transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"
+                        className={`text-sm font-bold flex items-center gap-1.5 transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"
                             }`}
                     >
+                        <HelpCircle size={16} />
                         Nasıl Oynanır?
+                    </Link>
+                    <Link
+                        href="/ozellikler"
+                        className={`text-sm font-bold flex items-center gap-1.5 transition-colors hover:text-primary ${pathname.startsWith("/ozellikler") ? "text-primary" : "text-text-main"
+                            }`}
+                    >
+                        <Star size={16} />
+                        Özellikler
                     </Link>
                     <Link
                         href="/leaderboard"
                         className={`text-sm font-bold transition-colors hover:text-primary flex items-center gap-1.5 ${pathname.startsWith("/leaderboard") ? "text-primary" : "text-text-main"
                             }`}
                     >
-                        <Trophy size={14} />
+                        <Trophy size={16} />
                         Liderlik
                     </Link>
                     <button
@@ -114,23 +124,33 @@ export default function Navbar() {
                     <Link
                         href="/"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={`text-base font-bold transition-colors hover:text-primary ${pathname === "/" ? "text-primary" : "text-text-main"}`}
+                        className={`text-base font-bold flex items-center gap-2 transition-colors hover:text-primary ${pathname === "/" ? "text-primary" : "text-text-main"}`}
                     >
+                        <Home size={18} />
                         Ana Sayfa
                     </Link>
                     <Link
                         href="/nasil-oynanir"
                         onClick={() => setIsMobileMenuOpen(false)}
-                        className={`text-base font-bold transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"}`}
+                        className={`text-base font-bold flex items-center gap-2 transition-colors hover:text-primary ${pathname.startsWith("/nasil-oynanir") ? "text-primary" : "text-text-main"}`}
                     >
+                        <HelpCircle size={18} />
                         Nasıl Oynanır?
+                    </Link>
+                    <Link
+                        href="/ozellikler"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className={`text-base font-bold flex items-center gap-2 transition-colors hover:text-primary ${pathname.startsWith("/ozellikler") ? "text-primary" : "text-text-main"}`}
+                    >
+                        <Star size={18} />
+                        Özellikler
                     </Link>
                     <Link
                         href="/leaderboard"
                         onClick={() => setIsMobileMenuOpen(false)}
                         className={`text-base font-bold transition-colors hover:text-primary flex items-center gap-2 ${pathname.startsWith("/leaderboard") ? "text-primary" : "text-text-main"}`}
                     >
-                        <Trophy size={16} />
+                        <Trophy size={18} />
                         Liderlik Tablosu
                     </Link>
                     <button

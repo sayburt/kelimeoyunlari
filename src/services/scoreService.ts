@@ -131,6 +131,12 @@ export const scoreService = {
                 saved = await this.saveToSupabase(user.id, gameName, won, score, calculatedScore, metadata);
             } else {
                 saved = this.saveToLocalStorage(gameName, won, score, calculatedScore);
+                // Anonim ziyaretciler icin global sayaci API uzerinden tetikle
+                fetch("/api/public-stats/increment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ gameId: gameName })
+                }).catch(err => console.debug("Anonim artis basarisiz", err));
             }
 
             if (saved && typeof window !== "undefined") {
