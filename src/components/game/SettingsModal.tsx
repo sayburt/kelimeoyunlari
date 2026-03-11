@@ -32,17 +32,17 @@ export function SettingsModal({ isOpen, onClose, showCategory }: SettingsModalPr
 
     const categoryOptions: { id: CategoryOption; label: string }[] = [
         { id: 'rastgele', label: 'RASTGELE' },
-        { id: 'araçlar', label: 'ARAÇLAR' },
-        { id: 'bilim', label: 'BİLİM' },
-        { id: 'bitki', label: 'BİTKİLER' },
-        { id: 'coğrafya', label: 'COĞRAFYA' },
-        { id: 'eşya', label: 'EŞYA' },
-        { id: 'hayvan', label: 'HAYVANLAR' },
-        { id: 'meslek', label: 'MESLEKLER' },
-        { id: 'sanat', label: 'SANAT' },
-        { id: 'spor', label: 'SPOR' },
-        { id: 'şehir', label: 'ŞEHİRLER' },
-        { id: 'yemek', label: 'YEMEKLER' },
+        { id: 'Bitkiler', label: 'BİTKİLER' },
+        { id: 'Coğrafya & Yerler', label: 'COĞRAFYA' },
+        { id: 'Eşyalar', label: 'EŞYALAR' },
+        { id: 'Hayvanlar', label: 'HAYVANLAR' },
+        { id: 'İsimler', label: 'İSİMLER' },
+        { id: 'Giyim & Moda', label: 'MODA' },
+        { id: 'Yiyecek & İçecek', label: 'MUTFAK' },
+        { id: 'Vücut & Sağlık', label: 'SAĞLIK' },
+        { id: 'Sanat & Kültür', label: 'SANAT' },
+        { id: 'Spor', label: 'SPOR' },
+        { id: 'Bilim & Teknoloji', label: 'TEKNOLOJİ' },
     ];
 
     if (!isOpen) return null;

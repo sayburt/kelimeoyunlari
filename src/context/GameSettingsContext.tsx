@@ -3,7 +3,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 export type DifficultyLevel = 1 | 2 | 3; // 1: Kolay, 2: Orta, 3: Zor
-export const VALID_CATEGORIES = ['rastgele', 'araçlar', 'bilim', 'bitki', 'coğrafya', 'eşya', 'hayvan', 'meslek', 'sanat', 'spor', 'şehir', 'yemek'] as const;
+export const VALID_CATEGORIES = [
+    'rastgele',
+    'Bitkiler',
+    'Coğrafya & Yerler',
+    'Eşyalar',
+    'Hayvanlar',
+    'İsimler',
+    'Giyim & Moda',
+    'Yiyecek & İçecek',
+    'Vücut & Sağlık',
+    'Sanat & Kültür',
+    'Spor',
+    'Bilim & Teknoloji',
+] as const;
 export type CategoryOption = typeof VALID_CATEGORIES[number];
 
 interface GameSettingsContextType {
