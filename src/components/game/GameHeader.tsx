@@ -122,10 +122,10 @@ export function GameHeader({
             </header>
 
             {/* 2. SATIR: Oyun Araç Çubuğu (Toolbar) */}
-            <div className="flex items-center justify-center py-2 px-4 sm:px-6 w-full gap-2 overflow-x-auto no-scrollbar bg-surface-base/80 dark:bg-black/20 border-b border-surface-mid/50 backdrop-blur-sm">
+            <div className="flex flex-wrap items-center justify-center py-2 px-2 sm:px-6 w-full gap-2 sm:gap-4 bg-surface-base/80 dark:bg-black/20 border-b border-surface-mid/50 backdrop-blur-sm">
                 
                 {timerText && (
-                    <div className="flex-shrink-0 mr-1 sm:mr-2 pointer-events-none bg-surface/50 px-3 py-1.5 rounded-lg border border-surface-mid/50">
+                    <div className="flex-shrink-0 pointer-events-none bg-surface/50 px-3 py-1.5 rounded-lg border border-surface-mid/50">
                         <span className="text-primary font-mono text-sm sm:text-base font-bold tabular-nums tracking-tighter">
                             {timerText}
                         </span>
@@ -133,7 +133,7 @@ export function GameHeader({
                 )}
 
                 {/* Oyun İkonları */}
-                <div className="flex items-center gap-1.5 sm:gap-2">
+                <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
                     {/* Joker Butonu */}
                     <button
                         onClick={onJoker}

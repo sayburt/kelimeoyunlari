@@ -109,7 +109,7 @@ Ana konsept: **Soft Depth + Subtle Glow + Controlled Contrast**
 - **Özellikler:** 
     - Oyun içi aksiyon menülerinde **Hamburger menü** kullanılmaz. Özellikler yatay olarak ekranda listelenmelidir.
     - İkon butonları sıkıcı bir tek renk yerine, kullanıcıya ayrışabilir hissettirmek amacıyla soft pastel tonlar (Örn: `text-cyan-500` icon, `bg-cyan-500/10` hover background) ile canlandırılmalıdır.
-    - Araç çubuğu geniş ekranlarda ortalanır (`justify-center`), dar ekranlarda yana yaslanıp yatay scroll (`overflow-x-auto no-scrollbar`) edilebilir yapılır.
+    - Araç çubuğu geniş ekranlarda ortalanır (`justify-center`), daha dar ekranlarda ise yana kaydırma (horizontal scroll) sorunu yaratmaması için ikonlar `flex-wrap` ile alta geçecek şekilde (`gap-1.5` veya `gap-2` ile) güvenli biçimde dizilmelidir.
 
 **Premium Kartlar (.premium-card)**
 - **Kapsam:** Ana sayfa oyun kartları.
