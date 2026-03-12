@@ -52,9 +52,9 @@ export default function Navbar() {
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="md:hidden p-2 -ml-2 text-text-main hover:bg-surface/10 rounded-md transition-colors"
+                    className="md:hidden p-1.5 -ml-1 text-text-main hover:bg-surface/10 rounded-md transition-colors"
                 >
-                    {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
                 </button>
                 <Link href="/" className="text-2xl font-black text-text-main tracking-tighter">
                     <span className="text-primary">KELİME</span> oyunları
@@ -110,23 +110,19 @@ export default function Navbar() {
                     </button>
                 </div>
                 {isAuthenticated ? (
-                    <div className="flex items-center gap-4">
-                        <div className="hidden md:block">
-                            <ThemeToggle />
-                        </div>
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <ThemeToggle />
                         <AvatarMenu />
                     </div>
                 ) : (
-                    <div className="flex items-center gap-3">
-                        <div className="hidden md:block">
-                            <ThemeToggle />
-                        </div>
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <ThemeToggle />
                         <Link
                             href="/login"
-                            className="flex items-center justify-center w-10 h-10 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 border-[0.5px] border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-secondary hover:text-text-main dark:text-text-secondary dark:hover:text-white group"
+                            className="flex flex-shrink-0 items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 border-[0.5px] border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-secondary hover:text-text-main dark:text-text-secondary dark:hover:text-white group"
                             aria-label="Giriş / Kayıt Ol"
                         >
-                            <User size={20} className="group-hover:scale-110 transition-transform" />
+                            <User className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform" />
                         </Link>
                     </div>
                 )}
@@ -180,11 +176,6 @@ export default function Navbar() {
                             </>
                         )}
                     </button>
-                    <div className="h-[1px] bg-surface-mid w-full my-1"></div>
-                    <div className="flex items-center justify-between">
-                        <span className="text-base font-bold text-text-main">Tema</span>
-                        <ThemeToggle />
-                    </div>
                 </div>
             )}
         </nav>

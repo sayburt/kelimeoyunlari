@@ -156,17 +156,39 @@ function WordSearchPageContent() {
                 <ErrorToast message={error || toastMessage || ''} />
 
                 <div className="flex-1 flex flex-col gap-3 px-3 sm:px-4 py-2 sm:py-3 max-w-6xl mx-auto w-full min-h-0 pb-4 lg:pb-8">
-                    <div className="w-full max-w-[680px] rounded-2xl border border-surface-active/30 bg-surface/25 px-3 py-2.5 sm:px-4 sm:py-3 flex items-center justify-between gap-2">
-                        <div className="text-xs sm:text-sm text-text-muted font-bold uppercase tracking-wider">
-                            Oyun Durumu
-                        </div>
-                        <div className="flex items-center gap-3 sm:gap-4">
-                            <span className="text-[11px] sm:text-xs font-black uppercase tracking-wide px-2 py-1 rounded-lg border border-surface-active/40 bg-surface/40 text-text-muted">
-                                Zorluk: {getDifficultyLabel(difficulty)}
+                    <div className="w-full max-w-[680px] rounded-2xl border border-surface-active/30 bg-surface/25 px-3 py-3 sm:px-4 sm:py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 shadow-sm">
+                        
+                        {/* Zorluk Seviyesi Label */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Zorluk</span>
+                            <span className="text-[11px] sm:text-xs font-black uppercase tracking-wide px-2.5 py-1 rounded-md border border-surface-active/50 bg-surface-hover/70 text-text-main shadow-inner">
+                                {getDifficultyLabel(difficulty)}
                             </span>
-                            <span className="text-xs sm:text-sm font-bold text-text-main">{foundWordCount}/{totalWordCount} bulundu</span>
-                            <span className="text-sm sm:text-base font-black text-primary">{score} puan</span>
                         </div>
+
+                        {/* Ayraç */}
+                        <div className="w-1 h-1 rounded-full bg-surface-active/60 hidden sm:block"></div>
+
+                        {/* Bulunan Kelimeler */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Bulunan</span>
+                            <div className="flex items-baseline gap-0.5">
+                                <span className="text-sm sm:text-base font-black text-text-main">{foundWordCount}</span>
+                                <span className="text-xs font-medium text-text-muted">/{totalWordCount}</span>
+                            </div>
+                        </div>
+
+                        {/* Ayraç */}
+                        <div className="w-1 h-1 rounded-full bg-surface-active/60 hidden sm:block"></div>
+
+                        {/* Toplam Puan */}
+                        <div className="flex items-center gap-2">
+                            <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Puan</span>
+                            <span className="text-sm sm:text-base font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                                {score}
+                            </span>
+                        </div>
+
                     </div>
 
                     <div className="flex-1 flex flex-col lg:flex-row items-stretch justify-start lg:justify-start gap-4 lg:gap-6 w-full min-h-0">

@@ -104,6 +104,13 @@ Ana konsept: **Soft Depth + Subtle Glow + Controlled Contrast**
     - `backdrop-blur(16px)` efekti.
     - `0 8px 24px rgba(0,0,0,0.25)` shadow (border yerine).
 
+**İkincil Menü (Game Toolbar & Action Icons)**
+- **Kapsam:** Headder içindeki aksiyon ikonları menüsü (Joker, Taktik, Puan vs).
+- **Özellikler:** 
+    - Oyun içi aksiyon menülerinde **Hamburger menü** kullanılmaz. Özellikler yatay olarak ekranda listelenmelidir.
+    - İkon butonları sıkıcı bir tek renk yerine, kullanıcıya ayrışabilir hissettirmek amacıyla soft pastel tonlar (Örn: `text-cyan-500` icon, `bg-cyan-500/10` hover background) ile canlandırılmalıdır.
+    - Araç çubuğu geniş ekranlarda ortalanır (`justify-center`), dar ekranlarda yana yaslanıp yatay scroll (`overflow-x-auto no-scrollbar`) edilebilir yapılır.
+
 **Premium Kartlar (.premium-card)**
 - **Kapsam:** Ana sayfa oyun kartları.
 - **Özellikler:** 

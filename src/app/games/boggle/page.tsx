@@ -127,7 +127,7 @@ function BogglePageContent() {
 
     return (
         <div className="min-h-[100dvh] flex flex-col bg-bg text-text-main overflow-y-auto w-full">
-            <div className="flex flex-col h-[100dvh] lg:h-auto lg:min-h-[100dvh] shrink-0">
+            <div className="flex flex-col min-h-[100dvh] shrink-0">
                 <GameHeader
                     title="BOGGLE"
                     onHelp={() => setShowInfoModal(true)}

@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useRef, Suspense } from 'react';
-import { Heart } from 'lucide-react';
 import { useHangman } from '@/hooks/useHangman';
 import { GameHeader } from '@/components/game/GameHeader';
 import { GameEndModal } from '@/components/game/GameEndModal';
@@ -185,44 +184,31 @@ function AdamAsmacaPageContent() {
                 <ErrorToast message={error || toastMessage || ''} />
 
                 {/* Oyun İçeriği — Alt Hiza Klavyeye Dayalı (Scroll olmaması için esneyebilir) */}
-                <div className="flex-1 min-h-0 flex flex-col sm:flex-row w-full max-w-2xl mx-auto px-1 sm:px-2 mt-2 sm:mt-4 mb-4 sm:mb-4 gap-2 sm:gap-4 items-center justify-center">
+                <div className="flex-1 min-h-0 flex flex-col sm:flex-row w-full max-w-2xl mx-auto px-1 sm:px-2 mt-2 sm:mt-4 mb-2 sm:mb-4 gap-2 sm:gap-4 items-stretch">
                     {/* Sol Sütun (Figür) */}
-                    <div className="w-full sm:w-1/2 h-full flex justify-center items-end bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-2 sm:p-4 shadow-sm min-h-[220px] sm:min-h-0">
+                    <div className="flex-1 min-h-0 w-full sm:w-1/2 flex justify-center items-end bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-2 sm:p-4 shadow-sm">
                         <div className="w-full h-full max-w-[280px] max-h-full flex items-end justify-center">
                             <HangmanDrawing wrongGuesses={wrongGuesses} />
                         </div>
                     </div>
 
-                    {/* Sağ Sütun (Can ve Gizli Kelime) */}
-                    <div className="w-full sm:w-1/2 flex flex-col justify-between bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-3 sm:p-6 shadow-sm min-h-[90px] h-auto sm:min-h-0 sm:h-full mb-2 sm:mb-0">
+                    {/* Sağ Sütun (Gizli Kelime) */}
+                    <div className="shrink-0 pt-3 pb-4 sm:py-6 w-full sm:w-1/2 flex flex-col justify-center gap-4 sm:gap-16 lg:gap-20 bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 px-4 sm:px-6 shadow-sm">
                         {/* Kategori ve Zorluk Bilgileri */}
                         {!isChallengeMode && (
-                            <div className="flex justify-center items-center gap-2 mb-2 sm:mb-4">
-                                <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 capitalize tracking-wide">
+                            <div className="flex justify-center items-center gap-2 flex-wrap">
+                                <span className="text-[10px] sm:text-xs font-medium px-3 py-1 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 capitalize tracking-wide">
                                     {category === 'rastgele' ? 'Rastgele' : category}
                                 </span>
                                 <span className="w-1 h-1 rounded-full bg-surface-hover/80"></span>
-                                <span className="text-[10px] sm:text-xs font-medium px-2 py-0.5 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 tracking-wide">
+                                <span className="text-[10px] sm:text-xs font-medium px-3 py-1 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 tracking-wide">
                                     {difficulty === 1 ? 'Kolay Seviye' : difficulty === 2 ? 'Orta Seviye' : 'Zor Seviye'}
                                 </span>
                             </div>
                         )}
 
-                        {/* Can göstergesi (Üstte) */}
-                        <div className="flex flex-wrap gap-1 sm:gap-2 justify-center items-center pb-2 sm:pb-0 sm:mb-auto min-h-[20px] sm:min-h-[32px]">
-                            {Array.from({ length: maxLives }).map((_, i) => (
-                                <Heart
-                                    key={i}
-                                    className={`w-4 h-4 sm:w-6 sm:h-6 ${i < maxLives - wrongGuesses
-                                        ? 'fill-red-500 text-red-500'
-                                        : 'text-muted-foreground opacity-20'
-                                        }`}
-                                />
-                            ))}
-                        </div>
-
-                        {/* Gizli Kelime (Altta) */}
-                        <div className="flex justify-center items-end mt-auto pt-2 sm:mt-4">
+                        {/* Gizli Kelime (Ortalanmış) */}
+                        <div className="flex justify-center items-center">
                             <HangmanWordDisplay
                                 targetWord={targetWord}
                                 guessedLetters={guessedLetters}

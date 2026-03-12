@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Volume2, VolumeX, Moon, Sun } from 'lucide-react';
+import { X, Check, Volume2, VolumeX } from 'lucide-react';
 import { useGameSettings, DifficultyLevel, CategoryOption } from '@/context/GameSettingsContext';
-import { useTheme } from 'next-themes';
 
 interface SettingsModalProps {
     isOpen: boolean;
@@ -12,17 +11,7 @@ interface SettingsModalProps {
 
 export function SettingsModal({ isOpen, onClose, showCategory }: SettingsModalProps) {
     const { difficulty, setDifficulty, category, setCategory, isSoundEnabled, toggleSound } = useGameSettings();
-    const { theme, setTheme } = useTheme();
     const [activeTab, setActiveTab] = useState<'game' | 'system'>('game');
-    const [mounted, setMounted] = useState(false);
-
-    useEffect(() => {
-        // Use a microtask to avoid the synchronous setState warning if needed,
-        // or just accept that this might trigger an extra render for hydration.
-        // In this case, it's safer to use requestAnimationFrame or similar to ensure it's not synchronous.
-        const timer = requestAnimationFrame(() => setMounted(true));
-        return () => cancelAnimationFrame(timer);
-    }, []);
 
     const difficultyOptions: { level: DifficultyLevel; label: string; description: string }[] = [
         { level: 1, label: 'KOLAY', description: 'Yaygın kelimeler.' },
@@ -210,35 +199,6 @@ export function SettingsModal({ isOpen, onClose, showCategory }: SettingsModalPr
                                                     className="w-5 h-5 rounded-full bg-white shadow-sm"
                                                 />
                                             </button>
-                                        </div>
-
-                                        {/* Tema Ayarı */}
-                                        <div className="flex items-center justify-between p-4 px-5">
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 rounded-xl bg-surface-mid/50 flex items-center justify-center text-primary">
-                                                    {mounted && (theme === 'dark' ? <Moon size={20} /> : <Sun size={20} />)}
-                                                </div>
-                                                <div>
-                                                    <h4 className="font-bold text-text-main text-sm">Görünüm</h4>
-                                                    <p className="text-[9px] text-text-muted font-bold uppercase tracking-wider mt-0.5">Koyu / Açık Tema</p>
-                                                </div>
-                                            </div>
-                                            <div className="flex bg-surface border border-surface-mid/50 rounded-lg p-1 gap-1">
-                                                <button
-                                                    onClick={() => setTheme('light')}
-                                                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-all ${theme === 'light' ? 'bg-white text-orange-500 shadow-sm' : 'text-text-muted hover:text-text-main'}`}
-                                                    title="Açık Tema"
-                                                >
-                                                    <Sun size={16} />
-                                                </button>
-                                                <button
-                                                    onClick={() => setTheme('dark')}
-                                                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-all ${theme === 'dark' ? 'bg-surface-hover text-primary shadow-sm' : 'text-text-muted hover:text-text-main'}`}
-                                                    title="Koyu Tema"
-                                                >
-                                                    <Moon size={16} />
-                                                </button>
-                                            </div>
                                         </div>
                                     </div>
                                 </motion.div>
