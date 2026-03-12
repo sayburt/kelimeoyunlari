@@ -136,7 +136,14 @@ export const scoreService = {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ gameId: gameName })
-                }).catch(err => console.debug("Anonim artis basarisiz", err));
+                })
+                .then(async (res) => {
+                    if (!res.ok) {
+                        const errText = await res.text();
+                        console.error("Anonim artis 500 Hatası! API sunucusunu (npm run dev) baştan başlatmayı deneyin. Detay:", errText);
+                    }
+                })
+                .catch(err => console.debug("Anonim artis ag basarisizligi:", err));
             }
 
             if (saved && typeof window !== "undefined") {

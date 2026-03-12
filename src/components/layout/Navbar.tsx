@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { AvatarMenu } from "@/components/ui/AvatarMenu";
 import { shareContent } from "@/utils/shareUtils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Share2, User, Menu, X, Trophy, Home, HelpCircle, Star } from "lucide-react";
 
 export default function Navbar() {
@@ -14,6 +14,16 @@ export default function Navbar() {
     const pathname = usePathname();
     const [isCopied, setIsCopied] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 20);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => window.removeEventListener("scroll", handleScroll);
+    }, []);
 
     const handleShare = async () => {
         const result = await shareContent({
@@ -34,7 +44,11 @@ export default function Navbar() {
     if (isAuthPage) return null;
 
     return (
-        <nav className="h-16 flex items-center justify-between px-6 glass-header sticky top-0 z-50">
+        <nav className={`h-16 flex items-center justify-between px-6 sticky top-0 z-50 transition-all duration-300 ${
+            isScrolled || isMobileMenuOpen 
+                ? "bg-bg shadow-md border-b border-surface-mid" 
+                : "glass-header"
+        }`}>
             <div className="flex items-center gap-3">
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -120,7 +134,7 @@ export default function Navbar() {
 
             {/* Mobile Menu Dropdown */}
             {isMobileMenuOpen && (
-                <div className="absolute top-16 left-0 w-full glass-surface md:hidden flex flex-col p-4 gap-4 z-40 animate-in slide-in-from-top-2">
+                <div className="absolute top-16 left-0 w-full bg-bg border-b border-surface-mid shadow-lg md:hidden flex flex-col p-4 gap-4 z-40 animate-in slide-in-from-top-2">
                     <Link
                         href="/"
                         onClick={() => setIsMobileMenuOpen(false)}
