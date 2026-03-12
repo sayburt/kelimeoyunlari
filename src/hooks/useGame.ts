@@ -151,6 +151,7 @@ export function useGame(options: UseGameOptions = {}) {
         setWordLength(length);
         setMaxGuesses(max);
         try {
+            await scoreService.recordGameStart(GAME_NAME);
             let word: Word | null = null;
 
             if (challengeId) {

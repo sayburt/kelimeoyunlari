@@ -137,6 +137,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
         setStatus('loading');
         setError(null);
         try {
+            await scoreService.recordGameStart(GAME_NAME);
             setGuessedLetters(new Set());
             setWrongGuesses(0);
             setJoker({ used: false, count: 0, max: 1 });

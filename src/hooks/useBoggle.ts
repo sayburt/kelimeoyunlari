@@ -154,9 +154,10 @@ export function useBoggle(options: UseBoggleOptions = {}) {
 
     // --- Main Actions ---
 
-    const startNewGame = useCallback(() => {
+    const startNewGame = useCallback(async () => {
         setStatus('loading');
         setError(null);
+        await scoreService.recordGameStart(GAME_NAME);
 
         const newGrid = generateGrid();
         setGrid(newGrid);

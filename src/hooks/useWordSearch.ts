@@ -265,6 +265,7 @@ export function useWordSearch(options: UseWordSearchOptions = {}) {
         clearLocal();
 
         try {
+            await scoreService.recordGameStart(GAME_NAME);
             const puzzle = await buildPuzzle();
             const initialWords: WordSearchWord[] = puzzle.placements.map((placement) => ({
                 word: placement.word,

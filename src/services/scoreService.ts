@@ -131,19 +131,6 @@ export const scoreService = {
                 saved = await this.saveToSupabase(user.id, gameName, won, score, calculatedScore, metadata);
             } else {
                 saved = this.saveToLocalStorage(gameName, won, score, calculatedScore);
-                // Anonim ziyaretciler icin global sayaci API uzerinden tetikle
-                fetch("/api/public-stats/increment", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ gameId: gameName })
-                })
-                .then(async (res) => {
-                    if (!res.ok) {
-                        const errText = await res.text();
-                        console.error("Anonim artis 500 Hatası! API sunucusunu (npm run dev) baştan başlatmayı deneyin. Detay:", errText);
-                    }
-                })
-                .catch(err => console.debug("Anonim artis ag basarisizligi:", err));
             }
 
             if (saved && typeof window !== "undefined") {
@@ -158,6 +145,75 @@ export const scoreService = {
         } catch (error) {
             console.error("Skor kaydedilirken hata oluştu:", error);
             return this.saveToLocalStorage(gameName, won, score, 0);
+        }
+    },
+
+    /**
+     * Oyunun başladığını kaydeder (Oynanma sayısını artırır).
+     * Giriş yapmış kullanıcılar için Supabase'e, misafirler için LocalStorage ve API'ye kaydeder.
+     */
+    async recordGameStart(gameName: string) {
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            const user = session?.user;
+
+            if (user) {
+                // Supabase'den mevcut istatistiği kontrol et
+                const { data: currentStat } = await supabase
+                    .from("game_stats")
+                    .select("played")
+                    .eq("user_id", user.id)
+                    .eq("game_name", gameName)
+                    .single();
+
+                if (!currentStat) {
+                    await supabase.from("game_stats").insert({
+                        user_id: user.id,
+                        game_name: gameName,
+                        played: 1,
+                        won: 0,
+                        best_score: 0,
+                        high_score: 0,
+                        current_streak: 0,
+                        max_streak: 0,
+                        updated_at: new Date().toISOString()
+                    });
+                } else {
+                    await supabase.from("game_stats").update({
+                        played: currentStat.played + 1,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq("user_id", user.id)
+                    .eq("game_name", gameName);
+                }
+            } else {
+                // LocalStorage güncelle
+                const guestStats = storage.getGuestStats();
+                const statIndex = guestStats.findIndex(s => s.game_name === gameName);
+                if (statIndex === -1) {
+                    guestStats.push({
+                        game_name: gameName,
+                        played: 1,
+                        won: 0,
+                        best_score: 0,
+                        high_score: 0,
+                        current_streak: 0,
+                        max_streak: 0
+                    });
+                } else {
+                    guestStats[statIndex].played += 1;
+                }
+                storage.setGuestStats(guestStats);
+
+                // Global sayacı API üzerinden tetikle
+                fetch("/api/public-stats/increment", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ gameId: gameName })
+                }).catch(err => console.debug("Anonim artis ag basarisizligi:", err));
+            }
+        } catch (error) {
+            console.error("Oyun başlangıcı kaydedilirken hata:", error);
         }
     },
 
@@ -197,7 +253,7 @@ export const scoreService = {
             });
         } else {
             const stat = guestStats[statIndex];
-            stat.played += 1;
+            // played + 1 kaldırıldı, artık recordGameStart tarafından yapılıyor.
 
             if (won) {
                 stat.won += 1;
@@ -302,7 +358,7 @@ export const scoreService = {
                 const { error: updateError } = await supabase
                     .from("game_stats")
                     .update({
-                        played: currentStat.played + 1,
+                        // played artışı kaldırıldı, artık recordGameStart tarafından yapılıyor.
                         won: currentStat.won + (won ? 1 : 0),
                         best_score: bestScore,
                         high_score: highScore,
