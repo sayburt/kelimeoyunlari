@@ -27,7 +27,7 @@ export default function Home() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [selectedGame, setSelectedGame] = useState<Game | null>(null);
-  const { playCounts, likeCounts, applyLikeDelta } = usePublicStats();
+  const { playCounts, likeCounts, applyLikeDelta, incrementPlayCount } = usePublicStats();
   const { userLikes, toggleLike } = useGameLikes({
     userId: user?.id,
     authLoading,
@@ -65,7 +65,10 @@ export default function Home() {
                 title={game.title}
                 description={game.description}
                 comingSoon={game.comingSoon}
-                onClick={() => router.push(game.href)}
+                onClick={() => {
+                  incrementPlayCount(game.id);
+                  router.push(game.href);
+                }}
                 onInfo={() => setSelectedGame(game)}
                 thumbnail={game.thumbnail}
                 playCount={playCounts[game.id] || game.playCount}

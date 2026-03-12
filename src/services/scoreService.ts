@@ -204,13 +204,6 @@ export const scoreService = {
                     guestStats[statIndex].played += 1;
                 }
                 storage.setGuestStats(guestStats);
-
-                // Global sayacı API üzerinden tetikle
-                fetch("/api/public-stats/increment", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ gameId: gameName })
-                }).catch(err => console.debug("Anonim artis ag basarisizligi:", err));
             }
         } catch (error) {
             console.error("Oyun başlangıcı kaydedilirken hata:", error);

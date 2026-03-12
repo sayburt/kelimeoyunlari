@@ -61,9 +61,30 @@ export function usePublicStats() {
         }));
     }, []);
 
+    const incrementPlayCount = useCallback((gameId: string) => {
+        // Optimistic UI update
+        setStats((prev) => ({
+            ...prev,
+            playCounts: {
+                ...prev.playCounts,
+                [gameId]: (prev.playCounts[gameId] || 0) + 1,
+            },
+        }));
+
+        // Fire-and-forget backend increment
+        fetch("/api/public-stats/increment", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ gameId }),
+        }).catch(() => {
+            // Sessizce yut — UI zaten güncellendi
+        });
+    }, []);
+
     return {
         playCounts: stats.playCounts,
         likeCounts: stats.likeCounts,
         applyLikeDelta,
+        incrementPlayCount,
     };
 }
