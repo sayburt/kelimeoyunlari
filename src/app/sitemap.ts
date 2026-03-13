@@ -39,6 +39,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
             priority: 0.8,
         },
         {
+            url: `${baseUrl}/games/kelime-merdiveni`,
+            lastModified: new Date(),
+            changeFrequency: 'weekly',
+            priority: 0.8,
+        },
+        {
             url: `${baseUrl}/nasil-oynanir`,
             lastModified: new Date(),
             changeFrequency: 'weekly',

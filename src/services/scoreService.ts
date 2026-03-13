@@ -164,7 +164,7 @@ export const scoreService = {
                     .select("played")
                     .eq("user_id", user.id)
                     .eq("game_name", gameName)
-                    .single();
+                    .maybeSingle();
 
                 if (!currentStat) {
                     await supabase.from("game_stats").insert({
@@ -208,6 +208,40 @@ export const scoreService = {
         } catch (error) {
             console.error("Oyun başlangıcı kaydedilirken hata:", error);
         }
+    },
+
+    /**
+     * Kelime Merdiveni için puan hesaplar.
+     * Formül: (Baz + OptimalBonus + ZamanBonusu) × ZorlukÇarpanı - JokerCezası
+     */
+    calculateWordLadderScore(
+        steps: number,
+        optimalSteps: number,
+        seconds: number,
+        difficulty: number = 1,
+        jokersUsed: number = 0
+    ): number {
+        const basePoint = 1000;
+
+        // Optimal hamle bonusu: optimal == steps ise 500, her fazla adımda -100
+        const optimalBonus = Math.max(0, 500 - (steps - optimalSteps) * 100);
+
+        // Zaman bonusu: max(0, (180 - harcanan_saniye) × 3)
+        const timeBonus = Math.max(0, (180 - seconds) * 3);
+
+        // Zorluk çarpanı
+        let multiplier = 1.0;
+        if (difficulty === 2) multiplier = 1.5;
+        if (difficulty === 3) multiplier = 2.0;
+
+        // Joker cezası
+        const jokerPenalty = jokersUsed * 200;
+
+        const totalScore = Math.max(
+            0,
+            Math.round((basePoint + optimalBonus + timeBonus) * multiplier) - jokerPenalty
+        );
+        return totalScore;
     },
 
     isLowerBestMetricGame(gameName: string): boolean {
@@ -313,9 +347,9 @@ export const scoreService = {
                 .select("*")
                 .eq("user_id", userId)
                 .eq("game_name", gameName)
-                .single();
+                .maybeSingle();
 
-            if (fetchError && fetchError.code !== 'PGRST116') {
+            if (fetchError) {
                 console.error("İstatistik alınırken hata:", fetchError);
                 return false;
             }

@@ -250,5 +250,58 @@ export const GAMES: Game[] = [
                 'Bir kelimeyi bulamadığında çapraz yönleri özellikle kontrol et.'
             ]
         }
+    },
+    {
+        id: 'kelime-merdiveni',
+        title: 'Kelime Merdiveni',
+        description: 'Ücretsiz Türkçe Kelime Merdiveni oyununda başlangıç kelimesinden hedef kelimeye tek harf değiştirerek ulaş! En az adımda hedefe var.',
+        href: '/games/kelime-merdiveni',
+        thumbnail: '/games/kelime-merdiveni/card.webp',
+        playCount: 0,
+        likeCount: 0,
+        comingSoon: false,
+        instructions: {
+            basic: 'Kelime Merdiveni\'nde amaç, başlangıç kelimesinden hedef kelimeye her adımda sadece bir harf değiştirerek ulaşmaktır. Her adımda girdiğiniz kelime, Türkçe sözlükte mevcut ve anlamlı olmalıdır. En az adımla hedefe ulaşan en yüksek puanı alır.',
+            rules: [
+                'Her adımda yalnızca bir harf değiştirilebilir; harf eklenemez veya çıkarılamaz.',
+                'Girdiğiniz her kelime Türkçe sözlükte mevcut ve anlamlı olmalıdır.',
+                'Mevcut kelimenizden yalnızca bir harf farklı olan kelimeler geçerlidir.',
+                'En az hamlede hedefe ulaşırsanız en yüksek puan çarpanını kazanırsınız.',
+                'Maksimum adım sayısı aşılırsa oyun sona erer ve kaybedersiniz.'
+            ],
+            scoring: {
+                description: 'Kelime Merdiveni puanlaması, optimal adım sayısı ve süreye göre hesaplanır:',
+                points: [
+                    { condition: 'Temel Puan', value: '1000 Puan' },
+                    { condition: 'Optimal Adımda Bitiş', value: '+500 Bonus' },
+                    { condition: 'Her Fazla Adım', value: '-100 Puan' },
+                    { condition: 'Zaman Bonusu', value: 'Her saniye için puan' }
+                ]
+            },
+            examples: [
+                {
+                    word: 'KASA',
+                    colors: ['default', 'default', 'default', 'default'],
+                    highlightLetter: 'K',
+                    description: 'Başlangıç: KASA — Hedef: MASA'
+                },
+                {
+                    word: 'MASA',
+                    colors: ['correct', 'default', 'default', 'default'],
+                    highlightLetter: 'M',
+                    description: 'K → M değiştirildi. MASA geçerli bir kelime, tek adımda hedefe ulaşıldı!'
+                }
+            ],
+            footer: 'Her adımda bir harf, en az adımda zafer!'
+        },
+        blogContent: {
+            history: 'Kelime Merdiveni (Word Ladder), 1878 yılında «Alice Harikalar Dünyasında» kitabının yazarı Lewis Carroll tarafından icat edilmiştir. Carroll bu oyuna başlangıçta «Doublets» adını vermiştir. Oyun, iki kelime arasındaki farkı birer harf değişimi ile kapatmaya dayanmakta ve hem dil hem de mantık becerilerini geliştirmektedir. Bilgisayar biliminde BFS (Genişlik Öncelikli Arama) algoritmasının klasik uygulama örneklerinden biri olmasıyla da akademik dünyada ünlenmektedir.',
+            proTips: [
+                'Sesli harfleri değiştirmek genellikle daha fazla kelime seçeneği sunar.',
+                'Hedef kelimedeki harfleri tek tek yerine oturtmaya çalışın.',
+                'İki kelime arasındaki farklı harfleri belirleyip sırayla değiştirin.',
+                'Ara hedef kelimeler belirleyin: büyük değişiklikler için küçük adımlar daha güvenlidir.'
+            ]
+        }
     }
 ];

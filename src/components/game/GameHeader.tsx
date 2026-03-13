@@ -134,7 +134,9 @@ export function GameHeader({
 
                 {/* Oyun İkonları */}
                 <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
-                    {/* Joker Butonu */}
+                {/* Joker Butonu — sadece onJoker geçildiyse göster */}
+                    {onJoker !== undefined && (
+                        <>
                     <button
                         onClick={onJoker}
                         disabled={jokerUsed}
@@ -150,6 +152,8 @@ export function GameHeader({
                     </button>
 
                     <div className="w-px h-6 bg-surface-mid/50 mx-1"></div>
+                        </>
+                    )}
 
                     {/* Diğer Menü İtemleri */}
                     {menuItems.map((item, idx) => {
