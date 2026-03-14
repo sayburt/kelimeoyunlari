@@ -12,7 +12,6 @@ import { shareContent } from '@/utils/shareUtils';
 import { GameHeader } from '@/components/game/GameHeader';
 import { ErrorToast } from '@/components/game/ErrorToast';
 import { SettingsModal } from '@/components/game/SettingsModal';
-import { InfoModal } from '@/components/game/InfoModal';
 import { StatsModal } from '@/components/game/StatsModal';
 import { GameEndModal } from '@/components/game/GameEndModal';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
@@ -34,7 +33,6 @@ function getDifficultyLabel(difficulty: number): string {
 
 function WordSearchPageContent() {
     const {
-        showInfoModal, setShowInfoModal,
         showStatsModal, setShowStatsModal,
         showSettingsModal, setShowSettingsModal,
         showResultModal, setShowResultModal,
@@ -173,7 +171,6 @@ function WordSearchPageContent() {
             <div className="flex flex-col min-h-[100dvh] shrink-0">
                 <GameHeader
                     title="KELIME ARAMA"
-                    onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
@@ -281,7 +278,6 @@ function WordSearchPageContent() {
                 score={score}
             />
 
-            {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
             {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
 
             <SettingsModal

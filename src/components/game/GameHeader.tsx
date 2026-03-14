@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ArrowLeft, Info, BarChart2, Share2, Save, Swords, Settings } from 'lucide-react';
+import { ArrowLeft, BarChart2, Share2, Save, Swords, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { VisitorAuthModal } from './VisitorAuthModal';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -10,7 +10,6 @@ import { AvatarMenu } from '@/components/ui/AvatarMenu';
 export interface GameHeaderProps {
     title: string;
     onBack?: () => void;
-    onHelp?: () => void;
     onStats?: () => void;
     onSettings?: () => void;
     onShare?: () => void;
@@ -28,7 +27,6 @@ export interface GameHeaderProps {
 export function GameHeader({
     title,
     onBack,
-    onHelp,
     onStats,
     onSettings,
     onShare,
@@ -79,37 +77,31 @@ export function GameHeader({
             icon: Save, 
             label: 'Sonra Devam Et', 
             onClick: onSave, 
-            colorClass: 'text-accent-indigo hover:bg-accent-indigo/10' 
+            colorClass: 'text-accent-indigo' 
         }] : []),
         ...(!isChallengeMode && onChallenge ? [{ 
             icon: Swords, 
             label: 'Meydan Oku', 
             onClick: handleChallengeClick, 
-            colorClass: 'text-accent-rose hover:bg-accent-rose/10' 
+            colorClass: 'text-accent-rose' 
         }] : []),
-        { 
-            icon: Info, 
-            label: 'Nasıl Oynanır?', 
-            onClick: onHelp, 
-            colorClass: 'text-accent-cyan hover:bg-accent-cyan/10' 
-        },
         { 
             icon: BarChart2, 
             label: 'İstatistikler', 
-            onClick: onStats, 
-            colorClass: 'text-accent-amber hover:bg-accent-amber/10' 
+            onClick: onStats,
+            colorClass: 'text-accent-emerald'
         },
         ...(onSettings ? [{ 
             icon: Settings, 
             label: 'Ayarlar', 
-            onClick: onSettings, 
-            colorClass: 'text-text-secondary hover:bg-surface-mid/50' 
+            onClick: onSettings,
+            colorClass: 'text-accent-cyan'
         }] : []),
         { 
             icon: Share2, 
             label: 'Oyunu Paylaş', 
-            onClick: onShare, 
-            colorClass: 'text-accent-emerald hover:bg-accent-emerald/10' 
+            onClick: onShare,
+            colorClass: 'text-accent-violet'
         },
     ];
 
@@ -159,10 +151,10 @@ export function GameHeader({
             </header>
 
             {/* 2. SATIR: Oyun Araç Çubuğu (Toolbar) */}
-            <div className="flex flex-wrap items-center justify-center py-3 px-2 sm:px-6 w-full gap-2 sm:gap-4 bg-surface-dark/80 dark:bg-black/40 border-b border-surface-mid/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
+            <div className="flex flex-wrap items-center justify-center py-2.5 sm:py-3.5 px-2 sm:px-6 w-full gap-3 sm:gap-6 bg-bg/80 dark:bg-black/20 backdrop-blur-md border-b border-surface-mid/30">
                 
                 {isMounted && timerText && (
-                    <div className="flex-shrink-0 pointer-events-none bg-surface dark:bg-white/10 px-4 py-2 rounded-2xl border border-surface-mid shadow-sm transition-all duration-300">
+                    <div className="flex-shrink-0 bg-surface-dark px-3.5 py-1.5 rounded-2xl border border-surface-mid/50 shadow-sm ring-1 ring-black/5">
                         <span className="text-text-main font-mono text-base sm:text-lg font-black tabular-nums tracking-tight">
                             {timerText}
                         </span>
@@ -171,39 +163,36 @@ export function GameHeader({
 
                 {/* Oyun İkonları */}
                 <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                {/* Joker Butonu — sadece onJoker geçildiyse göster */}
+                    {/* Joker Butonu — sadece onJoker geçildiyse göster */}
                     {onJoker !== undefined && (
-                        <>
-                    <button
-                        onClick={onJoker}
-                        disabled={jokerUsed}
-                        className={`relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-2xl transition-all duration-200 active:scale-90 group cursor-pointer border shadow-sm ${jokerUsed
-                            ? 'opacity-40 grayscale cursor-not-allowed bg-surface/50 border-surface-mid'
-                            : 'bg-surface hover:border-accent-amber/50 hover:shadow-md hover:shadow-accent-amber/5 border-surface-accent/30 text-accent-amber'
-                            }`}
-                        title={jokerUsed ? 'İpucu Kullanıldı' : 'İpucu Kullan (💡)'}
-                        aria-label="İpucu"
-                    >
-                        <span className={`text-lg sm:text-xl ${!jokerUsed && 'group-hover:scale-110 transition-transform'}`}>💡</span>
-                        {jokerUsed && <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent-rose rounded-full border-2 border-white shadow-sm" />}
-                    </button>
-
-                    <div className="w-px h-6 bg-surface-mid/40 mx-1"></div>
-                        </>
+                        <div className="flex items-center">
+                            <button
+                                onClick={onJoker}
+                                disabled={jokerUsed}
+                                className={`relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-2xl transition-all duration-200 active:scale-90 group cursor-pointer border shadow-sm ${jokerUsed
+                                    ? 'opacity-30 grayscale cursor-not-allowed bg-surface-mid/20 border-surface-mid/30'
+                                    : 'bg-surface-dark dark:bg-white/5 border-surface-mid/50 text-text-secondary hover:text-primary hover:border-primary/30 hover:shadow-md'
+                                    }`}
+                                title={jokerUsed ? 'İpucu Kullanıldı' : 'İpucu Kullan (💡)'}
+                                aria-label="İpucu"
+                            >
+                                <span className={`text-lg sm:text-xl ${!jokerUsed && 'group-hover:scale-110 transition-transform'}`}>💡</span>
+                                {jokerUsed && <div className="absolute -top-1 -right-1 w-3 h-3 bg-text-muted rounded-full border-2 border-white shadow-sm" />}
+                            </button>
+                        </div>
                     )}
 
                     {/* Diğer Menü İtemleri */}
                     {menuItems.map((item, idx) => {
                         const Icon = item.icon;
-                        const cc = item.colorClass || '';
                         return (
                             <button
                                 key={idx}
                                 onClick={item.onClick}
                                 disabled={item.disabled}
                                 className={`flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-2xl transition-all duration-200 active:scale-90 group cursor-pointer border shadow-sm ${item.disabled
-                                    ? 'opacity-30 grayscale cursor-not-allowed text-text-muted bg-surface/50 border-surface-mid'
-                                    : `bg-surface dark:bg-white/5 border-surface-accent/30 hover:shadow-md ${cc.includes('text-accent-indigo') ? 'hover:border-accent-indigo/40 hover:shadow-accent-indigo/5' : ''} ${cc.includes('text-accent-rose') ? 'hover:border-accent-rose/40 hover:shadow-accent-rose/5' : ''} ${cc.includes('text-accent-cyan') ? 'hover:border-accent-cyan/40 hover:shadow-accent-cyan/5' : ''} ${cc.includes('text-accent-amber') ? 'hover:border-accent-amber/40 hover:shadow-accent-amber/5' : ''} ${cc.includes('text-accent-emerald') ? 'hover:border-accent-emerald/40 hover:shadow-accent-emerald/5' : ''} ${cc}`
+                                    ? 'opacity-30 grayscale cursor-not-allowed bg-surface-mid/20 border-surface-mid/30'
+                                    : `bg-surface-dark dark:bg-white/5 border-surface-mid/50 ${item.colorClass || 'text-text-secondary'} hover:text-text-main hover:border-surface-mid hover:shadow-md`
                                     }`}
                                 title={item.label}
                                 aria-label={item.label}

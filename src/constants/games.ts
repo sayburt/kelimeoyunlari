@@ -5,5 +5,6 @@ export const GAME_LABELS: Record<string, string> = {
     hangman: 'Adam Asmaca',
     boggle: 'Boggle',
     'kelime-arama': 'Kelime Arama',
+    'kelime-merdiveni': 'Kelime Merdiveni',
     quiz: 'Kelime Bilgi',
 };

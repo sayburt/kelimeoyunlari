@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useAuth } from "@/hooks/useAuth";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, LogOut } from "lucide-react";
+import { User, LogOut, BarChart3 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export function AvatarMenu() {
@@ -70,15 +70,27 @@ export function AvatarMenu() {
                             </div>
 
                             <Link
-                                href="/profile"
+                                href="/profile/settings"
                                 onClick={closeMenu}
-                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${pathname === "/profile"
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${pathname === "/profile/settings"
                                     ? "bg-primary/10 text-primary"
                                     : "text-text-main hover:bg-surface hover:text-primary"
                                     }`}
                             >
                                 <User className="w-4 h-4" />
-                                Profil ve İstatistikler
+                                Profil Ayarları
+                            </Link>
+
+                            <Link
+                                href="/profile/stats"
+                                onClick={closeMenu}
+                                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${pathname === "/profile/stats"
+                                    ? "bg-primary/10 text-primary"
+                                    : "text-text-main hover:bg-surface hover:text-primary"
+                                    }`}
+                            >
+                                <BarChart3 className="w-4 h-4" />
+                                İstatistikler
                             </Link>
 
                             <button

@@ -7,7 +7,6 @@ import { GameHeader } from '@/components/game/GameHeader';
 
 import { GameKeyboard } from '@/components/game/GameKeyboard';
 import { GameEndModal } from '@/components/game/GameEndModal';
-import { InfoModal } from '@/components/game/InfoModal';
 import { StatsModal } from '@/components/game/StatsModal';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { WordLadderGuessArea, FixedWordRow } from '@/components/game/WordLadderGrid';
@@ -27,7 +26,6 @@ const TURKISH_LETTERS = new Set(
 
 function WordLadderPageContent() {
     const {
-        showInfoModal, setShowInfoModal,
         showStatsModal, setShowStatsModal,
         showResultModal, setShowResultModal,
         isPaused,
@@ -177,7 +175,6 @@ function WordLadderPageContent() {
                 {/* ── 1. HEADER ── */}
                 <GameHeader
                     title="KELİME MERDİVENİ"
-                    onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onShare={handleShare}
                     onSave={handleSaveGame}
@@ -279,7 +276,6 @@ function WordLadderPageContent() {
                 onNewGame={handleNewGameFromModal}
             />
 
-            {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
             {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
 
             <SaveConfirmationModal

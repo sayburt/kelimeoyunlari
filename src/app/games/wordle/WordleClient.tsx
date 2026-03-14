@@ -12,7 +12,6 @@ import { GameInstructions } from '@/components/game/GameInstructions';
 import { SettingsModal } from '@/components/game/SettingsModal';
 import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { ChallengeModal } from '@/components/game/ChallengeModal';
-import { InfoModal } from '@/components/game/InfoModal';
 import { StatsModal } from '@/components/game/StatsModal';
 import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
 import { useGameSettings } from '@/context/GameSettingsContext';
@@ -37,7 +36,6 @@ function WordlePageContent() {
     const searchParams = useSearchParams();
     const challengeId = searchParams.get('challengeId');
     const {
-        showInfoModal, setShowInfoModal,
         showStatsModal, setShowStatsModal,
         showSettingsModal, setShowSettingsModal,
         showResultModal, setShowResultModal,
@@ -271,7 +269,6 @@ function WordlePageContent() {
             <div className="flex flex-col min-h-[100dvh] shrink-0">
                 <GameHeader
                     title="WORDLE"
-                    onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
@@ -350,7 +347,6 @@ function WordlePageContent() {
                 onNewGame={handleNewGameFromModal}
             />
 
-            {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
             {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
 
             <SettingsModal

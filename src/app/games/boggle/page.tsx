@@ -8,7 +8,6 @@ import { GameHeader } from '@/components/game/GameHeader';
 import { GameEndModal } from '@/components/game/GameEndModal';
 import { ErrorToast } from '@/components/game/ErrorToast';
 import { SettingsModal } from '@/components/game/SettingsModal';
-import { InfoModal } from '@/components/game/InfoModal';
 import { StatsModal } from '@/components/game/StatsModal';
 import { BoggleGrid } from '@/components/game/BoggleGrid';
 import { BoggleWordList } from '@/components/game/BoggleWordList';
@@ -26,7 +25,6 @@ const GAME_NAME = 'boggle';
 
 function BogglePageContent() {
     const {
-        showInfoModal, setShowInfoModal,
         showStatsModal, setShowStatsModal,
         showSettingsModal, setShowSettingsModal,
         showResultModal, setShowResultModal,
@@ -163,7 +161,6 @@ function BogglePageContent() {
             <div className="flex flex-col min-h-[100dvh] shrink-0">
                 <GameHeader
                     title="BOGGLE"
-                    onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
@@ -259,7 +256,6 @@ function BogglePageContent() {
                 score={score}
             />
 
-            {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
             {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
 
             <SettingsModal

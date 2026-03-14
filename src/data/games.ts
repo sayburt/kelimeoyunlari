@@ -233,11 +233,11 @@ export const GAMES: Game[] = [
             scoring: {
                 description: 'Kelime Arama puanlaması kelime uzunluğu, zorluk seviyesi, joker kullanımı ve bitiş bonusuna göre hesaplanır:',
                 points: [
-                    { condition: 'Kısa Kelimeler', value: 'Temel Puan' },
-                    { condition: 'Uzun Kelimeler', value: 'Daha Fazla Puan' },
-                    { condition: 'Zorluk Çarpanı', value: 'Kolay/Orta/Zor' },
-                    { condition: 'Bulmacayı Tamamlama', value: 'Ek Bonus' },
-                    { condition: 'Joker Kullanımı', value: 'Puan Cezası' }
+                    { condition: 'Kısa Kelimeler (4-5 Harf)', value: '10-14 Puan' },
+                    { condition: 'Uzun Kelimeler (6-7+ Harf)', value: '18-30 Puan' },
+                    { condition: 'Zorluk Çarpanı', value: 'Kolay (x1), Orta (x1.5), Zor (x2)' },
+                    { condition: 'Bulmacayı Tamamlama', value: '+120 Bonus Puan' },
+                    { condition: 'Joker Kullanımı', value: '-30 Puan Cezası' }
                 ]
             },
             footer: 'Doğru doğrultuyu yakala, tüm kelimeleri bul ve bulmacayı temizle!'

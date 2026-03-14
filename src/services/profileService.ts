@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { storage, GuestStat } from "@/lib/storage";
+import { GAME_LABELS } from "@/constants/games";
 
 export interface GameStat {
     game_name: string;
@@ -75,6 +76,28 @@ function computeAggregates(stats: GameStat[]): Pick<ProfileData, "totalPlayed" |
     return { totalPlayed, totalWon, winRate, bestStreak };
 }
 
+function ensureAllGamesPresent(stats: GameStat[]): GameStat[] {
+    const existingGames = new Set(stats.map(s => s.game_name));
+    const allGames = Object.keys(GAME_LABELS);
+    
+    const additionalStats: GameStat[] = allGames
+        .filter(game => !existingGames.has(game))
+        .map(game => ({
+            game_name: game,
+            played: 0,
+            won: 0,
+            best_score: 0,
+            high_score: 0,
+            current_streak: 0,
+            max_streak: 0
+        }));
+    
+    return [...stats, ...additionalStats].sort((a, b) => {
+        const order = allGames;
+        return order.indexOf(a.game_name) - order.indexOf(b.game_name);
+    });
+}
+
 function mapGuestStats(guestStats: GuestStat[]): GameStat[] {
     return guestStats.map((s) => ({
         game_name: s.game_name,
@@ -101,7 +124,7 @@ export const profileService = {
 
     getGuestProfile(): ProfileData {
         const guestStats = storage.getGuestStats();
-        const stats = mapGuestStats(guestStats);
+        const stats = ensureAllGamesPresent(mapGuestStats(guestStats));
         const aggregates = computeAggregates(stats);
 
         return {
@@ -155,16 +178,17 @@ export const profileService = {
                 earned_at: b.earned_at ?? "",
             }));
 
-            const aggregates = computeAggregates(rawStats);
+            const stats = ensureAllGamesPresent(rawStats);
+            const aggregates = computeAggregates(stats);
 
             return {
                 username: profile?.username ?? null,
                 avatar: profile?.avatar ?? null,
                 createdAt: profile?.created_at ?? null,
-                stats: rawStats,
+                stats: stats,
                 challengeStats: rawChallengeStats,
                 badges,
-                careerSummary: buildCareerSummary(rawStats),
+                careerSummary: buildCareerSummary(stats),
                 ...aggregates,
                 isGuest: false,
             };
@@ -240,4 +264,3 @@ export const profileService = {
         }
     }
 };
-

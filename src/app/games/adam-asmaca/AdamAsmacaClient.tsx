@@ -6,7 +6,6 @@ import { GameHeader } from '@/components/game/GameHeader';
 import { GameEndModal } from '@/components/game/GameEndModal';
 import { ErrorToast } from '@/components/game/ErrorToast';
 import { SettingsModal } from '@/components/game/SettingsModal';
-import { InfoModal } from '@/components/game/InfoModal';
 import { StatsModal } from '@/components/game/StatsModal';
 import { useAuth } from '@/hooks/useAuth';
 import { formatTime } from '@/utils/timeUtils';
@@ -30,7 +29,6 @@ function AdamAsmacaPageContent() {
     const searchParams = useSearchParams();
     const challengeId = searchParams.get('challengeId');
     const {
-        showInfoModal, setShowInfoModal,
         showStatsModal, setShowStatsModal,
         showSettingsModal, setShowSettingsModal,
         showResultModal, setShowResultModal,
@@ -169,7 +167,6 @@ function AdamAsmacaPageContent() {
             <div className="flex flex-col h-full shrink-0">
                 <GameHeader
                     title="ADAM ASMACA"
-                    onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
@@ -303,7 +300,6 @@ function AdamAsmacaPageContent() {
                 onNewGame={handleNewGameFromModal}
             />
 
-            {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
             {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
 
             <SettingsModal

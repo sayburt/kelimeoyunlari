@@ -10,29 +10,29 @@ interface WordSearchWordListProps {
 
 const GROUP_STYLES = [
     {
-        container: 'bg-sky-500/10 border-sky-400/25',
-        badge: 'bg-sky-400/15 text-sky-200 border-sky-300/30',
-        row: 'bg-sky-500/10 border-sky-300/30',
+        container: 'bg-accent-cyan/10 border-accent-cyan/25',
+        badge: 'bg-accent-cyan/15 text-accent-cyan border-accent-cyan/30',
+        row: 'bg-accent-cyan/10 border-accent-cyan/30',
     },
     {
-        container: 'bg-emerald-500/10 border-emerald-400/25',
-        badge: 'bg-emerald-400/15 text-emerald-200 border-emerald-300/30',
-        row: 'bg-emerald-500/10 border-emerald-300/30',
+        container: 'bg-accent-emerald/10 border-accent-emerald/25',
+        badge: 'bg-accent-emerald/15 text-accent-emerald border-accent-emerald/30',
+        row: 'bg-accent-emerald/10 border-accent-emerald/30',
     },
     {
-        container: 'bg-amber-500/10 border-amber-400/25',
-        badge: 'bg-amber-400/15 text-amber-200 border-amber-300/30',
-        row: 'bg-amber-500/10 border-amber-300/30',
+        container: 'bg-accent-amber/10 border-accent-amber/25',
+        badge: 'bg-accent-amber/15 text-accent-amber border-accent-amber/30',
+        row: 'bg-accent-amber/10 border-accent-amber/30',
     },
     {
-        container: 'bg-violet-500/10 border-violet-400/25',
-        badge: 'bg-violet-400/15 text-violet-200 border-violet-300/30',
-        row: 'bg-violet-500/10 border-violet-300/30',
+        container: 'bg-accent-violet/10 border-accent-violet/25',
+        badge: 'bg-accent-violet/15 text-accent-violet border-accent-violet/30',
+        row: 'bg-accent-violet/10 border-accent-violet/30',
     },
     {
-        container: 'bg-rose-500/10 border-rose-400/25',
-        badge: 'bg-rose-400/15 text-rose-200 border-rose-300/30',
-        row: 'bg-rose-500/10 border-rose-300/30',
+        container: 'bg-accent-rose/10 border-accent-rose/25',
+        badge: 'bg-accent-rose/15 text-accent-rose border-accent-rose/30',
+        row: 'bg-accent-rose/10 border-accent-rose/30',
     },
 ];
 

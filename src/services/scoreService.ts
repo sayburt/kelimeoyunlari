@@ -242,7 +242,7 @@ export const scoreService = {
     },
 
     isLowerBestMetricGame(gameName: string): boolean {
-        return ["wordle", "adam-asmaca", "hangman"].includes(gameName);
+        return ["wordle", "adam-asmaca", "hangman", "kelime-merdiveni"].includes(gameName);
     },
 
     computeUpdatedBestScore(currentBest: number, candidateScore: number, gameName: string): number {

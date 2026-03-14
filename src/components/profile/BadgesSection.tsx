@@ -16,9 +16,59 @@ const BADGE_LABELS: Record<string, { label: string; criteria: string; icon: Reac
 
 interface BadgesSectionProps {
     profile: ProfileData;
+    isHeader?: boolean;
 }
 
-export function BadgesSection({ profile }: BadgesSectionProps) {
+export function BadgesSection({ profile, isHeader = false }: BadgesSectionProps) {
+    if (isHeader) {
+        if (profile.isGuest) return null;
+
+        return (
+            <div className="flex flex-wrap gap-2 justify-start sm:justify-end mt-2 sm:mt-0">
+                {profile.badges.length === 0 ? (
+                    <div className="bg-surface border-2 border-surface-mid rounded-2xl p-2.5 px-4 flex flex-col items-center justify-center min-w-[90px] sm:min-w-[110px] opacity-40 shadow-sm border-dashed">
+                        <Award size={20} className="text-text-secondary mb-1" />
+                        <span className="text-[10px] font-black uppercase tracking-tight text-text-secondary">
+                            Henüz Rozet Yok
+                        </span>
+                    </div>
+                ) : (
+                    <>
+                        {profile.badges.slice(0, 3).map((earnedBadge) => {
+                            const info = BADGE_LABELS[earnedBadge.badge_key];
+                            if (!info) return null;
+
+                            return (
+                                <div
+                                    key={earnedBadge.badge_key}
+                                    className="bg-surface border-2 border-primary/20 rounded-2xl p-2.5 px-3 flex flex-col items-center justify-center min-w-[85px] sm:min-w-[105px] shadow-sm hover:border-primary/40 transition-all group cursor-default"
+                                    title={`${info.label}: ${info.criteria}`}
+                                >
+                                    <div className="text-primary mb-1 group-hover:scale-110 transition-transform">
+                                        {React.cloneElement(info.icon as React.ReactElement<{ size: number }>, { size: 18 })}
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase tracking-tight text-text-main text-center leading-tight">
+                                        {info.label}
+                                    </span>
+                                </div>
+                            );
+                        })}
+                        {profile.badges.length > 3 && (
+                            <div className="bg-surface border-2 border-surface-mid rounded-2xl p-2.5 px-3 flex flex-col items-center justify-center min-w-[60px] shadow-sm">
+                                <span className="text-sm font-black text-primary">
+                                    +{profile.badges.length - 3}
+                                </span>
+                                <span className="text-[8px] font-black uppercase tracking-widest text-text-secondary">
+                                    DAHA
+                                </span>
+                            </div>
+                        )}
+                    </>
+                )}
+            </div>
+        );
+    }
+
     return (
         <div className="space-y-4">
             <h2 className="text-lg font-black text-text-main flex items-center gap-2">
