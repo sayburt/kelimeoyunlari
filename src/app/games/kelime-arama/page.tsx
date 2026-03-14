@@ -168,28 +168,6 @@ function WordSearchPageContent() {
         }
     };
 
-    if (status === 'loading' || status === 'idle') {
-        return (
-            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
-                <GameHeader
-                    title="KELIME ARAMA"
-                    onHelp={() => setShowInfoModal(true)}
-                    onStats={() => setShowStatsModal(true)}
-                    onSettings={() => setShowSettingsModal(true)}
-                    onShare={handleShare}
-                    isLoggedIn={isAuthenticated}
-                    gameStatus={status}
-                    onJoker={useJoker}
-                    jokerUsed={joker.used}
-                    timerText={formatTime(elapsedTime)}
-                />
-                <div className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner />
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-[100dvh] flex flex-col bg-bg text-text-main overflow-y-auto w-full">
             <div className="flex flex-col min-h-[100dvh] shrink-0">
@@ -201,81 +179,87 @@ function WordSearchPageContent() {
                     onShare={handleShare}
                     onSave={handleSaveGame}
                     isLoggedIn={isAuthenticated}
-
-
                     gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
 
-                <ErrorToast message={error || toastMessage || ''} />
-
-                <div className="flex-1 flex flex-col gap-3 px-3 sm:px-4 py-2 sm:py-3 max-w-6xl mx-auto w-full min-h-0 pb-4 lg:pb-8">
-                    <div className="w-full max-w-[680px] rounded-2xl border border-surface-active/30 bg-surface/25 px-3 py-3 sm:px-4 sm:py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 shadow-sm">
-                        
-                        {/* Zorluk Seviyesi Label */}
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Zorluk</span>
-                            <span className="text-[11px] sm:text-xs font-black uppercase tracking-wide px-2.5 py-1 rounded-md border border-surface-active/50 bg-surface-hover/70 text-text-main shadow-inner">
-                                {getDifficultyLabel(difficulty)}
-                            </span>
-                        </div>
-
-                        {/* Ayraç */}
-                        <div className="w-1 h-1 rounded-full bg-surface-active/60 hidden sm:block"></div>
-
-                        {/* Bulunan Kelimeler */}
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Bulunan</span>
-                            <div className="flex items-baseline gap-0.5">
-                                <span className="text-sm sm:text-base font-black text-text-main">{foundWordCount}</span>
-                                <span className="text-xs font-medium text-text-muted">/{totalWordCount}</span>
-                            </div>
-                        </div>
-
-                        {/* Ayraç */}
-                        <div className="w-1 h-1 rounded-full bg-surface-active/60 hidden sm:block"></div>
-
-                        {/* Toplam Puan */}
-                        <div className="flex items-center gap-2">
-                            <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Puan</span>
-                            <span className="text-sm sm:text-base font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
-                                {score}
-                            </span>
-                        </div>
-
+                {(status === 'loading' || status === 'idle') ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <LoadingSpinner />
                     </div>
+                ) : (
+                    <>
+                        <ErrorToast message={error || toastMessage || ''} />
 
-                    <div className="flex-1 flex flex-col lg:flex-row items-stretch justify-start lg:justify-start gap-4 lg:gap-6 w-full min-h-0">
-                        <div className="w-full max-w-[680px] flex-none lg:self-stretch min-h-0">
-                            <div ref={gridPanelRef} className="w-full rounded-2xl border border-surface-active/20 bg-surface/20 p-2 sm:p-3 overflow-hidden">
-                                <div className="w-full max-w-[420px] sm:max-w-[540px] lg:max-w-none mx-auto">
-                                    <WordSearchGrid
-                                        grid={grid}
-                                        gridSize={gridSize}
-                                        selectedCells={selectedCells}
-                                        foundPaths={foundPaths}
-                                        hintCells={hintCells}
-                                        disabled={status !== 'playing'}
-                                        onPreviewSelection={previewSelection}
-                                        onHandleSelection={handleSelection}
-                                        onClearPreview={clearSelection}
-                                    />
+                        <div className="flex-1 flex flex-col gap-3 px-3 sm:px-4 py-2 sm:py-3 max-w-6xl mx-auto w-full min-h-0 pb-4 lg:pb-8">
+                            <div className="w-full max-w-[680px] rounded-2xl border border-surface-active/30 bg-surface/25 px-3 py-3 sm:px-4 sm:py-4 flex flex-wrap items-center justify-center gap-4 sm:gap-6 shadow-sm">
+                                
+                                {/* Zorluk Seviyesi Label */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Zorluk</span>
+                                    <span className="text-[11px] sm:text-xs font-black uppercase tracking-wide px-2.5 py-1 rounded-md border border-surface-active/50 bg-surface-hover/70 text-text-main shadow-inner">
+                                        {getDifficultyLabel(difficulty)}
+                                    </span>
+                                </div>
+
+                                {/* Ayraç */}
+                                <div className="w-1 h-1 rounded-full bg-surface-active/60 hidden sm:block"></div>
+
+                                {/* Bulunan Kelimeler */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Bulunan</span>
+                                    <div className="flex items-baseline gap-0.5">
+                                        <span className="text-sm sm:text-base font-black text-text-main">{foundWordCount}</span>
+                                        <span className="text-xs font-medium text-text-muted">/{totalWordCount}</span>
+                                    </div>
+                                </div>
+
+                                {/* Ayraç */}
+                                <div className="w-1 h-1 rounded-full bg-surface-active/60 hidden sm:block"></div>
+
+                                {/* Toplam Puan */}
+                                <div className="flex items-center gap-2">
+                                    <span className="text-[10px] sm:text-xs font-bold text-text-muted uppercase tracking-wider">Puan</span>
+                                    <span className="text-sm sm:text-base font-black text-amber-500 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/20">
+                                        {score}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div className="flex-1 flex flex-col lg:flex-row items-stretch justify-start lg:justify-start gap-4 lg:gap-6 w-full min-h-0">
+                                <div className="w-full max-w-[680px] flex-none lg:self-stretch min-h-0">
+                                    <div ref={gridPanelRef} className="w-full rounded-2xl border border-surface-active/20 bg-surface/20 p-2 sm:p-3 overflow-hidden">
+                                        <div className="w-full max-w-[420px] sm:max-w-[540px] lg:max-w-none mx-auto">
+                                            <WordSearchGrid
+                                                grid={grid}
+                                                gridSize={gridSize}
+                                                selectedCells={selectedCells}
+                                                foundPaths={foundPaths}
+                                                hintCells={hintCells}
+                                                disabled={status !== 'playing'}
+                                                onPreviewSelection={previewSelection}
+                                                onHandleSelection={handleSelection}
+                                                onClearPreview={clearSelection}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div
+                                    className="w-full lg:w-80 flex-none lg:self-stretch min-h-0 flex flex-col items-stretch"
+                                    style={rightPanelStyle}
+                                >
+                                    <div className="h-[240px] sm:h-[300px] lg:h-[var(--grid-panel-height,300px)] lg:max-h-[var(--grid-panel-height,300px)] flex flex-col min-h-0 overflow-hidden bg-surface/20 rounded-2xl border border-surface-active/20 p-2 sm:p-3">
+                                        <WordSearchWordList words={words} />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-
-                        <div
-                            className="w-full lg:w-80 flex-none lg:self-stretch min-h-0 flex flex-col items-stretch"
-                            style={rightPanelStyle}
-                        >
-                            <div className="h-[240px] sm:h-[300px] lg:h-[var(--grid-panel-height,300px)] lg:max-h-[var(--grid-panel-height,300px)] flex flex-col min-h-0 overflow-hidden bg-surface/20 rounded-2xl border border-surface-active/20 p-2 sm:p-3">
-                                <WordSearchWordList words={words} />
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
 
             <section className="w-full max-w-2xl mx-auto px-6 py-12 md:py-16 border-t border-surface/50">

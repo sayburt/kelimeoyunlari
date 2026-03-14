@@ -2,38 +2,47 @@
 
 @layer base {
   :root {
-    --theme-bg: #F7F9FC;
+    --theme-bg: #FFF9E5; /* Slightly warmer/more saturated cream to pop against white cards */
     --theme-surface: #FFFFFF;
-    --theme-surface-dark: #F1F5F9;
-    --theme-surface-mid: #E2E8F0;
-    --theme-surface-hover: #CBD5E1;
-    --theme-surface-accent: #94A3B8;
-    --theme-surface-accent-hover: #475569;
+    --theme-surface-dark: #F7F2E8;
+    --theme-surface-mid: #EBE5D8;
+    --theme-surface-hover: #DFD9CC;
+    --theme-surface-accent: #C3BDB0;
+    --theme-surface-accent-hover: #7A6A6A;
 
-    --theme-text-main: #0F172A;
-    --theme-text-secondary: #475569;
-    --theme-text-muted: #94A3B8;
+    --theme-text-main: #2D2424; /* Soft dark brown */
+    --theme-text-secondary: #5C4B4B;
+    --theme-text-muted: #9B8B8B;
     --theme-text-on-state: #FFFFFF;
 
-    --theme-primary: #0284C7;
+    --theme-primary: #FF8A8A; /* Soft Coral Pink */
 
-    --theme-correct: #16A34A;
-    --theme-correct-hover: #22C55E;
+    /* Accent Palette - Pastel & Playful - Slightly Deepened for Visibility */
+    --theme-accent-indigo: #4F46E5; /* Indigo-600 */
+    --theme-accent-rose: #E11D48;   /* Rose-600 */
+    --theme-accent-cyan: #0891B2;   /* Cyan-600 */
+    --theme-accent-amber: #B45309;  /* Amber-700 for better contrast */
+    --theme-accent-emerald: #059669; /* Emerald-600 */
+    --theme-accent-violet: #7C3AED;  /* Violet-600 */
+
+    --theme-correct: #22C55E;
+    --theme-correct-hover: #16A34A;
     --theme-present: #D97706;
-    --theme-present-hover: #EAB308;
-    --theme-absent: #CBD5E1;
-    --theme-wrong: #DC2626;
+    --theme-present-hover: #B45309;
+    --theme-absent: #C3BDB0;
+    --theme-wrong: #F43F5E;
+    --theme-error: #F43F5E;
 
-    /* Premium Design Tokens — Light */
-    --theme-footer-bg: #F1F5F9;
-    --theme-footer-border: #E2E8F0;
-    --theme-glass-bg: rgba(255,255,255,0.8);
-    --theme-glass-border: rgba(15,23,42,0.06);
-    --theme-card-glass: rgba(255,255,255,0.85);
-    --theme-hero-glow: rgba(14,165,233,0.06);
-    --theme-premium-shadow: 0 6px 20px rgba(15,23,42,0.08);
-    --theme-premium-shadow-hover: 0 12px 32px rgba(15,23,42,0.12);
-    --theme-header-shadow: 0 6px 20px rgba(15,23,42,0.08);
+    /* Premium Design Tokens — Light (Sunset Breeze) */
+    --theme-footer-bg: #F7F2E8;
+    --theme-footer-border: rgba(255, 138, 138, 0.1);
+    --theme-glass-bg: rgba(255, 249, 229, 0.85);
+    --theme-glass-border: rgba(255, 138, 138, 0.12);
+    --theme-card-glass: rgba(255, 255, 255, 0.85);
+    --theme-hero-glow: rgba(255, 138, 138, 0.18);
+    --theme-premium-shadow: 0 8px 30px rgba(255, 138, 138, 0.1);
+    --theme-premium-shadow-hover: 0 12px 40px rgba(255, 138, 138, 0.15);
+    --theme-header-shadow: 0 8px 24px rgba(255, 138, 138, 0.08);
   }
   
   .dark {
@@ -95,6 +104,15 @@
   --color-present-hover: var(--theme-present-hover);
   --color-absent: var(--theme-absent);
   --color-wrong: var(--theme-wrong);
+  --color-error: var(--theme-error);
+
+  /* Accents */
+  --color-accent-indigo: var(--theme-accent-indigo);
+  --color-accent-rose: var(--theme-accent-rose);
+  --color-accent-cyan: var(--theme-accent-cyan);
+  --color-accent-amber: var(--theme-accent-amber);
+  --color-accent-emerald: var(--theme-accent-emerald);
+  --color-accent-violet: var(--theme-accent-violet);
 
   /* Typography */
   --font-sans: var(--font-nunito), ui-sans-serif, system-ui, sans-serif;

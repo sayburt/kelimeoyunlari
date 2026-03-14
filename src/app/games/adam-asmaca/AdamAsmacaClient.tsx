@@ -164,50 +164,6 @@ function AdamAsmacaPageContent() {
         }
     };
 
-    if (status === 'loading' || status === 'idle') {
-        return (
-            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
-                <GameHeader
-                    title="ADAM ASMACA"
-                    onHelp={() => setShowInfoModal(true)}
-                    onStats={() => setShowStatsModal(true)}
-                    onSettings={() => setShowSettingsModal(true)}
-                    onShare={handleShare}
-                    onSave={handleSaveGame}
-                    onChallenge={() => setShowChallengeModal(true)}
-
-                    isLoggedIn={isAuthenticated}
-                    isChallengeMode={isChallengeMode}
-                    gameStatus={status}
-                    onJoker={useJoker}
-                    jokerUsed={joker.used}
-                    timerText={formatTime(elapsedTime)}
-                />
-                <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
-                    {error ? (
-                        <div className="max-w-xs animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <span className="text-2xl text-red-500">⚠️</span>
-                            </div>
-                            <h3 className="text-lg font-bold text-text-main mb-2">Eyvah! Bir sorun çıktı</h3>
-                            <p className="text-text-secondary text-sm mb-6 leading-relaxed">
-                                {error}
-                            </p>
-                            <button
-                                onClick={() => startNewGame()}
-                                className="w-full bg-primary text-bg font-black py-3 rounded-xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
-                            >
-                                YENİDEN DENE
-                            </button>
-                        </div>
-                    ) : (
-                        <LoadingSpinner />
-                    )}
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="h-[100dvh] flex flex-col bg-bg text-text-main overflow-hidden w-full">
             <div className="flex flex-col h-full shrink-0">
@@ -219,7 +175,6 @@ function AdamAsmacaPageContent() {
                     onShare={handleShare}
                     onSave={handleSaveGame}
                     onChallenge={() => setShowChallengeModal(true)}
-
                     isLoggedIn={isAuthenticated}
                     isChallengeMode={isChallengeMode}
                     gameStatus={status}
@@ -228,57 +183,83 @@ function AdamAsmacaPageContent() {
                     timerText={formatTime(elapsedTime)}
                 />
 
-                {isChallengeMode && (
-                    <div className="mx-4 mt-1 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-center">
-                        <p className="text-primary text-sm font-bold flex items-center justify-center gap-2">⚔️ Bir meydan okuma oynuyorsunuz!</p>
+                {(status === 'loading' || status === 'idle') ? (
+                    <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+                        {error ? (
+                            <div className="max-w-xs animate-in fade-in slide-in-from-bottom-4 duration-500">
+                                <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                                    <span className="text-2xl text-red-500">⚠️</span>
+                                </div>
+                                <h3 className="text-lg font-bold text-text-main mb-2">Eyvah! Bir sorun çıktı</h3>
+                                <p className="text-text-secondary text-sm mb-6 leading-relaxed">
+                                    {error}
+                                </p>
+                                <button
+                                    onClick={() => startNewGame()}
+                                    className="w-full bg-primary text-bg font-black py-3 rounded-xl hover:scale-[1.02] transition-transform shadow-lg shadow-primary/20"
+                                >
+                                    YENİDEN DENE
+                                </button>
+                            </div>
+                        ) : (
+                            <LoadingSpinner />
+                        )}
                     </div>
-                )}
-
-                <ErrorToast message={error || toastMessage || ''} />
-
-                {/* Oyun İçeriği — Alt Hiza Klavyeye Dayalı (Scroll olmaması için esneyebilir) */}
-                <div className="flex-1 min-h-0 flex flex-col sm:flex-row w-full max-w-2xl mx-auto px-1 sm:px-2 mt-2 sm:mt-4 mb-2 sm:mb-4 gap-2 sm:gap-4 items-stretch">
-                    {/* Sol Sütun (Figür) */}
-                    <div className="flex-1 min-h-0 w-full sm:w-1/2 flex justify-center items-end bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-2 sm:p-4 shadow-sm">
-                        <div className="w-full h-full max-w-[280px] max-h-full flex items-end justify-center">
-                            <HangmanDrawing wrongGuesses={wrongGuesses} />
-                        </div>
-                    </div>
-
-                    {/* Sağ Sütun (Gizli Kelime) */}
-                    <div className="shrink-0 pt-3 pb-4 sm:py-6 w-full sm:w-1/2 flex flex-col justify-center gap-4 sm:gap-16 lg:gap-20 bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 px-4 sm:px-6 shadow-sm">
-                        {/* Kategori ve Zorluk Bilgileri */}
-                        {!isChallengeMode && (
-                            <div className="flex justify-center items-center gap-2 flex-wrap">
-                                <span className="text-[10px] sm:text-xs font-medium px-3 py-1 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 capitalize tracking-wide">
-                                    {category === 'rastgele' ? 'Rastgele' : category}
-                                </span>
-                                <span className="w-1 h-1 rounded-full bg-surface-hover/80"></span>
-                                <span className="text-[10px] sm:text-xs font-medium px-3 py-1 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 tracking-wide">
-                                    {difficulty === 1 ? 'Kolay Seviye' : difficulty === 2 ? 'Orta Seviye' : 'Zor Seviye'}
-                                </span>
+                ) : (
+                    <>
+                        {isChallengeMode && (
+                            <div className="mx-4 mt-1 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-center">
+                                <p className="text-primary text-sm font-bold flex items-center justify-center gap-2">⚔️ Bir meydan okuma oynuyorsunuz!</p>
                             </div>
                         )}
 
-                        {/* Gizli Kelime (Ortalanmış) */}
-                        <div className="flex justify-center items-center">
-                            <HangmanWordDisplay
-                                targetWord={targetWord}
-                                guessedLetters={guessedLetters}
-                                status={status}
+                        <ErrorToast message={error || toastMessage || ''} />
+
+                        {/* Oyun İçeriği — Alt Hiza Klavyeye Dayalı (Scroll olmaması için esneyebilir) */}
+                        <div className="flex-1 min-h-0 flex flex-col sm:flex-row w-full max-w-2xl mx-auto px-1 sm:px-2 mt-2 sm:mt-4 mb-2 sm:mb-4 gap-2 sm:gap-4 items-stretch">
+                            {/* Sol Sütun (Figür) */}
+                            <div className="flex-1 min-h-0 w-full sm:w-1/2 flex justify-center items-end bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 p-2 sm:p-4 shadow-sm">
+                                <div className="w-full h-full max-w-[280px] max-h-full flex items-end justify-center">
+                                    <HangmanDrawing wrongGuesses={wrongGuesses} />
+                                </div>
+                            </div>
+
+                            {/* Sağ Sütun (Gizli Kelime) */}
+                            <div className="shrink-0 pt-3 pb-4 sm:py-6 w-full sm:w-1/2 flex flex-col justify-center gap-4 sm:gap-16 lg:gap-20 bg-surface-mid/50 rounded-xl sm:rounded-2xl border border-surface-hover/30 px-4 sm:px-6 shadow-sm">
+                                {/* Kategori ve Zorluk Bilgileri */}
+                                {!isChallengeMode && (
+                                    <div className="flex justify-center items-center gap-2 flex-wrap">
+                                        <span className="text-[10px] sm:text-xs font-medium px-3 py-1 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 capitalize tracking-wide">
+                                            {category === 'rastgele' ? 'Rastgele' : category}
+                                        </span>
+                                        <span className="w-1 h-1 rounded-full bg-surface-hover/80"></span>
+                                        <span className="text-[10px] sm:text-xs font-medium px-3 py-1 sm:px-2.5 sm:py-1 bg-surface-hover/50 text-text-secondary rounded-full border border-surface-hover/80 tracking-wide">
+                                            {difficulty === 1 ? 'Kolay Seviye' : difficulty === 2 ? 'Orta Seviye' : 'Zor Seviye'}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* Gizli Kelime (Ortalanmış) */}
+                                <div className="flex justify-center items-center">
+                                    <HangmanWordDisplay
+                                        targetWord={targetWord}
+                                        guessedLetters={guessedLetters}
+                                        status={status}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Klavye — Alta Sabit */}
+                        <div className="px-1 sm:px-2 pb-2 sm:pb-3 shrink-0">
+                            <HangmanKeyboard
+                                onKeyPress={handleGuess}
+                                keyboardState={keyboardState}
+                                disabled={status !== 'playing'}
                             />
                         </div>
-                    </div>
-                </div>
-
-                {/* Klavye — Alta Sabit */}
-                <div className="px-1 sm:px-2 pb-2 sm:pb-3 shrink-0">
-                    <HangmanKeyboard
-                        onKeyPress={handleGuess}
-                        keyboardState={keyboardState}
-                        disabled={status !== 'playing'}
-                    />
-                </div>
+                    </>
+                )}
             </div>
 
             <section className="w-full max-w-2xl mx-auto px-6 py-12 md:py-16 border-t border-surface/50">

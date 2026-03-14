@@ -74,7 +74,7 @@ export function GameCard({
                                 e.stopPropagation();
                                 onLike?.();
                             }}
-                            className={`flex items-center gap-1.5 text-xs font-medium cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${isLiked ? 'text-red-500 hover:text-red-400' : 'text-text-secondary hover:text-red-500'}`}
+                            className={`flex items-center gap-1.5 text-xs font-medium cursor-pointer transition-all duration-200 hover:-translate-y-0.5 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 ${isLiked ? 'text-accent-rose hover:text-accent-rose' : 'text-text-secondary hover:text-accent-rose'}`}
                             title={isLiked ? "Beğeniyi Geri Al" : "Beğen"}
                             aria-label={isLiked ? "Beğeniyi Geri Al" : "Beğen"}
                         >
@@ -88,7 +88,7 @@ export function GameCard({
                         {hasChallenge && (
                             <div className="relative group/challenge flex items-center">
                                 <div
-                                    className="p-1.5 rounded-md text-green-500 bg-green-500/10 flex items-center justify-center transition-colors shadow-sm cursor-help"
+                                    className="p-1.5 rounded-md text-accent-emerald bg-accent-emerald/10 flex items-center justify-center transition-colors shadow-sm cursor-help"
                                     aria-label="Meydan Okuma Mevcut"
                                 >
                                     <Swords size={16} />
@@ -96,7 +96,7 @@ export function GameCard({
 
                                 {/* Tooltip */}
                                 <div className="absolute bottom-full right-0 mb-2 w-56 p-3 bg-surface-hover/95 backdrop-blur-md text-text-main text-[11px] leading-relaxed rounded-xl shadow-xl border border-surface-mid opacity-0 invisible group-hover/challenge:opacity-100 group-hover/challenge:visible transition-all duration-200 z-50 pointer-events-none text-center">
-                                    <div className="font-bold text-green-500 mb-1.5 flex items-center justify-center gap-1.5">
+                                    <div className="font-bold text-accent-emerald mb-1.5 flex items-center justify-center gap-1.5">
                                         <Swords size={12} /> Meydan Okuma
                                     </div>
                                     Bu oyunda arkadaşlarınıza meydan okuyabilirsiniz! Oyuna girdikten sonra üst menüdeki kılıç ikonuna tıklayarak link oluşturun.

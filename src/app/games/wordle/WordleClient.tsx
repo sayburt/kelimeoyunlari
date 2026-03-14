@@ -69,7 +69,6 @@ function WordlePageContent() {
         maxGuesses,
         wordLength,
         elapsedTime,
-        joker,
         score,
         isChallengeMode,
         activeChallengeId,
@@ -78,7 +77,6 @@ function WordlePageContent() {
         handleKeyPress,
         handleDelete,
         handleEnter,
-        useJoker,
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
@@ -268,31 +266,6 @@ function WordlePageContent() {
         }
     };
 
-    if (status === 'loading' || status === 'idle') {
-        return (
-            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
-                <GameHeader
-                    title="WORDLE"
-                    onHelp={() => setShowInfoModal(true)}
-                    onStats={() => setShowStatsModal(true)}
-                    onSettings={() => setShowSettingsModal(true)}
-                    onShare={handleShare}
-                    onSave={handleSaveGame}
-                    onChallenge={() => setShowChallengeModal(true)}
-                    isLoggedIn={isAuthenticated}
-                    isChallengeMode={isChallengeMode}
-                    gameStatus={status}
-                    onJoker={useJoker}
-                    jokerUsed={joker.used}
-                    timerText={formatTime(elapsedTime)}
-                />
-                <div className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner />
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-[100dvh] flex flex-col bg-bg text-text-main overflow-y-auto w-full">
             <div className="flex flex-col min-h-[100dvh] shrink-0">
@@ -307,39 +280,45 @@ function WordlePageContent() {
                     isLoggedIn={isAuthenticated}
                     isChallengeMode={isChallengeMode}
                     gameStatus={status}
-                    onJoker={useJoker}
-                    jokerUsed={joker.used}
                     timerText={formatTime(elapsedTime)}
                 />
 
-                {isChallengeMode && (
-                    <div className="mx-4 mt-1 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-center">
-                        <p className="text-primary text-sm font-bold flex items-center justify-center gap-2">⚔️ Bir meydan okuma oynuyorsunuz!</p>
+                {(status === 'loading' || status === 'idle') ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <LoadingSpinner />
                     </div>
+                ) : (
+                    <>
+                        {isChallengeMode && (
+                            <div className="mx-4 mt-1 px-4 py-2 bg-primary/10 border border-primary/30 rounded-xl text-center">
+                                <p className="text-primary text-sm font-bold flex items-center justify-center gap-2">⚔️ Bir meydan okuma oynuyorsunuz!</p>
+                            </div>
+                        )}
+
+                        <ErrorToast message={error || toastMessage || ''} />
+
+                        <div className="flex-1 flex items-center justify-center px-4 py-2">
+                            <WordleBoard
+                                guesses={guesses}
+                                currentGuess={currentGuess}
+                                currentRow={currentRow}
+                                wordLength={wordLength}
+                                maxGuesses={maxGuesses}
+                                shakeRow={shakeRow}
+                                status={status}
+                            />
+                        </div>
+
+                        <div className="px-1 sm:px-2 pb-4 sm:pb-6 shrink-0">
+                            <GameKeyboard
+                                onKeyPress={handleKeyPress}
+                                onEnter={handleEnter}
+                                onDelete={handleDelete}
+                                keyStates={keyboardState}
+                            />
+                        </div>
+                    </>
                 )}
-
-                <ErrorToast message={error || toastMessage || ''} />
-
-                <div className="flex-1 flex items-center justify-center px-4 py-2">
-                    <WordleBoard
-                        guesses={guesses}
-                        currentGuess={currentGuess}
-                        currentRow={currentRow}
-                        wordLength={wordLength}
-                        maxGuesses={maxGuesses}
-                        shakeRow={shakeRow}
-                        status={status}
-                    />
-                </div>
-
-                <div className="px-1 sm:px-2 pb-4 sm:pb-6 shrink-0">
-                    <GameKeyboard
-                        onKeyPress={handleKeyPress}
-                        onEnter={handleEnter}
-                        onDelete={handleDelete}
-                        keyStates={keyboardState}
-                    />
-                </div>
             </div>
 
             <section className="w-full max-w-2xl mx-auto px-6 py-12 md:py-16 border-t border-surface/50">

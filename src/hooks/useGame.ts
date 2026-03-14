@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useMemo } from 'react';
 import { wordService, Word } from '@/services/wordService';
 import { scoreService } from '@/services/scoreService';
-import { GameStatus, JokerState } from '@/types/game';
+import { GameStatus } from '@/types/game';
 import { challengeService } from '@/services/challengeService';
 import { LetterState } from '@/components/game/LetterCell';
 import { evaluateGuess } from '@/services/gameService';
@@ -18,7 +18,6 @@ export interface PersistedGameState {
     targetWord: Word | null;
     guesses: GuessResult[];
     keyboardState: Record<string, LetterState>;
-    joker: JokerState;
     elapsedTime: number;
     lastUpdated: number;
 }
@@ -28,7 +27,7 @@ export interface GuessResult {
     states: LetterState[];
 }
 
-export type { GameStatus, JokerState } from '@/types/game';
+export type { GameStatus } from '@/types/game';
 
 export interface UseGameOptions {
     initialWordLength?: number;
@@ -62,7 +61,6 @@ export function useGame(options: UseGameOptions = {}) {
     const [error, setError] = useState<string | null>(null);
     const [wordLength, setWordLength] = useState(initialWordLength);
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
-    const [joker, setJoker] = useState<JokerState>(hasLocalSaved ? localSaved.joker : { used: false, count: 0, max: 1 });
     const [score, setScore] = useState<number>(0);
     const [isChallengeMode, setIsChallengeMode] = useState(false);
     const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
@@ -78,9 +76,8 @@ export function useGame(options: UseGameOptions = {}) {
         targetWord,
         guesses,
         keyboardState,
-        joker,
         elapsedTime
-    }), [status, targetWord, guesses, keyboardState, joker, elapsedTime]);
+    }), [status, targetWord, guesses, keyboardState, elapsedTime]);
 
     const handleRestore = useCallback((saved: PersistedGameState) => {
         if (saved.status === 'playing') {
@@ -88,7 +85,6 @@ export function useGame(options: UseGameOptions = {}) {
             setTargetWord(saved.targetWord);
             setGuesses(saved.guesses);
             setKeyboardState(saved.keyboardState);
-            setJoker(saved.joker);
             setElapsedTime(saved.elapsedTime);
         }
     }, [setElapsedTime]);
@@ -127,12 +123,12 @@ export function useGame(options: UseGameOptions = {}) {
             playWin();
             setStatus('won');
             const seconds = Math.floor(elapsedTime / 1000);
-            const calculatedScore = scoreService.calculateWordleScore(newGuesses.length, seconds, difficulty, joker.count);
+            const calculatedScore = scoreService.calculateWordleScore(newGuesses.length, seconds, difficulty);
             setScore(calculatedScore);
 
             if (!isChallengeMode) {
                 await scoreService.saveGameResult(GAME_NAME, true, newGuesses.length, {
-                    jokersUsed: joker.used ? 1 : 0,
+                    jokersUsed: 0,
                     calculatedScore
                 });
             }
@@ -141,13 +137,13 @@ export function useGame(options: UseGameOptions = {}) {
             setStatus('lost');
             if (!isChallengeMode) {
                 await scoreService.saveGameResult(GAME_NAME, false, newGuesses.length, {
-                    jokersUsed: joker.used ? 1 : 0,
+                    jokersUsed: 0,
                     calculatedScore: 0
                 });
             }
         }
         clearLocal();
-    }, [playWin, playLose, elapsedTime, difficulty, joker, isChallengeMode, clearLocal]);
+    }, [playWin, playLose, elapsedTime, difficulty, isChallengeMode, clearLocal]);
 
     // --- Main Actions ---
 
@@ -196,7 +192,6 @@ export function useGame(options: UseGameOptions = {}) {
             setGuesses([]);
             setCurrentGuess('');
             setKeyboardState({});
-            setJoker({ used: false, count: 0, max: 1 });
             setScore(0);
             resetTimer();
             clearLocal();
@@ -266,44 +261,24 @@ export function useGame(options: UseGameOptions = {}) {
         }
     }, [status, currentGuess, wordLength, targetWord, guesses, maxGuesses, playEnter, playError, isChallengeMode, handleGameEnd]);
 
-    const useJoker = useCallback(() => {
-        if (status !== 'playing' || joker.used || !targetWord) return false;
-
-        const target = targetWord.kelime.toLocaleUpperCase('tr-TR');
-        const correctLetters = Array.from(new Set(target.split('')));
-        const remainingLetters = correctLetters.filter(l => keyboardState[l] !== 'correct');
-
-        if (remainingLetters.length > 0) {
-            const randomLetter = remainingLetters[Math.floor(Math.random() * remainingLetters.length)];
-            setKeyboardState(prev => ({ ...prev, [randomLetter]: 'correct' }));
-            setJoker(prev => ({ ...prev, used: true, count: prev.count + 1 }));
-            playEnter();
-            return true;
-        } else {
-            playError();
-            return false;
-        }
-    }, [status, joker.used, targetWord, keyboardState, playEnter, playError]);
 
     const saveGameToCloud = useCallback(async (): Promise<boolean> => {
         if (status !== 'playing' || !targetWord) return false;
         const stateToSave: WordleSavedGameState = {
             guesses,
             keyboardState,
-            joker,
             targetWord,
             difficulty,
             wordLength,
             maxGuesses,
         };
         return await saveToCloud(stateToSave as unknown as PersistedGameState, elapsedTime);
-    }, [status, targetWord, guesses, keyboardState, joker, difficulty, wordLength, maxGuesses, elapsedTime, saveToCloud]);
+    }, [status, targetWord, guesses, keyboardState, difficulty, wordLength, maxGuesses, elapsedTime, saveToCloud]);
 
     const loadGameFromCloud = useCallback((cloudState: WordleSavedGameState, savedElapsedTime: number) => {
         setTargetWord(cloudState.targetWord);
         setGuesses(cloudState.guesses as GuessResult[]);
         setKeyboardState(cloudState.keyboardState as Record<string, LetterState>);
-        setJoker(cloudState.joker);
         setWordLength(cloudState.wordLength);
         setMaxGuesses(cloudState.maxGuesses);
         setElapsedTime(savedElapsedTime);
@@ -331,7 +306,6 @@ export function useGame(options: UseGameOptions = {}) {
         isSoundEnabled,
         toggleSound,
         elapsedTime,
-        joker,
         score,
         isChallengeMode,
         activeChallengeId,
@@ -340,7 +314,6 @@ export function useGame(options: UseGameOptions = {}) {
         handleKeyPress,
         handleDelete,
         handleEnter,
-        useJoker,
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,

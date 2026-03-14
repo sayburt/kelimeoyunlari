@@ -168,7 +168,7 @@ export default function Navbar() {
                         className="text-base font-bold text-text-main hover:text-primary transition-all flex items-center gap-2 cursor-pointer active:scale-95"
                     >
                         {isCopied ? (
-                            <span className="text-green-500 animate-in fade-in zoom-in duration-300">Kopyalandı!</span>
+                            <span className="text-accent-emerald animate-in fade-in zoom-in duration-300">Kopyalandı!</span>
                         ) : (
                             <>
                                 <Share2 size={16} />

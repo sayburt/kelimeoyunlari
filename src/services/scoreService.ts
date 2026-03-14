@@ -6,7 +6,7 @@ export const scoreService = {
      * Wordle için puan hesaplar.
      * Toplam Puan = ((Taban + Deneme + Zaman) x Zorluk Çarpanı) - (Joker x 200)
      */
-    calculateWordleScore(attempts: number, seconds: number, difficulty: number, jokersUsed: number = 0): number {
+    calculateWordleScore(attempts: number, seconds: number, difficulty: number): number {
         const basePoint = 1000;
 
         // Deneme Bonusu: 1: 1000, 2: 800, 3: 600, 4: 400, 5: 200, 6: 0
@@ -21,10 +21,7 @@ export const scoreService = {
         if (difficulty === 2) multiplier = 1.5;
         if (difficulty === 3) multiplier = 2.0;
 
-        // Joker Cezası: Her joker için -200 puan
-        const jokerPenalty = jokersUsed * 200;
-
-        const totalScore = Math.max(0, Math.round((basePoint + trialBonus + timeBonus) * multiplier) - jokerPenalty);
+        const totalScore = Math.max(0, Math.round((basePoint + trialBonus + timeBonus) * multiplier));
         return totalScore;
     },
 

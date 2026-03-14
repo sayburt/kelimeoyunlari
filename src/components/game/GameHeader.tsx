@@ -44,6 +44,11 @@ export function GameHeader({
 }: GameHeaderProps) {
     const router = useRouter();
     const [showVisitorModal, setShowVisitorModal] = useState(false);
+    const [isMounted, setIsMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const handleBack = () => {
         if (onBack) {
@@ -70,12 +75,42 @@ export function GameHeader({
     }
 
     const menuItems: MenuItem[] = [
-        ...(gameStatus === 'playing' && onSave ? [{ icon: Save, label: 'Sonra Devam Et', onClick: onSave, colorClass: 'text-indigo-500 dark:text-indigo-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10' }] : []),
-        ...(!isChallengeMode && onChallenge ? [{ icon: Swords, label: 'Meydan Oku', onClick: handleChallengeClick, colorClass: 'text-rose-500 dark:text-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-500/10' }] : []),
-        { icon: Info, label: 'Nasıl Oynanır?', onClick: onHelp, colorClass: 'text-cyan-500 dark:text-cyan-400 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-500/10' },
-        { icon: BarChart2, label: 'İstatistikler', onClick: onStats, colorClass: 'text-amber-500 dark:text-amber-400 group-hover:bg-amber-50 dark:group-hover:bg-amber-500/10' },
-        ...(onSettings ? [{ icon: Settings, label: 'Ayarlar', onClick: onSettings, colorClass: 'text-slate-500 dark:text-slate-400 group-hover:bg-slate-50 dark:group-hover:bg-slate-500/10' }] : []),
-        { icon: Share2, label: 'Oyunu Paylaş', onClick: onShare, colorClass: 'text-emerald-500 dark:text-emerald-400 group-hover:bg-emerald-50 dark:group-hover:bg-emerald-500/10' },
+        ...(gameStatus === 'playing' && onSave ? [{ 
+            icon: Save, 
+            label: 'Sonra Devam Et', 
+            onClick: onSave, 
+            colorClass: 'text-accent-indigo hover:bg-accent-indigo/10' 
+        }] : []),
+        ...(!isChallengeMode && onChallenge ? [{ 
+            icon: Swords, 
+            label: 'Meydan Oku', 
+            onClick: handleChallengeClick, 
+            colorClass: 'text-accent-rose hover:bg-accent-rose/10' 
+        }] : []),
+        { 
+            icon: Info, 
+            label: 'Nasıl Oynanır?', 
+            onClick: onHelp, 
+            colorClass: 'text-accent-cyan hover:bg-accent-cyan/10' 
+        },
+        { 
+            icon: BarChart2, 
+            label: 'İstatistikler', 
+            onClick: onStats, 
+            colorClass: 'text-accent-amber hover:bg-accent-amber/10' 
+        },
+        ...(onSettings ? [{ 
+            icon: Settings, 
+            label: 'Ayarlar', 
+            onClick: onSettings, 
+            colorClass: 'text-text-secondary hover:bg-surface-mid/50' 
+        }] : []),
+        { 
+            icon: Share2, 
+            label: 'Oyunu Paylaş', 
+            onClick: onShare, 
+            colorClass: 'text-accent-emerald hover:bg-accent-emerald/10' 
+        },
     ];
 
     return (
@@ -107,70 +142,73 @@ export function GameHeader({
                 {/* Sağ: Tema ve Avatar */}
                 <div className="flex-shrink-0 flex justify-end items-center gap-2 sm:gap-3">
                     <ThemeToggle />
-                    {isLoggedIn ? (
-                        <AvatarMenu />
-                    ) : (
-                        <button
-                            onClick={() => router.push('/login')}
-                            className="flex flex-shrink-0 items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 border-[0.5px] border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-secondary hover:text-text-main dark:text-text-secondary dark:hover:text-white group"
-                            aria-label="Giriş / Kayıt Ol"
-                        >
-                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                        </button>
+                    {isMounted && (
+                        isLoggedIn ? (
+                            <AvatarMenu />
+                        ) : (
+                            <button
+                                onClick={() => router.push('/login')}
+                                className="flex flex-shrink-0 items-center justify-center w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/5 hover:bg-black/10 dark:bg-white/5 dark:hover:bg-white/10 border-[0.5px] border-black/10 hover:border-black/20 dark:border-white/10 dark:hover:border-white/20 transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-secondary hover:text-text-main dark:text-text-secondary dark:hover:text-white group"
+                                aria-label="Giriş / Kayıt Ol"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-[16px] h-[16px] sm:w-[20px] sm:h-[20px] group-hover:scale-110 transition-transform"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </button>
+                        )
                     )}
                 </div>
             </header>
 
             {/* 2. SATIR: Oyun Araç Çubuğu (Toolbar) */}
-            <div className="flex flex-wrap items-center justify-center py-2 px-2 sm:px-6 w-full gap-2 sm:gap-4 bg-surface-base/80 dark:bg-black/20 border-b border-surface-mid/50 backdrop-blur-sm">
+            <div className="flex flex-wrap items-center justify-center py-3 px-2 sm:px-6 w-full gap-2 sm:gap-4 bg-surface-dark/80 dark:bg-black/40 border-b border-surface-mid/50 shadow-[0_2px_10px_rgba(0,0,0,0.02)]">
                 
-                {timerText && (
-                    <div className="flex-shrink-0 pointer-events-none bg-surface/50 px-3 py-1.5 rounded-lg border border-surface-mid/50">
-                        <span className="text-primary font-mono text-sm sm:text-base font-bold tabular-nums tracking-tighter">
+                {isMounted && timerText && (
+                    <div className="flex-shrink-0 pointer-events-none bg-surface dark:bg-white/10 px-4 py-2 rounded-2xl border border-surface-mid shadow-sm transition-all duration-300">
+                        <span className="text-text-main font-mono text-base sm:text-lg font-black tabular-nums tracking-tight">
                             {timerText}
                         </span>
                     </div>
                 )}
 
                 {/* Oyun İkonları */}
-                <div className="flex flex-wrap items-center justify-center gap-1.5 sm:gap-2">
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                 {/* Joker Butonu — sadece onJoker geçildiyse göster */}
                     {onJoker !== undefined && (
                         <>
                     <button
                         onClick={onJoker}
                         disabled={jokerUsed}
-                        className={`relative flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-all active:scale-95 group cursor-pointer border border-transparent ${jokerUsed
-                            ? 'opacity-40 grayscale cursor-not-allowed bg-surface/30'
-                            : 'bg-yellow-50/50 dark:bg-yellow-500/10 hover:bg-yellow-100 dark:hover:bg-yellow-500/20 text-yellow-500 dark:text-yellow-400'
+                        className={`relative flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-2xl transition-all duration-200 active:scale-90 group cursor-pointer border shadow-sm ${jokerUsed
+                            ? 'opacity-40 grayscale cursor-not-allowed bg-surface/50 border-surface-mid'
+                            : 'bg-surface hover:border-accent-amber/50 hover:shadow-md hover:shadow-accent-amber/5 border-surface-accent/30 text-accent-amber'
                             }`}
                         title={jokerUsed ? 'İpucu Kullanıldı' : 'İpucu Kullan (💡)'}
                         aria-label="İpucu"
                     >
-                        <span className={`text-base sm:text-lg ${!jokerUsed && 'group-hover:scale-125 transition-transform'}`}>💡</span>
-                        {jokerUsed && <div className="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-bg" />}
+                        <span className={`text-lg sm:text-xl ${!jokerUsed && 'group-hover:scale-110 transition-transform'}`}>💡</span>
+                        {jokerUsed && <div className="absolute -top-1 -right-1 w-3 h-3 bg-accent-rose rounded-full border-2 border-white shadow-sm" />}
                     </button>
 
-                    <div className="w-px h-6 bg-surface-mid/50 mx-1"></div>
+                    <div className="w-px h-6 bg-surface-mid/40 mx-1"></div>
                         </>
                     )}
 
                     {/* Diğer Menü İtemleri */}
                     {menuItems.map((item, idx) => {
                         const Icon = item.icon;
+                        const cc = item.colorClass || '';
                         return (
                             <button
                                 key={idx}
                                 onClick={item.onClick}
                                 disabled={item.disabled}
-                                className={`flex-shrink-0 w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-xl transition-all active:scale-95 group cursor-pointer border border-transparent ${item.disabled
-                                    ? 'opacity-30 grayscale cursor-not-allowed text-text-muted'
-                                    : `bg-surface-base/30 dark:bg-black/10 hover:border-surface-mid/30 ${item.colorClass}`
+                                className={`flex-shrink-0 w-10 h-10 sm:w-11 sm:h-11 flex items-center justify-center rounded-2xl transition-all duration-200 active:scale-90 group cursor-pointer border shadow-sm ${item.disabled
+                                    ? 'opacity-30 grayscale cursor-not-allowed text-text-muted bg-surface/50 border-surface-mid'
+                                    : `bg-surface dark:bg-white/5 border-surface-accent/30 hover:shadow-md ${cc.includes('text-accent-indigo') ? 'hover:border-accent-indigo/40 hover:shadow-accent-indigo/5' : ''} ${cc.includes('text-accent-rose') ? 'hover:border-accent-rose/40 hover:shadow-accent-rose/5' : ''} ${cc.includes('text-accent-cyan') ? 'hover:border-accent-cyan/40 hover:shadow-accent-cyan/5' : ''} ${cc.includes('text-accent-amber') ? 'hover:border-accent-amber/40 hover:shadow-accent-amber/5' : ''} ${cc.includes('text-accent-emerald') ? 'hover:border-accent-emerald/40 hover:shadow-accent-emerald/5' : ''} ${cc}`
                                     }`}
                                 title={item.label}
                                 aria-label={item.label}
                             >
-                                <Icon size={18} className="sm:w-5 sm:h-5 group-hover:scale-110 transition-transform" />
+                                <Icon size={20} className="sm:w-[22px] sm:h-[22px] group-hover:scale-110 transition-transform" strokeWidth={2.5} />
                             </button>
                         );
                     })}

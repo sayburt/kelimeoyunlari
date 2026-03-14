@@ -8,7 +8,6 @@ import { supabase } from "@/lib/supabase";
 export interface WordleSavedGameState {
     guesses: { guess: string; states: string[] }[];
     keyboardState: Record<string, string>;
-    joker: { used: boolean; count: number; max: number };
     targetWord: {
         kelime: string;
         kategoriler: string[];
@@ -85,7 +84,7 @@ class SavedGameService {
             .select("*")
             .eq("user_id", user.id)
             .eq("game_name", gameName)
-            .single();
+            .maybeSingle();
 
         if (error || !data) return null;
 

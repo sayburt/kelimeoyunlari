@@ -171,45 +171,9 @@ function WordLadderPageContent() {
     const wordLength = startWord?.length || 4;
     const gameData = GAMES.find(g => g.id === 'kelime-merdiveni')!;
 
-    // YÜKLENİYOR hali
-    if (status === 'loading' || status === 'idle') {
-        return (
-            <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg">
-                <GameHeader
-                    title="KELİME MERDİVENİ"
-                    onHelp={() => setShowInfoModal(true)}
-                    onSave={handleSaveGame}
-                    isLoggedIn={isAuthenticated}
-                    gameStatus={status}
-                />
-
-                <div className="flex-1 flex items-center justify-center">
-                    <LoadingSpinner />
-                </div>
-            </div>
-        );
-    }
-
     return (
         <>
-            {/*
-             * ┌─────────────────────────────┐
-             * │  HEADER (sabit üst)         │
-             * │  BAŞLANGIÇ label            │
-             * │  BAŞLANGIÇ kutuları         │
-             * │  ─────── SCROLL ALANI ────  │
-             * │  tahminler + aktif satır    │
-             * │  ─────────────────────────  │
-             * │  ↓ (tek ok sabit)           │
-             * │  HEDEF kutuları             │
-             * │  HEDEF label                │
-             * │  KLAVYE (sabit alt)         │
-             * └─────────────────────────────┘
-             *
-             * h-[100dvh] overflow-hidden → sayfa DİKEY SCROLL YAPMAZ
-             */}
             <div className="flex flex-col h-[100dvh] overflow-hidden bg-bg text-text-main">
-
                 {/* ── 1. HEADER ── */}
                 <GameHeader
                     title="KELİME MERDİVENİ"
@@ -222,64 +186,70 @@ function WordLadderPageContent() {
                     timerText={formatTime(elapsedTime)}
                 />
 
+                {(status === 'loading' || status === 'idle') ? (
+                    <div className="flex-1 flex items-center justify-center">
+                        <LoadingSpinner />
+                    </div>
+                ) : (
+                    <>
+                        {/* ── 2. ORTA İÇERİK (SABIT çerçeve + KAYAN orta) ── */}
+                        <div className="flex flex-col flex-1 min-h-0 items-center px-4 pt-3 pb-1 gap-y-1.5">
 
-                {/* ── 2. ORTA İÇERİK (SABIT çerçeve + KAYAN orta) ── */}
-                <div className="flex flex-col flex-1 min-h-0 items-center px-4 pt-3 pb-1 gap-y-1.5">
+                            {/* BAŞLANGIÇ etiketi */}
+                            <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400/90 leading-none">
+                                Başlangıç
+                            </span>
 
-                    {/* BAŞLANGIÇ etiketi */}
-                    <span className="text-[10px] font-black uppercase tracking-widest text-cyan-400/90 leading-none">
-                        Başlangıç
-                    </span>
+                            {/* BAŞLANGIÇ kutuları (sabit) */}
+                            <FixedWordRow
+                                word={startWord}
+                                wordLength={wordLength}
+                                type="start"
+                            />
 
-                    {/* BAŞLANGIÇ kutuları (sabit) */}
-                    <FixedWordRow
-                        word={startWord}
-                        wordLength={wordLength}
-                        type="start"
-                    />
+                            {/* ── SCROLL ALANI: tahminler + aktif satır ── */}
+                            <WordLadderGuessArea
+                                steps={steps}
+                                currentInput={currentInput}
+                                wordLength={wordLength}
+                                maxSteps={maxSteps}
+                                status={status}
+                                errorMessage={inlineError}
+                            />
 
-                    {/* ── SCROLL ALANI: tahminler + aktif satır ── */}
-                    <WordLadderGuessArea
-                        steps={steps}
-                        currentInput={currentInput}
-                        wordLength={wordLength}
-                        maxSteps={maxSteps}
-                        status={status}
-                        errorMessage={inlineError}
-                    />
+                            {/* Tek ↓ ok (sabit) */}
+                            <ChevronDown
+                                className="w-4 h-4 shrink-0 text-primary/40"
+                                strokeWidth={2.5}
+                            />
 
-                    {/* Tek ↓ ok (sabit) */}
-                    <ChevronDown
-                        className="w-4 h-4 shrink-0 text-primary/40"
-                        strokeWidth={2.5}
-                    />
+                            {/* HEDEF kutuları (sabit) */}
+                            <FixedWordRow
+                                word={targetWord}
+                                wordLength={wordLength}
+                                type="target"
+                            />
 
-                    {/* HEDEF kutuları (sabit) */}
-                    <FixedWordRow
-                        word={targetWord}
-                        wordLength={wordLength}
-                        type="target"
-                    />
+                            {/* HEDEF etiketi */}
+                            <span className="text-[10px] font-black uppercase tracking-widest text-yellow-400/90 leading-none">
+                                Hedef
+                            </span>
+                        </div>
 
-                    {/* HEDEF etiketi */}
-                    <span className="text-[10px] font-black uppercase tracking-widest text-yellow-400/90 leading-none">
-                        Hedef
-                    </span>
-
-                </div>
-
-                {/* ── 3. KLAVYE (sabit alt) ── */}
-                <div className="shrink-0 px-1 pb-3">
-                    <GameKeyboard
-                        onKeyPress={handleKeyPress}
-                        onEnter={handleEnter}
-                        onDelete={handleDelete}
-                        keyStates={{}}
-                    />
-                </div>
+                        {/* ── 3. KLAVYE (sabit alt) ── */}
+                        <div className="shrink-0 px-1 pb-3">
+                            <GameKeyboard
+                                onKeyPress={handleKeyPress}
+                                onEnter={handleEnter}
+                                onDelete={handleDelete}
+                                keyStates={{}}
+                            />
+                        </div>
+                    </>
+                )}
             </div>
 
-            {/* ── SEO bölümü: 100dvh dışına çıkıyor — scroll yalnızca buraya gidince olur ── */}
+            {/* ── SEO bölümü ── */}
             <section className="w-full max-w-2xl mx-auto px-6 py-12 border-t border-surface/50">
                 <GameInstructions
                     instructions={gameData.instructions}
