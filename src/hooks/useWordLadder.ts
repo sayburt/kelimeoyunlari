@@ -1,12 +1,13 @@
 'use client';
 
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useMemo } from 'react';
 import { getWordPair, isOneLetterAway } from '@/services/wordLadderService';
 import { wordService } from '@/services/wordService';
 import { scoreService } from '@/services/scoreService';
 import { useTimer } from '@/hooks/useTimer';
 import { useSound } from '@/hooks/useSound';
 import { useGameSettings } from '@/context/GameSettingsContext';
+import { useGamePersistence } from '@/hooks/useGamePersistence';
 
 export type WordLadderStatus = 'idle' | 'loading' | 'playing' | 'won' | 'lost';
 
@@ -19,6 +20,17 @@ export interface JokerState {
     used: boolean;
     count: number;
     hint?: string; // joker ipucu metni
+}
+
+export interface PersistedWordLadderState {
+    status: WordLadderStatus;
+    startWord: string;
+    targetWord: string;
+    optimalSteps: number;
+    maxSteps: number;
+    steps: WordLadderStep[];
+    elapsedTime: number;
+    lastUpdated: number;
 }
 
 const GAME_NAME = 'kelime-merdiveni';
@@ -39,9 +51,40 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
     const [score, setScore] = useState<number>(0);
     const [joker, setJoker] = useState<JokerState>({ used: false, count: 0 });
 
-    const { elapsedTime, resetTimer } = useTimer(status === 'playing', isPaused);
+    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
     const { playKeyPress, playDelete, playEnter, playError, playWin, playLose } = useSound();
     const isProcessingRef = useRef(false);
+
+    // Persistence
+    const persistenceState: PersistedWordLadderState = useMemo(() => ({
+        status,
+        startWord,
+        targetWord,
+        optimalSteps,
+        maxSteps,
+        steps,
+        elapsedTime,
+        lastUpdated: 0,
+    }), [status, startWord, targetWord, optimalSteps, maxSteps, steps, elapsedTime]);
+
+    const handleRestore = useCallback((saved: PersistedWordLadderState) => {
+        if (saved.status === 'playing') {
+            setStartWord(saved.startWord);
+            setTargetWord(saved.targetWord);
+            setOptimalSteps(saved.optimalSteps);
+            setMaxSteps(saved.maxSteps);
+            setSteps(saved.steps);
+            setElapsedTime(saved.elapsedTime);
+            setStatus('playing');
+        }
+    }, [setElapsedTime]);
+
+    const { clearLocal, saveToCloud, loadFromCloud, deleteFromCloud } = useGamePersistence<PersistedWordLadderState>(
+        GAME_NAME,
+        status,
+        persistenceState,
+        handleRestore
+    );
 
     // Geçerli kelimenin son harfini döner
     const getCurrentWord = useCallback((): string => {
@@ -57,6 +100,7 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
         setScore(0);
         setJoker({ used: false, count: 0 });
         resetTimer();
+        clearLocal();
 
         try {
             await scoreService.recordGameStart(GAME_NAME);
@@ -70,13 +114,13 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
             setTargetWord(pair.target);
             setOptimalSteps(pair.optimalSteps);
             setMaxSteps(pair.optimalSteps + 4);
-            setCurrentInput(pair.start.split('').join('') === pair.start ? '' : '');
+            setCurrentInput('');
             setStatus('playing');
         } catch {
             setStatus('idle');
             setError('Bir hata oluştu. Lütfen tekrar deneyin.');
         }
-    }, [resetTimer]);
+    }, [resetTimer, clearLocal]);
 
     const handleKeyPress = useCallback((key: string) => {
         if (status !== 'playing' || isProcessingRef.current) return;
@@ -160,11 +204,13 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
                 );
                 setScore(calculatedScore);
                 await scoreService.saveGameResult(GAME_NAME, true, newSteps.length, { calculatedScore });
+                clearLocal();
                 setStatus('won');
             } else if (newSteps.length >= maxSteps) {
                 // KAYBETTI
                 playLose();
                 await scoreService.saveGameResult(GAME_NAME, false, newSteps.length, { calculatedScore: 0 });
+                clearLocal();
                 setStatus('lost');
             }
         } catch {
@@ -175,7 +221,7 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
     }, [
         status, startWord, currentInput, getCurrentWord, steps, targetWord,
         maxSteps, optimalSteps, difficulty, elapsedTime, joker,
-        playEnter, playError, playWin, playLose,
+        playEnter, playError, playWin, playLose, clearLocal,
     ]);
 
     const useJoker = useCallback((): string | null => {
@@ -200,6 +246,25 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
         return hint;
     }, [status, joker, getCurrentWord, targetWord]);
 
+    /** Mevcut oyunu Supabase'e kaydeder (sadece giriş yapmış üyeler) */
+    const saveGameToCloud = useCallback(async (): Promise<boolean> => {
+        if (status !== 'playing') return false;
+        return await saveToCloud(persistenceState, elapsedTime);
+    }, [status, saveToCloud, persistenceState, elapsedTime]);
+
+    /** Supabase'deki kayıtlı oyunu geri yükler */
+    const loadGameFromCloud = useCallback(async (): Promise<boolean> => {
+        const saved = await loadFromCloud();
+        if (!saved) return false;
+        handleRestore(saved.state);
+        return true;
+    }, [loadFromCloud, handleRestore]);
+
+    /** Supabase'deki kayıtlı oyunu siler */
+    const deleteCloudSave = useCallback(async () => {
+        await deleteFromCloud();
+    }, [deleteFromCloud]);
+
     return {
         status,
         startWord,
@@ -218,5 +283,8 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
         handleDelete,
         handleEnter,
         useJoker,
+        saveGameToCloud,
+        loadGameFromCloud,
+        deleteCloudSave,
     };
 }

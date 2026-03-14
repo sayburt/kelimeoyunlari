@@ -14,9 +14,10 @@ import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { ChallengeModal } from '@/components/game/ChallengeModal';
 import { InfoModal } from '@/components/game/InfoModal';
 import { StatsModal } from '@/components/game/StatsModal';
+import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { useAuth } from '@/hooks/useAuth';
-import { savedGameService } from '@/services/savedGameService';
+import { savedGameService, WordleSavedGameState } from '@/services/savedGameService';
 import { challengeService } from '@/services/challengeService';
 import { formatTime } from '@/utils/timeUtils';
 import { shareContent } from '@/utils/shareUtils';
@@ -44,14 +45,15 @@ function WordlePageContent() {
     } = useGameModals();
     const [showResumeModal, setShowResumeModal] = useState(false);
     const [showChallengeModal, setShowChallengeModal] = useState(false);
+    const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
     const [toastMessage, setToastMessage] = useState<string | null>(null);
     const [savedElapsedTime, setSavedElapsedTime] = useState(0);
     const [savedGuessesCount, setSavedGuessesCount] = useState(0);
 
     const cloudCheckDoneRef = useRef(false);
-    const savedCloudStateRef = useRef<{ state: import('@/services/savedGameService').SavedGameState; elapsedTime: number } | null>(null);
+    const savedCloudStateRef = useRef<{ state: WordleSavedGameState; elapsedTime: number } | null>(null);
 
-    const isPaused = baseIsPaused || showResumeModal || showChallengeModal;
+    const isPaused = baseIsPaused || showResumeModal || showChallengeModal || showSaveConfirmationModal;
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
@@ -101,7 +103,7 @@ function WordlePageContent() {
 
         const checkCloudSave = async () => {
             try {
-                const savedGame = await savedGameService.getSavedGame(GAME_NAME);
+                const savedGame = await savedGameService.getSavedGame<WordleSavedGameState>(GAME_NAME);
                 if (savedGame) {
                     setSavedElapsedTime(savedGame.elapsed_time);
                     setSavedGuessesCount(savedGame.state.guesses.length);
@@ -179,17 +181,28 @@ function WordlePageContent() {
         const success = await saveGameToCloud();
         if (success) {
             setToastMessage('Oyun kaydedildi!');
-            setTimeout(() => router.push('/'), 800);
+            setShowSaveConfirmationModal(true);
         } else {
             setToastMessage('Oyun kaydedilemedi!');
             setTimeout(() => setToastMessage(null), 3000);
         }
     };
 
+    const handleSaveConfirm = () => {
+        setShowSaveConfirmationModal(false);
+        setTimeout(() => router.push('/'), 300);
+    };
+
+    const handleSaveCancel = () => {
+        setShowSaveConfirmationModal(false);
+        setToastMessage(null);
+    };
+
     const handleResumeGame = () => {
         setShowResumeModal(false);
         if (savedCloudStateRef.current) {
-            loadGameFromCloud(savedCloudStateRef.current.state, savedCloudStateRef.current.elapsedTime);
+            const { state, elapsedTime: savedElapsed } = savedCloudStateRef.current;
+            loadGameFromCloud(state as import('@/services/savedGameService').WordleSavedGameState, savedElapsed);
             savedCloudStateRef.current = null;
         }
     };
@@ -344,6 +357,12 @@ function WordlePageContent() {
                 onClose={() => setShowChallengeModal(false)}
                 gameName={GAME_NAME}
                 wordLength={WORD_LENGTH}
+            />
+
+            <SaveConfirmationModal
+                isOpen={showSaveConfirmationModal}
+                onConfirm={handleSaveConfirm}
+                onCancel={handleSaveCancel}
             />
         </div>
     );

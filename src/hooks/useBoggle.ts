@@ -83,7 +83,7 @@ export function useBoggle(options: UseBoggleOptions = {}) {
         }
     }, []);
 
-    const { clearLocal } = useGamePersistence<PersistedBoggleState>(
+    const { clearLocal, saveToCloud, loadFromCloud, deleteFromCloud } = useGamePersistence<PersistedBoggleState>(
         GAME_NAME,
         status,
         persistenceState,
@@ -281,6 +281,25 @@ export function useBoggle(options: UseBoggleOptions = {}) {
         return foundWords.reduce((sum, fw) => sum + fw.points, 0);
     }, [foundWords]);
 
+    /** Mevcut Boggle oyununu Supabase'e kaydeder (sadece giriş yapmış üyeler) */
+    const saveGameToCloud = useCallback(async (): Promise<boolean> => {
+        if (status !== 'playing') return false;
+        return await saveToCloud(persistenceState, 0);
+    }, [status, saveToCloud, persistenceState]);
+
+    /** Supabase'deki kayıtlı Boggle oyununu yükler */
+    const loadGameFromCloud = useCallback(async (): Promise<boolean> => {
+        const saved = await loadFromCloud();
+        if (!saved) return false;
+        handleRestore(saved.state);
+        return true;
+    }, [loadFromCloud, handleRestore]);
+
+    /** Supabase'deki kayıtlı oyunu siler */
+    const deleteCloudSave = useCallback(async () => {
+        await deleteFromCloud();
+    }, [deleteFromCloud]);
+
     return {
         status,
         grid,
@@ -299,5 +318,8 @@ export function useBoggle(options: UseBoggleOptions = {}) {
         selectCell,
         clearSelection,
         submitWord,
+        saveGameToCloud,
+        loadGameFromCloud,
+        deleteCloudSave,
     };
 }

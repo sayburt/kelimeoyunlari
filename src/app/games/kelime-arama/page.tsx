@@ -2,7 +2,9 @@
 
 import React, { Suspense, useEffect, useMemo, useRef } from 'react';
 import { useWordSearch } from '@/hooks/useWordSearch';
+import { useRouter } from 'next/navigation';
 import { useGameModals } from '@/hooks/useGameModals';
+
 import { useAuth } from '@/hooks/useAuth';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { formatTime } from '@/utils/timeUtils';
@@ -16,6 +18,7 @@ import { GameEndModal } from '@/components/game/GameEndModal';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { WordSearchGrid } from '@/components/game/WordSearchGrid';
 import { WordSearchWordList } from '@/components/game/WordSearchWordList';
+import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { useSyncedElementHeight } from '@/hooks/useSyncedElementHeight';
@@ -37,9 +40,12 @@ function WordSearchPageContent() {
         isPaused,
     } = useGameModals();
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+    const [showSaveConfirmationModal, setShowSaveConfirmationModal] = React.useState(false);
     const { difficulty } = useGameSettings();
 
     const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
     const {
         status,
         grid,
@@ -59,7 +65,9 @@ function WordSearchPageContent() {
         clearSelection,
         handleSelection,
         useJoker,
+        saveGameToCloud,
     } = useWordSearch({ isPaused });
+
     const { elementRef: gridPanelRef, height: gridPanelHeight } = useSyncedElementHeight<HTMLDivElement>(status === 'playing' || status === 'won');
 
     const hasStartedRef = useRef(false);
@@ -101,8 +109,30 @@ function WordSearchPageContent() {
             setTimeout(() => setToastMessage(null), 3000);
         }
     };
+    
+    const handleSaveGame = async () => {
+        const success = await saveGameToCloud();
+        if (success) {
+            setToastMessage('Oyun kaydedildi!');
+            setShowSaveConfirmationModal(true);
+        } else {
+            setToastMessage('Oyun kaydedilemedi!');
+            setTimeout(() => setToastMessage(null), 3000);
+        }
+    };
+
+    const handleSaveConfirm = () => {
+        setShowSaveConfirmationModal(false);
+        setTimeout(() => router.push('/'), 300);
+    };
+
+    const handleSaveCancel = () => {
+        setShowSaveConfirmationModal(false);
+        setToastMessage(null);
+    };
 
     const handleResultShare = async () => {
+
         const result = await shareContent({
             title: 'Kelime Arama Sonucum',
             text: `Kelime Arama'da ${foundWordCount} kelime bulup ${score} puan aldım! 🔎`,
@@ -146,7 +176,10 @@ function WordSearchPageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
                     isLoggedIn={isAuthenticated}
+
+
                     gameStatus={status}
                     onJoker={useJoker}
                     jokerUsed={joker.used}
@@ -247,6 +280,12 @@ function WordSearchPageContent() {
             <SettingsModal
                 isOpen={showSettingsModal}
                 onClose={() => setShowSettingsModal(false)}
+            />
+
+            <SaveConfirmationModal
+                isOpen={showSaveConfirmationModal}
+                onConfirm={handleSaveConfirm}
+                onCancel={handleSaveCancel}
             />
         </div>
     );

@@ -20,6 +20,7 @@ import { useGameModals } from '@/hooks/useGameModals';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { ChallengeModal } from '@/components/game/ChallengeModal';
+import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 const GAME_NAME = 'adam-asmaca';
@@ -36,12 +37,13 @@ function AdamAsmacaPageContent() {
     } = useGameModals();
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
     const [showChallengeModal, setShowChallengeModal] = React.useState(false);
+    const [showSaveConfirmationModal, setShowSaveConfirmationModal] = React.useState(false);
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
     const { category, difficulty } = useGameSettings();
 
-    const isPaused = baseIsPaused || showChallengeModal;
+    const isPaused = baseIsPaused || showChallengeModal || showSaveConfirmationModal;
 
     const {
         status,
@@ -58,7 +60,9 @@ function AdamAsmacaPageContent() {
         startNewGame,
         handleGuess,
         useJoker,
+        saveGameToCloud,
     } = useHangman({
+
         isPaused,
         challengeId
     });
@@ -102,8 +106,30 @@ function AdamAsmacaPageContent() {
             setTimeout(() => setToastMessage(null), 3000);
         }
     };
+    
+    const handleSaveGame = async () => {
+        const success = await saveGameToCloud();
+        if (success) {
+            setToastMessage('Oyun kaydedildi!');
+            setShowSaveConfirmationModal(true);
+        } else {
+            setToastMessage('Oyun kaydedilemedi!');
+            setTimeout(() => setToastMessage(null), 3000);
+        }
+    };
+
+    const handleSaveConfirm = () => {
+        setShowSaveConfirmationModal(false);
+        setTimeout(() => router.push('/'), 300);
+    };
+
+    const handleSaveCancel = () => {
+        setShowSaveConfirmationModal(false);
+        setToastMessage(null);
+    };
 
     const handleShare = async () => {
+
         const result = await shareContent({
             title: 'Kelime Oyunları - Adam Asmaca',
             text: 'Kelime Oyunları\'nda Adam Asmaca oyna!',
@@ -124,7 +150,9 @@ function AdamAsmacaPageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
                     onChallenge={() => setShowChallengeModal(true)}
+
                     isLoggedIn={isAuthenticated}
                     isChallengeMode={isChallengeMode}
                     gameStatus={status}
@@ -166,7 +194,9 @@ function AdamAsmacaPageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
                     onChallenge={() => setShowChallengeModal(true)}
+
                     isLoggedIn={isAuthenticated}
                     isChallengeMode={isChallengeMode}
                     gameStatus={status}
@@ -253,6 +283,12 @@ function AdamAsmacaPageContent() {
                 onClose={() => setShowChallengeModal(false)}
                 gameName={GAME_NAME}
                 wordLength={0}
+            />
+
+            <SaveConfirmationModal
+                isOpen={showSaveConfirmationModal}
+                onConfirm={handleSaveConfirm}
+                onCancel={handleSaveCancel}
             />
 
             {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}

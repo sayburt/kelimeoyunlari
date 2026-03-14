@@ -71,7 +71,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
         }
     }, [setElapsedTime]);
 
-    const { clearLocal } = useGamePersistence<PersistedHangmanState>(
+    const { clearLocal, saveToCloud, loadFromCloud, deleteFromCloud } = useGamePersistence<PersistedHangmanState>(
         GAME_NAME,
         status,
         persistenceState,
@@ -259,6 +259,25 @@ export function useHangman(options: UseHangmanOptions = {}) {
         }
     }, [status, joker.used, targetWord, guessedLetters, handleGuess, playError]);
 
+    /** Mevcut oyunu Supabase'e kaydeder (sadece giriş yapmış üyeler) */
+    const saveGameToCloud = useCallback(async (): Promise<boolean> => {
+        if (status !== 'playing') return false;
+        return await saveToCloud(persistenceState, elapsedTime);
+    }, [status, saveToCloud, persistenceState, elapsedTime]);
+
+    /** Supabase'deki kayıtlı oyunu yükler */
+    const loadGameFromCloud = useCallback(async (): Promise<boolean> => {
+        const saved = await loadFromCloud();
+        if (!saved) return false;
+        handleRestore(saved.state);
+        return true;
+    }, [loadFromCloud, handleRestore]);
+
+    /** Supabase'deki kayıtlı oyunu siler */
+    const deleteCloudSave = useCallback(async () => {
+        await deleteFromCloud();
+    }, [deleteFromCloud]);
+
     return {
         status,
         targetWord,
@@ -278,5 +297,8 @@ export function useHangman(options: UseHangmanOptions = {}) {
         startNewGame,
         handleGuess,
         useJoker,
+        saveGameToCloud,
+        loadGameFromCloud,
+        deleteCloudSave,
     };
 }

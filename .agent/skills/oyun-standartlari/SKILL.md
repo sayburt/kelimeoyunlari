@@ -44,6 +44,7 @@ Temel altyapıyı baştan kodlamamak ve proje geneli tutarlılığı korumak ama
 *   **Custom Hook:** Durum yönetimi (State Management) temiz ve test edilebilir tutulması prensibi doğrultusunda, sayfa bileşeninden (page.tsx) bağımsız olarak `useGame.ts` (ya da örneğin `useWordHunt.ts` vb.) formunda bir React Hook içinde yürütülmelidir.
 *   **Veritabanı / Kütüphane:** Kelime bankasının yönetimi, her zaman projenin root veya data dizinlerinde yer alan veriler üzerinden (örneğin `kelime-data.json`), aracı yardımcı fonksiyonlarla (Services) gerçekleştirilmelidir.
 *   **Yerel Depolama (Storage):** Oyuna dair yerel kayıt geçmişleri ve ilerlemeler (Guest Stats vs.), modüler `storage.ts` servisi ile kaydedilmeli/çağrılmalıdır.
+*   **Kaydetme Zorunluluğu (⚠️):** Her oyun hook'u `useGamePersistence<T>` hook'unu kullanmalı ve `saveGameToCloud`, `loadGameFromCloud`, `deleteCloudSave` fonksiyonlarını return etmelidir. Bu, hem misafir (localStorage) hem de üye (Supabase) kaydetme desteği sağlar. Detaylar için `veri-yonetimi` skill'ine bakınız.
 
 ## 7. Rehber Sayfaları (Nasıl Oynanır? Sayfaları)
 Oyun rehber sayfaları (`src/app/nasil-oynanir/[id]/page.tsx`), hem eğitici hem de SEO odaklı olmalı ve şu standart yapıyı takip etmelidir:

@@ -2,7 +2,10 @@
 
 import { supabase } from "@/lib/supabase";
 
-export interface SavedGameState {
+/**
+ * Wordle'a özgü kayıt tipi (geriye dönük uyumluluk için saklandı)
+ */
+export interface WordleSavedGameState {
     guesses: { guess: string; states: string[] }[];
     keyboardState: Record<string, string>;
     joker: { used: boolean; count: number; max: number };
@@ -18,11 +21,17 @@ export interface SavedGameState {
     maxGuesses: number;
 }
 
-export interface SavedGame {
+/**
+ * @deprecated Yeni kod `WordleSavedGameState` kullanmalı.
+ * Bu alias geriye dönük uyumluluk için bırakılmıştır.
+ */
+export type SavedGameState = WordleSavedGameState;
+
+export interface SavedGame<T = Record<string, unknown>> {
     id: string;
     user_id: string;
     game_name: string;
-    state: SavedGameState;
+    state: T;
     elapsed_time: number;
     created_at: string;
     updated_at: string;
@@ -30,12 +39,18 @@ export interface SavedGame {
 
 class SavedGameService {
     /**
-     * Oyun durumunu Supabase'e kaydeder veya günceller.
-     * Her kullanıcı + oyun türü için sadece bir kayıt tutulur (UPSERT).
+     * Oyun durumunu kaydeder.
+     * Üye kullanıcılar için Supabase'e UPSERT yapar (her kullanıcı + oyun türü için tek kayıt).
+     * Misafir kullanıcılar için localStorage'a otomatik kayıt zaten yapılmaktadır;
+     * bu metot yalnızca true döndürerek onay modalının gösterilmesini sağlar.
      */
-    async saveGame(gameName: string, state: SavedGameState, elapsedTime: number): Promise<boolean> {
+    async saveGame<T>(gameName: string, state: T, elapsedTime: number): Promise<boolean> {
         const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return false;
+        if (!user) {
+            // Misafir kullanıcılar için localStorage'a zaten otomatik kayıt yapılıyor
+            // (useGamePersistence tarafından). Başarılı sayarak onay modalını göster.
+            return typeof window !== 'undefined';
+        }
 
         const { error } = await supabase
             .from("saved_games")
@@ -59,8 +74,9 @@ class SavedGameService {
 
     /**
      * Kullanıcının belirli bir oyun türündeki kayıtlı oyununu getirir.
+     * Misafir ise null döner (localStorage'dan yüklenecek).
      */
-    async getSavedGame(gameName: string): Promise<SavedGame | null> {
+    async getSavedGame<T = Record<string, unknown>>(gameName: string): Promise<SavedGame<T> | null> {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return null;
 
@@ -73,7 +89,7 @@ class SavedGameService {
 
         if (error || !data) return null;
 
-        return data as SavedGame;
+        return data as SavedGame<T>;
     }
 
     /**

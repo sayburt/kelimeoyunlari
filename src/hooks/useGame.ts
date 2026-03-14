@@ -10,7 +10,7 @@ import { evaluateGuess } from '@/services/gameService';
 import { useSound } from '@/hooks/useSound';
 import { useGameSettings } from '@/context/GameSettingsContext';
 import { useTimer } from '@/hooks/useTimer';
-import { SavedGameState } from '@/services/savedGameService';
+import { WordleSavedGameState } from '@/services/savedGameService';
 import { useGamePersistence } from '@/hooks/useGamePersistence';
 
 export interface PersistedGameState {
@@ -281,7 +281,7 @@ export function useGame(options: UseGameOptions = {}) {
 
     const saveGameToCloud = useCallback(async (): Promise<boolean> => {
         if (status !== 'playing' || !targetWord) return false;
-        const stateToSave: SavedGameState = {
+        const stateToSave: WordleSavedGameState = {
             guesses,
             keyboardState,
             joker,
@@ -290,10 +290,10 @@ export function useGame(options: UseGameOptions = {}) {
             wordLength,
             maxGuesses,
         };
-        return await saveToCloud(stateToSave, elapsedTime);
+        return await saveToCloud(stateToSave as unknown as PersistedGameState, elapsedTime);
     }, [status, targetWord, guesses, keyboardState, joker, difficulty, wordLength, maxGuesses, elapsedTime, saveToCloud]);
 
-    const loadGameFromCloud = useCallback((cloudState: SavedGameState, savedElapsedTime: number) => {
+    const loadGameFromCloud = useCallback((cloudState: WordleSavedGameState, savedElapsedTime: number) => {
         setTargetWord(cloudState.targetWord);
         setGuesses(cloudState.guesses as GuessResult[]);
         setKeyboardState(cloudState.keyboardState as Record<string, LetterState>);

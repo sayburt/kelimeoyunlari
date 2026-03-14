@@ -2,7 +2,9 @@
 
 import React, { useEffect, useRef, Suspense } from 'react';
 import { useBoggle } from '@/hooks/useBoggle';
+import { useRouter } from 'next/navigation';
 import { GameHeader } from '@/components/game/GameHeader';
+
 import { GameEndModal } from '@/components/game/GameEndModal';
 import { ErrorToast } from '@/components/game/ErrorToast';
 import { SettingsModal } from '@/components/game/SettingsModal';
@@ -11,6 +13,7 @@ import { StatsModal } from '@/components/game/StatsModal';
 import { BoggleGrid } from '@/components/game/BoggleGrid';
 import { BoggleWordList } from '@/components/game/BoggleWordList';
 import { BoggleTimer } from '@/components/game/BoggleTimer';
+import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { useAuth } from '@/hooks/useAuth';
@@ -29,8 +32,11 @@ function BogglePageContent() {
         isPaused,
     } = useGameModals();
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
+    const [showSaveConfirmationModal, setShowSaveConfirmationModal] = React.useState(false);
 
     const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
 
     const {
         status,
@@ -49,7 +55,9 @@ function BogglePageContent() {
         selectCell,
         clearSelection,
         submitWord,
+        saveGameToCloud,
     } = useBoggle({
+
         isPaused,
     });
 
@@ -98,8 +106,30 @@ function BogglePageContent() {
             setTimeout(() => setToastMessage(null), 3000);
         }
     };
+    
+    const handleSaveGame = async () => {
+        const success = await saveGameToCloud();
+        if (success) {
+            setToastMessage('Oyun kaydedildi!');
+            setShowSaveConfirmationModal(true);
+        } else {
+            setToastMessage('Oyun kaydedilemedi!');
+            setTimeout(() => setToastMessage(null), 3000);
+        }
+    };
+
+    const handleSaveConfirm = () => {
+        setShowSaveConfirmationModal(false);
+        setTimeout(() => router.push('/'), 300);
+    };
+
+    const handleSaveCancel = () => {
+        setShowSaveConfirmationModal(false);
+        setToastMessage(null);
+    };
 
     // Timer text for header
+
     const seconds = Math.ceil(remainingTime / 1000);
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
@@ -114,8 +144,10 @@ function BogglePageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
                     isLoggedIn={isAuthenticated}
                     gameStatus={status === 'loading' ? 'loading' : 'idle'}
+
                     timerText={timerText}
                 />
                 <div className="flex-1 flex items-center justify-center">
@@ -134,8 +166,10 @@ function BogglePageContent() {
                     onStats={() => setShowStatsModal(true)}
                     onSettings={() => setShowSettingsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
                     isLoggedIn={isAuthenticated}
                     gameStatus={status === 'finished' ? 'won' : status === 'playing' ? 'playing' : 'idle'}
+
                     timerText={timerText}
                 />
 
@@ -223,6 +257,12 @@ function BogglePageContent() {
             <SettingsModal
                 isOpen={showSettingsModal}
                 onClose={() => setShowSettingsModal(false)}
+            />
+
+            <SaveConfirmationModal
+                isOpen={showSaveConfirmationModal}
+                onConfirm={handleSaveConfirm}
+                onCancel={handleSaveCancel}
             />
         </div>
     );

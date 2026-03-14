@@ -110,7 +110,7 @@ export function useWordSearch(options: UseWordSearchOptions = {}) {
         setElapsedTime(saved.elapsedTime);
     }, [difficulty, setElapsedTime]);
 
-    const { clearLocal } = useGamePersistence<PersistedWordSearchState>(
+    const { clearLocal, saveToCloud, loadFromCloud, deleteFromCloud } = useGamePersistence<PersistedWordSearchState>(
         GAME_NAME,
         status,
         persistenceState,
@@ -410,6 +410,25 @@ export function useWordSearch(options: UseWordSearchOptions = {}) {
     const foundWordCount = useMemo(() => words.filter(word => word.found).length, [words]);
     const foundPaths = useMemo(() => words.filter(word => word.found).map(word => word.cells), [words]);
 
+    /** Mevcut oyunu Supabase'e kaydeder (sadece giriş yapmış üyeler) */
+    const saveGameToCloud = useCallback(async (): Promise<boolean> => {
+        if (status !== 'playing') return false;
+        return await saveToCloud(persistenceState, elapsedTime);
+    }, [status, saveToCloud, persistenceState, elapsedTime]);
+
+    /** Supabase'deki kayıtlı oyunu yükler */
+    const loadGameFromCloud = useCallback(async (): Promise<boolean> => {
+        const saved = await loadFromCloud();
+        if (!saved) return false;
+        handleRestore(saved.state);
+        return true;
+    }, [loadFromCloud, handleRestore]);
+
+    /** Supabase'deki kayıtlı oyunu siler */
+    const deleteCloudSave = useCallback(async () => {
+        await deleteFromCloud();
+    }, [deleteFromCloud]);
+
     return {
         status,
         grid,
@@ -431,5 +450,8 @@ export function useWordSearch(options: UseWordSearchOptions = {}) {
         checkWordMatch,
         finishGame,
         useJoker,
+        saveGameToCloud,
+        loadGameFromCloud,
+        deleteCloudSave,
     };
 }

@@ -2,7 +2,9 @@
 
 import React, { useEffect, useRef, useState, useCallback, Suspense } from 'react';
 import { useWordLadder, GAME_NAME } from '@/hooks/useWordLadder';
+import { useRouter } from 'next/navigation';
 import { GameHeader } from '@/components/game/GameHeader';
+
 import { GameKeyboard } from '@/components/game/GameKeyboard';
 import { GameEndModal } from '@/components/game/GameEndModal';
 import { InfoModal } from '@/components/game/InfoModal';
@@ -10,6 +12,7 @@ import { StatsModal } from '@/components/game/StatsModal';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { WordLadderGuessArea, FixedWordRow } from '@/components/game/WordLadderGrid';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
+import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
 import { GAMES } from '@/data/games';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameModals } from '@/hooks/useGameModals';
@@ -30,6 +33,8 @@ function WordLadderPageContent() {
     } = useGameModals();
 
     const { isAuthenticated } = useAuth();
+    const router = useRouter();
+
 
     const {
         status,
@@ -45,11 +50,15 @@ function WordLadderPageContent() {
         handleKeyPress,
         handleDelete,
         handleEnter,
+        saveGameToCloud,
     } = useWordLadder({ isPaused });
+
 
     // Inline error toast: 2 saniye sonra otomatik kaybolur
     const [inlineError, setInlineError] = useState<string | null>(null);
+    const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
     const errorTimerRef = useRef<NodeJS.Timeout | null>(null);
+
 
     useEffect(() => {
         if (error) {
@@ -95,8 +104,27 @@ function WordLadderPageContent() {
             url: window.location.href,
         });
     };
+    
+    const handleSaveGame = async () => {
+        const success = await saveGameToCloud();
+        if (success) {
+            setShowSaveConfirmationModal(true);
+        } else {
+            setInlineError('Oyun kaydedilemedi!');
+        }
+    };
+
+    const handleSaveConfirm = () => {
+        setShowSaveConfirmationModal(false);
+        setTimeout(() => router.push('/'), 300);
+    };
+
+    const handleSaveCancel = () => {
+        setShowSaveConfirmationModal(false);
+    };
 
     const handleResultShare = async () => {
+
         const resultText = status === 'won'
             ? `Kelime Merdiveni'nde ${startWord} → ${targetWord} yolunu ${steps.length} adımda tamamladım! 🏆`
             : `Kelime Merdiveni'nde ${startWord} → ${targetWord} yolunu bulamadım. 🧩`;
@@ -126,9 +154,11 @@ function WordLadderPageContent() {
                 <GameHeader
                     title="KELİME MERDİVENİ"
                     onHelp={() => setShowInfoModal(true)}
+                    onSave={handleSaveGame}
                     isLoggedIn={isAuthenticated}
                     gameStatus={status}
                 />
+
                 <div className="flex-1 flex items-center justify-center">
                     <LoadingSpinner />
                 </div>
@@ -162,10 +192,12 @@ function WordLadderPageContent() {
                     onHelp={() => setShowInfoModal(true)}
                     onStats={() => setShowStatsModal(true)}
                     onShare={handleShare}
+                    onSave={handleSaveGame}
                     isLoggedIn={isAuthenticated}
                     gameStatus={status}
                     timerText={formatTime(elapsedTime)}
                 />
+
 
                 {/* ── 2. ORTA İÇERİK (SABIT çerçeve + KAYAN orta) ── */}
                 <div className="flex flex-col flex-1 min-h-0 items-center px-4 pt-3 pb-1 gap-y-1.5">
@@ -247,6 +279,12 @@ function WordLadderPageContent() {
 
             {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
             {showStatsModal && <StatsModal gameName={GAME_NAME} onClose={() => setShowStatsModal(false)} />}
+
+            <SaveConfirmationModal
+                isOpen={showSaveConfirmationModal}
+                onConfirm={handleSaveConfirm}
+                onCancel={handleSaveCancel}
+            />
         </>
     );
 }

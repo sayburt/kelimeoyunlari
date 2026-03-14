@@ -2,7 +2,7 @@
 
 import { useEffect, useCallback } from 'react';
 import { storage } from '@/lib/storage';
-import { savedGameService, SavedGameState } from '@/services/savedGameService';
+import { savedGameService } from '@/services/savedGameService';
 
 export function useGamePersistence<T>(
     gameName: string,
@@ -10,7 +10,7 @@ export function useGamePersistence<T>(
     state: T,
     onRestore: (savedState: T) => void
 ) {
-    // LocalStorage'dan yükle
+    // LocalStorage'dan yükle (misafir + üye)
     useEffect(() => {
         const savedState = storage.getGameState<T>(gameName);
         if (savedState) {
@@ -18,7 +18,7 @@ export function useGamePersistence<T>(
         }
     }, [gameName, onRestore]);
 
-    // LocalStorage'a kaydet
+    // LocalStorage'a kaydet (playing durumunda)
     useEffect(() => {
         if (status === 'playing') {
             storage.setGameState(gameName, {
@@ -28,17 +28,27 @@ export function useGamePersistence<T>(
         }
     }, [gameName, status, state]);
 
-    const saveToCloud = useCallback(async (data: SavedGameState, elapsedTime: number) => {
-        return await savedGameService.saveGame(gameName, data, elapsedTime);
-    }, [gameName]);
-
-    const deleteFromCloud = useCallback(async () => {
-        await savedGameService.deleteSavedGame(gameName);
-    }, [gameName]);
-
+    /** LocalStorage'dan siler (oyun bitti / yeni oyun) */
     const clearLocal = useCallback(() => {
         storage.clearGameState(gameName);
     }, [gameName]);
 
-    return { saveToCloud, deleteFromCloud, clearLocal };
+    /** Supabase'e kaydeder (yalnızca giriş yapmış üyeler için, misafirde sessizce başarısız olur) */
+    const saveToCloud = useCallback(async (data: T, elapsedTime: number): Promise<boolean> => {
+        return await savedGameService.saveGame<T>(gameName, data, elapsedTime);
+    }, [gameName]);
+
+    /** Supabase'den yükler (yalnızca giriş yapmış üyeler için) */
+    const loadFromCloud = useCallback(async (): Promise<{ state: T; elapsedTime: number } | null> => {
+        const saved = await savedGameService.getSavedGame<T>(gameName);
+        if (!saved) return null;
+        return { state: saved.state, elapsedTime: saved.elapsed_time };
+    }, [gameName]);
+
+    /** Supabase'den siler */
+    const deleteFromCloud = useCallback(async () => {
+        await savedGameService.deleteSavedGame(gameName);
+    }, [gameName]);
+
+    return { saveToCloud, loadFromCloud, deleteFromCloud, clearLocal };
 }

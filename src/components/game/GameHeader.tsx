@@ -70,7 +70,7 @@ export function GameHeader({
     }
 
     const menuItems: MenuItem[] = [
-        ...(isLoggedIn && gameStatus === 'playing' && onSave ? [{ icon: Save, label: 'Sonra Devam Et', onClick: onSave, colorClass: 'text-indigo-500 dark:text-indigo-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10' }] : []),
+        ...(gameStatus === 'playing' && onSave ? [{ icon: Save, label: 'Sonra Devam Et', onClick: onSave, colorClass: 'text-indigo-500 dark:text-indigo-400 group-hover:bg-indigo-50 dark:group-hover:bg-indigo-500/10' }] : []),
         ...(!isChallengeMode && onChallenge ? [{ icon: Swords, label: 'Meydan Oku', onClick: handleChallengeClick, colorClass: 'text-rose-500 dark:text-rose-400 group-hover:bg-rose-50 dark:group-hover:bg-rose-500/10' }] : []),
         { icon: Info, label: 'Nasıl Oynanır?', onClick: onHelp, colorClass: 'text-cyan-500 dark:text-cyan-400 group-hover:bg-cyan-50 dark:group-hover:bg-cyan-500/10' },
         { icon: BarChart2, label: 'İstatistikler', onClick: onStats, colorClass: 'text-amber-500 dark:text-amber-400 group-hover:bg-amber-50 dark:group-hover:bg-amber-500/10' },
