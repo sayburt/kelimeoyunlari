@@ -15,6 +15,7 @@ import {
     getWordSearchWordCount,
     WORD_SEARCH_COMPLETION_BONUS,
 } from '@/constants/wordSearchConstants';
+import { storage } from '@/lib/storage';
 import { generateGrid, getLineIndices, WordSearchPlacement } from '@/utils/wordSearchUtils';
 import {
     isWordSearchWordValid,
@@ -62,18 +63,23 @@ export function useWordSearch(options: UseWordSearchOptions = {}) {
     const { isPaused = false } = options;
 
     const { difficulty } = useGameSettings();
-    const [status, setStatus] = useState<WordSearchStatus>('idle');
-    const [puzzleDifficulty, setPuzzleDifficulty] = useState(difficulty);
-    const [grid, setGrid] = useState<string[]>([]);
-    const [gridSize, setGridSize] = useState(getWordSearchGridSize());
-    const [words, setWords] = useState<WordSearchWord[]>([]);
-    const [selectedCells, setSelectedCells] = useState<number[]>([]);
-    const [hintCells, setHintCells] = useState<number[]>([]);
-    const [error, setError] = useState<string | null>(null);
-    const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
-    const [score, setScore] = useState(0);
 
-    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
+    // LocalStorage'dan senkron başlangıç durumu al
+    const localSaved = storage.getGameState<PersistedWordSearchState>(GAME_NAME);
+    const hasLocalSaved = localSaved && localSaved.status === 'playing' && localSaved.difficulty === difficulty;
+
+    const [status, setStatus] = useState<WordSearchStatus>(hasLocalSaved ? 'playing' : 'idle');
+    const [puzzleDifficulty, setPuzzleDifficulty] = useState(difficulty);
+    const [grid, setGrid] = useState<string[]>(hasLocalSaved ? localSaved.grid : []);
+    const [gridSize, setGridSize] = useState(hasLocalSaved ? localSaved.gridSize : getWordSearchGridSize());
+    const [words, setWords] = useState<WordSearchWord[]>(hasLocalSaved ? localSaved.words : []);
+    const [selectedCells, setSelectedCells] = useState<number[]>(hasLocalSaved ? localSaved.selectedCells : []);
+    const [hintCells, setHintCells] = useState<number[]>(hasLocalSaved ? localSaved.hintCells : []);
+    const [error, setError] = useState<string | null>(null);
+    const [joker, setJoker] = useState<JokerState>(hasLocalSaved ? localSaved.joker : { used: false, count: 0, max: 1 });
+    const [score, setScore] = useState(hasLocalSaved ? localSaved.score : 0);
+
+    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused, hasLocalSaved ? localSaved.elapsedTime : 0);
     const { playCorrect, playWrong, playError, playWin } = useSound();
     const isProcessingRef = useRef(false);
     const clearHintTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -453,5 +459,6 @@ export function useWordSearch(options: UseWordSearchOptions = {}) {
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
+        clearLocal,
     };
 }

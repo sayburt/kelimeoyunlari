@@ -9,6 +9,7 @@ const GAME_NAMES: Record<string, string> = {
     'adam-asmaca': 'Adam Asmaca',
     boggle: 'Boggle',
     'kelime-arama': 'Kelime Arama',
+    'kelime-merdiveni': 'Kelime Merdiveni',
 };
 
 /**
@@ -19,6 +20,7 @@ const GAME_CTA: Record<string, string> = {
     'adam-asmaca': 'Adam Asmaca\'da bu kelimeleri tahmin etmeye calis!',
     boggle: 'Boggle\'da bu kelimeleri bul ve puan topla!',
     'kelime-arama': 'Kelime Arama bulmacasinda bu kelimeleri ara!',
+    'kelime-merdiveni': 'Kelime Merdiveni ile bir kelimeden digerine en az adimda ulas!',
 };
 
 // ---------- Meta aciklama sablonlari ----------
@@ -185,6 +187,18 @@ export function generateStrategyTips(parsed: ParsedSlug, stats: WordStats): Stra
         });
     }
 
+    if (parsed.gameId === 'kelime-merdiveni') {
+        tips.push({
+            title: 'Adim Adim Degisim',
+            description: 'Kelime Merdiveni\'nde tek seferde sadece bir harf degistirebilirsiniz. Bu listedeki kelimeleri kullanarak baslangictan hedefe giden yolu kisaltin.',
+        });
+
+        tips.push({
+            title: 'Yaygin Harf Yerlestirme',
+            description: 'Turkce\'de en sik kullanilan harfleri (A, E, L, R) hedef kelimeye yaklasmak icin kullanin. Bu harfleri iceren ara kelimeler seceneklerinizi arttirir.',
+        });
+    }
+
     return tips;
 }
 
@@ -246,6 +260,21 @@ export function generateFAQItems(parsed: ParsedSlug, stats: WordStats): FAQItem[
         items.push({
             question: `${letters} harflerini eleyerek Wordle nasil daha hizli cozulur?`,
             answer: `Bazi tahminlerden sonra ${letters} harflerinin kelimede olmadigini biliyorsaniz, bu liste kalan olasiliklari daraltir ve bir sonraki tahmini daha isabetli yapmanizi saglar.`,
+        });
+    }
+
+    if (parsed.gameId === 'kelime-merdiveni') {
+        const isSozcuk = parsed.displayTitle.includes('Sözcük');
+        const nameText = isSozcuk ? 'Sozcuk Merdiveni' : 'Kelime Merdiveni';
+
+        items.push({
+            question: `${nameText} nasil oynanir?`,
+            answer: `${nameText}'nde amac, bir kelimeden her seferinde sadece bir harf degistirerek hedef kelimeye ulasmaktir. Her adimda anlamli bir kelime olusturmaniz gerekir.`,
+        });
+
+        items.push({
+            question: `${nameText} ornekleri nelerdir?`,
+            answer: `Ornegin "KEDI"den "YEDI"ye tek adimda ulasabilirsiniz. Daha uzun zincirler icin bu sayfadaki kelime listelerinden faydalanabilirsiniz.`,
         });
     }
 

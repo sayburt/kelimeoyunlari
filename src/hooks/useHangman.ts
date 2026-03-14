@@ -29,23 +29,29 @@ export interface UseHangmanOptions {
 }
 
 import { GAME_NAME, MAX_LIVES } from '@/constants/hangmanConstants';
+import { storage } from '@/lib/storage';
 
 export function useHangman(options: UseHangmanOptions = {}) {
     const { isPaused = false, challengeId = null } = options;
 
     const { difficulty, category } = useGameSettings();
-    const [status, setStatus] = useState<GameStatus>('idle');
-    const [targetWord, setTargetWord] = useState<Word | null>(null);
-    const [guessedLetters, setGuessedLetters] = useState<Set<string>>(new Set());
-    const [wrongGuesses, setWrongGuesses] = useState<number>(0);
-    const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
+
+    // LocalStorage'dan senkron başlangıç durumu al
+    const localSaved = storage.getGameState<PersistedHangmanState>(GAME_NAME);
+    const hasLocalSaved = localSaved && localSaved.status === 'playing';
+
+    const [status, setStatus] = useState<GameStatus>(hasLocalSaved ? 'playing' : 'idle');
+    const [targetWord, setTargetWord] = useState<Word | null>(hasLocalSaved ? localSaved.targetWord : null);
+    const [guessedLetters, setGuessedLetters] = useState<Set<string>>(hasLocalSaved ? new Set(localSaved.guessedLetters) : new Set());
+    const [wrongGuesses, setWrongGuesses] = useState<number>(hasLocalSaved ? localSaved.wrongGuesses : 0);
+    const [joker, setJoker] = useState<JokerState>(hasLocalSaved ? localSaved.joker : { used: false, count: 0, max: 1 });
     const [score, setScore] = useState<number>(0);
     const [error, setError] = useState<string | null>(null);
     const [isChallengeMode, setIsChallengeMode] = useState<boolean>(false);
     const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
     const [isCustomWord, setIsCustomWord] = useState<boolean>(false);
 
-    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
+    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused, hasLocalSaved ? localSaved.elapsedTime : 0);
     const { playCorrect, playWrong, playError, playWin, playLose, isSoundEnabled, toggleSound } = useSound();
     const isProcessingRef = useRef(false);
 
@@ -69,7 +75,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
             setJoker(saved.joker);
             setElapsedTime(saved.elapsedTime);
         }
-    }, [setElapsedTime]);
+    }, [setElapsedTime, setStatus, setTargetWord, setGuessedLetters, setWrongGuesses, setJoker]);
 
     const { clearLocal, saveToCloud, loadFromCloud, deleteFromCloud } = useGamePersistence<PersistedHangmanState>(
         GAME_NAME,
@@ -129,7 +135,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
             }
         }
         clearLocal();
-    }, [playWin, playLose, elapsedTime, difficulty, joker, wrongGuesses, targetWord, clearLocal, isChallengeMode, activeChallengeId]);
+    }, [playWin, playLose, elapsedTime, difficulty, joker, wrongGuesses, targetWord, clearLocal, isChallengeMode, activeChallengeId, setStatus, setScore]);
 
     // --- Main Actions ---
 
@@ -197,7 +203,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
             setStatus('idle');
             setError('Oyun başlatılamadı. Lütfen sayfayı yenileyip tekrar deneyin.');
         }
-    }, [difficulty, category, resetTimer, clearLocal, challengeId]);
+    }, [difficulty, category, resetTimer, clearLocal, challengeId, setStatus, setError, setGuessedLetters, setWrongGuesses, setJoker, setScore, setIsChallengeMode, setActiveChallengeId, setIsCustomWord, setTargetWord]);
 
     const handleGuess = useCallback(async (letter: string) => {
         if (status !== 'playing' || isProcessingRef.current || !targetWord) return;
@@ -236,7 +242,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
         }
 
         isProcessingRef.current = false;
-    }, [status, guessedLetters, targetWord, wrongGuesses, handleGameEnd, playCorrect, playWrong]);
+    }, [status, guessedLetters, targetWord, wrongGuesses, handleGameEnd, playCorrect, playWrong, setGuessedLetters, setWrongGuesses]);
 
     const useJoker = useCallback(() => {
         if (status !== 'playing' || joker.used || !targetWord) return false;
@@ -257,7 +263,7 @@ export function useHangman(options: UseHangmanOptions = {}) {
             playError();
             return false;
         }
-    }, [status, joker.used, targetWord, guessedLetters, handleGuess, playError]);
+    }, [status, joker.used, targetWord, guessedLetters, handleGuess, playError, setJoker]);
 
     /** Mevcut oyunu Supabase'e kaydeder (sadece giriş yapmış üyeler) */
     const saveGameToCloud = useCallback(async (): Promise<boolean> => {
@@ -300,5 +306,6 @@ export function useHangman(options: UseHangmanOptions = {}) {
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
+        clearLocal,
     };
 }

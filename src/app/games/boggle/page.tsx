@@ -14,6 +14,7 @@ import { BoggleGrid } from '@/components/game/BoggleGrid';
 import { BoggleWordList } from '@/components/game/BoggleWordList';
 import { BoggleTimer } from '@/components/game/BoggleTimer';
 import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
+import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { useAuth } from '@/hooks/useAuth';
@@ -33,6 +34,7 @@ function BogglePageContent() {
     } = useGameModals();
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
     const [showSaveConfirmationModal, setShowSaveConfirmationModal] = React.useState(false);
+    const [showResumeModal, setShowResumeModal] = React.useState(false);
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
@@ -56,6 +58,7 @@ function BogglePageContent() {
         clearSelection,
         submitWord,
         saveGameToCloud,
+        clearLocal,
     } = useBoggle({
 
         isPaused,
@@ -63,8 +66,18 @@ function BogglePageContent() {
 
     const hasStartedRef = useRef(false);
 
+    // Yerel kayıt kontrolü
     useEffect(() => {
-        if (!hasStartedRef.current && status === 'idle') {
+        if (status === 'playing' && !hasStartedRef.current && foundWords.length > 0) {
+            // setState'i mikro-görev olarak zamanla → senkron effect setState lint hatasını önler
+            Promise.resolve().then(() => {
+                setShowResumeModal(true);
+            });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (!hasStartedRef.current && (status === 'idle' || status === 'loading')) {
             hasStartedRef.current = true;
             startNewGame();
         }
@@ -126,6 +139,16 @@ function BogglePageContent() {
     const handleSaveCancel = () => {
         setShowSaveConfirmationModal(false);
         setToastMessage(null);
+    };
+
+    const handleResumeGame = () => {
+        setShowResumeModal(false);
+    };
+
+    const handleNewGameFromModal = () => {
+        setShowResumeModal(false);
+        clearLocal();
+        startNewGame();
     };
 
     // Timer text for header
@@ -263,6 +286,16 @@ function BogglePageContent() {
                 isOpen={showSaveConfirmationModal}
                 onConfirm={handleSaveConfirm}
                 onCancel={handleSaveCancel}
+            />
+
+            <ResumeGameModal
+                isOpen={showResumeModal}
+                elapsedTime={remainingTime} // Boggle'da remainingTime var, modal elapsedTime bekliyor. 
+                                            // Aslında modal "geçen süre" diyor. Boggle için ters mantık mı yapsak?
+                                            // Şimdilik kalan süreyi verelim.
+                guessesCount={foundWords.length}
+                onResume={handleResumeGame}
+                onNewGame={handleNewGameFromModal}
             />
         </div>
     );

@@ -82,6 +82,7 @@ function WordlePageContent() {
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
+        clearLocal,
     } = useGame({
         initialWordLength: WORD_LENGTH,
         initialMaxGuesses: MAX_GUESSES,
@@ -92,11 +93,27 @@ function WordlePageContent() {
     const [shakeRow, setShakeRow] = useState(false);
     const { difficulty } = useGameSettings();
 
+    // Yerel kayıt kontrolü (Sadece mount olduğunda bir kez çalışır)
+    useEffect(() => {
+        const checkLocalSave = () => {
+            if (status === 'playing' && !cloudCheckDoneRef.current && guesses.length > 0) {
+                // useGame yerel kaydı zaten yükledi ve status playing oldu
+                setSavedElapsedTime(elapsedTime);
+                setSavedGuessesCount(guesses.length);
+                setShowResumeModal(true);
+            }
+        };
+        checkLocalSave();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
     useEffect(() => {
         if (cloudCheckDoneRef.current || !isAuthenticated) {
-            startNewGame(WORD_LENGTH, MAX_GUESSES);
+            // Sadece status idle ise ve yerel kayıt yoksa yeni oyun başlat
+            if (status === 'idle') {
+                startNewGame(WORD_LENGTH, MAX_GUESSES);
+            }
         }
-    }, [startNewGame, difficulty, isAuthenticated]);
+    }, [startNewGame, difficulty, isAuthenticated, status]);
 
     useEffect(() => {
         if (!isAuthenticated || cloudCheckDoneRef.current) return;
@@ -105,24 +122,31 @@ function WordlePageContent() {
             try {
                 const savedGame = await savedGameService.getSavedGame<WordleSavedGameState>(GAME_NAME);
                 if (savedGame) {
-                    setSavedElapsedTime(savedGame.elapsed_time);
-                    setSavedGuessesCount(savedGame.state.guesses.length);
-                    savedCloudStateRef.current = {
-                        state: savedGame.state,
-                        elapsedTime: savedGame.elapsed_time,
-                    };
-                    setShowResumeModal(true);
-                } else {
+                    // Yerel kayıt zaten yüklendiyse (status playing), cloud save'i sormaya gerek olmayabilir.
+                    // Ya da ikisini karşılaştırabiliriz (lastUpdated ile hangisi yeniyse).
+                    // Basitlik için: status halen idle ise cloud sormaya devam et.
+                    if (status === 'idle' && savedGame.state.guesses.length > 0) {
+                        setSavedElapsedTime(savedGame.elapsed_time);
+                        setSavedGuessesCount(savedGame.state.guesses.length);
+                        savedCloudStateRef.current = {
+                            state: savedGame.state,
+                            elapsedTime: savedGame.elapsed_time,
+                        };
+                        setShowResumeModal(true);
+                    }
+                } else if (status === 'idle') {
                     startNewGame(WORD_LENGTH, MAX_GUESSES);
                 }
             } catch {
-                startNewGame(WORD_LENGTH, MAX_GUESSES);
+                if (status === 'idle') {
+                    startNewGame(WORD_LENGTH, MAX_GUESSES);
+                }
             }
             cloudCheckDoneRef.current = true;
         };
 
         checkCloudSave();
-    }, [isAuthenticated, startNewGame]);
+    }, [isAuthenticated, startNewGame, status]);
 
     useEffect(() => {
         if (status === 'won' || status === 'lost') {
@@ -210,7 +234,10 @@ function WordlePageContent() {
     const handleNewGameFromModal = async () => {
         setShowResumeModal(false);
         savedCloudStateRef.current = null;
-        await deleteCloudSave();
+        if (isAuthenticated) {
+            await deleteCloudSave();
+        }
+        clearLocal();
         startNewGame(WORD_LENGTH, MAX_GUESSES);
     };
 

@@ -13,6 +13,7 @@ import { GameInstructions } from '@/components/game/GameInstructions';
 import { WordLadderGuessArea, FixedWordRow } from '@/components/game/WordLadderGrid';
 import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
+import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { GAMES } from '@/data/games';
 import { useAuth } from '@/hooks/useAuth';
 import { useGameModals } from '@/hooks/useGameModals';
@@ -51,12 +52,14 @@ function WordLadderPageContent() {
         handleDelete,
         handleEnter,
         saveGameToCloud,
+        clearLocal,
     } = useWordLadder({ isPaused });
 
 
     // Inline error toast: 2 saniye sonra otomatik kaybolur
     const [inlineError, setInlineError] = useState<string | null>(null);
     const [showSaveConfirmationModal, setShowSaveConfirmationModal] = useState(false);
+    const [showResumeModal, setShowResumeModal] = useState(false);
     const errorTimerRef = useRef<NodeJS.Timeout | null>(null);
 
 
@@ -77,8 +80,19 @@ function WordLadderPageContent() {
 
     const hasStartedRef = useRef(false);
 
+    // Yerel kayıt kontrolü
     useEffect(() => {
-        if (!hasStartedRef.current && status === 'idle') {
+        if (status === 'playing' && !hasStartedRef.current && steps.length > 0) {
+            // setState'i mikro-görev olarak zamanla → senkron effect setState lint hatasını önler
+            Promise.resolve().then(() => {
+                setShowResumeModal(true);
+            });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (!hasStartedRef.current && (status === 'idle' || status === 'loading')) {
+            // Sadece status idle/loading ise ve henüz başlama komutu verilmediyse
             hasStartedRef.current = true;
             startNewGame();
         }
@@ -121,6 +135,16 @@ function WordLadderPageContent() {
 
     const handleSaveCancel = () => {
         setShowSaveConfirmationModal(false);
+    };
+
+    const handleResumeGame = () => {
+        setShowResumeModal(false);
+    };
+
+    const handleNewGameFromModal = () => {
+        setShowResumeModal(false);
+        clearLocal();
+        startNewGame();
     };
 
     const handleResultShare = async () => {
@@ -275,6 +299,14 @@ function WordLadderPageContent() {
                 onRestart={handleRestart}
                 onShare={handleResultShare}
                 score={score}
+            />
+
+            <ResumeGameModal
+                isOpen={showResumeModal}
+                elapsedTime={elapsedTime}
+                guessesCount={steps.length}
+                onResume={handleResumeGame}
+                onNewGame={handleNewGameFromModal}
             />
 
             {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}

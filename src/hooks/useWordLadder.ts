@@ -36,22 +36,28 @@ export interface PersistedWordLadderState {
 const GAME_NAME = 'kelime-merdiveni';
 export { GAME_NAME };
 
+import { storage } from '@/lib/storage';
+
 export function useWordLadder(options: { isPaused?: boolean } = {}) {
     const { isPaused = false } = options;
     const { difficulty } = useGameSettings();
 
-    const [status, setStatus] = useState<WordLadderStatus>('idle');
-    const [startWord, setStartWord] = useState<string>('');
-    const [targetWord, setTargetWord] = useState<string>('');
-    const [optimalSteps, setOptimalSteps] = useState<number>(0);
-    const [maxSteps, setMaxSteps] = useState<number>(0);
-    const [steps, setSteps] = useState<WordLadderStep[]>([]);
+    // LocalStorage'dan senkron başlangıç durumu al
+    const localSaved = storage.getGameState<PersistedWordLadderState>(GAME_NAME);
+    const hasLocalSaved = localSaved && localSaved.status === 'playing';
+
+    const [status, setStatus] = useState<WordLadderStatus>(hasLocalSaved ? 'playing' : 'idle');
+    const [startWord, setStartWord] = useState<string>(hasLocalSaved ? localSaved.startWord : '');
+    const [targetWord, setTargetWord] = useState<string>(hasLocalSaved ? localSaved.targetWord : '');
+    const [optimalSteps, setOptimalSteps] = useState<number>(hasLocalSaved ? localSaved.optimalSteps : 0);
+    const [maxSteps, setMaxSteps] = useState<number>(hasLocalSaved ? localSaved.maxSteps : 0);
+    const [steps, setSteps] = useState<WordLadderStep[]>(hasLocalSaved ? localSaved.steps : []);
     const [currentInput, setCurrentInput] = useState<string>('');
     const [error, setError] = useState<string | null>(null);
     const [score, setScore] = useState<number>(0);
     const [joker, setJoker] = useState<JokerState>({ used: false, count: 0 });
 
-    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
+    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused, hasLocalSaved ? localSaved.elapsedTime : 0);
     const { playKeyPress, playDelete, playEnter, playError, playWin, playLose } = useSound();
     const isProcessingRef = useRef(false);
 
@@ -286,5 +292,6 @@ export function useWordLadder(options: { isPaused?: boolean } = {}) {
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
+        clearLocal,
     };
 }

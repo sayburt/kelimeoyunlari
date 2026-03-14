@@ -10,6 +10,11 @@ export function useGamePersistence<T>(
     state: T,
     onRestore: (savedState: T) => void
 ) {
+    /** LocalStorage'dan senkron olarak yükler */
+    const getLocalState = useCallback((): T | null => {
+        return storage.getGameState<T>(gameName);
+    }, [gameName]);
+
     // LocalStorage'dan yükle (misafir + üye)
     useEffect(() => {
         const savedState = storage.getGameState<T>(gameName);
@@ -50,5 +55,5 @@ export function useGamePersistence<T>(
         await savedGameService.deleteSavedGame(gameName);
     }, [gameName]);
 
-    return { saveToCloud, loadFromCloud, deleteFromCloud, clearLocal };
+    return { saveToCloud, loadFromCloud, deleteFromCloud, clearLocal, getLocalState };
 }

@@ -19,6 +19,7 @@ import { LoadingSpinner } from '@/components/ui/LoadingSpinner';
 import { WordSearchGrid } from '@/components/game/WordSearchGrid';
 import { WordSearchWordList } from '@/components/game/WordSearchWordList';
 import { SaveConfirmationModal } from '@/components/game/SaveConfirmationModal';
+import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { GAMES } from '@/data/games';
 import { GameInstructions } from '@/components/game/GameInstructions';
 import { useSyncedElementHeight } from '@/hooks/useSyncedElementHeight';
@@ -41,6 +42,7 @@ function WordSearchPageContent() {
     } = useGameModals();
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
     const [showSaveConfirmationModal, setShowSaveConfirmationModal] = React.useState(false);
+    const [showResumeModal, setShowResumeModal] = React.useState(false);
     const { difficulty } = useGameSettings();
 
     const { isAuthenticated } = useAuth();
@@ -66,6 +68,7 @@ function WordSearchPageContent() {
         handleSelection,
         useJoker,
         saveGameToCloud,
+        clearLocal,
     } = useWordSearch({ isPaused });
 
     const { elementRef: gridPanelRef, height: gridPanelHeight } = useSyncedElementHeight<HTMLDivElement>(status === 'playing' || status === 'won');
@@ -78,8 +81,18 @@ function WordSearchPageContent() {
         [gridPanelHeight]
     );
 
+    // Yerel kayıt kontrolü
     useEffect(() => {
-        if (!hasStartedRef.current && status === 'idle') {
+        if (status === 'playing' && !hasStartedRef.current && foundWordCount > 0) {
+            // setState'i mikro-görev olarak zamanla → senkron effect setState lint hatasını önler
+            Promise.resolve().then(() => {
+                setShowResumeModal(true);
+            });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (!hasStartedRef.current && (status === 'idle' || status === 'loading')) {
             hasStartedRef.current = true;
             startNewGame();
         }
@@ -129,6 +142,16 @@ function WordSearchPageContent() {
     const handleSaveCancel = () => {
         setShowSaveConfirmationModal(false);
         setToastMessage(null);
+    };
+
+    const handleResumeGame = () => {
+        setShowResumeModal(false);
+    };
+
+    const handleNewGameFromModal = () => {
+        setShowResumeModal(false);
+        clearLocal();
+        startNewGame();
     };
 
     const handleResultShare = async () => {
@@ -286,6 +309,14 @@ function WordSearchPageContent() {
                 isOpen={showSaveConfirmationModal}
                 onConfirm={handleSaveConfirm}
                 onCancel={handleSaveCancel}
+            />
+
+            <ResumeGameModal
+                isOpen={showResumeModal}
+                elapsedTime={elapsedTime}
+                guessesCount={foundWordCount}
+                onResume={handleResumeGame}
+                onNewGame={handleNewGameFromModal}
             />
         </div>
     );

@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next';
 import { GAMES } from "@/data/games";
 import { getWordlePseoFilters } from '@/lib/wordData';
+import { getWordLadderPseoSlugs } from '@/lib/wordData/pseoFilters';
 import { generateSlug } from '@/lib/pseo/slugGenerator';
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -97,5 +98,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
         priority: 0.6,
     }));
 
-    return [...staticPages, ...pseoPages];
+    // Word Ladder pSEO
+    const ladderSlugs = getWordLadderPseoSlugs();
+    const ladderPages: MetadataRoute.Sitemap = ladderSlugs.map((slug: string) => ({
+        url: `${baseUrl}/kelimeler/${slug}`,
+        lastModified: new Date(),
+        changeFrequency: 'monthly' as const,
+        priority: 0.6,
+    }));
+
+    return [...staticPages, ...pseoPages, ...ladderPages];
 }

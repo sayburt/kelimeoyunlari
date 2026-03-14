@@ -21,9 +21,9 @@ import { RelatedLinks } from '@/components/pseo/RelatedLinks';
 import { PageDescription } from '@/components/pseo/PageDescription';
 import { PseoHero } from '@/components/pseo/PseoHero';
 import { FaqSection } from '@/components/pseo/FaqSection';
-import Navbar from '@/components/layout/Navbar';
 import { buildPseoSchemas } from '@/lib/pseo/pageSchemas';
 import { isIndexableWordCount } from '@/lib/pseo/config';
+import { getWordLadderPseoSlugs } from '@/lib/wordData/pseoFilters';
 
 interface PageProps {
     params: Promise<{ slug: string }>;
@@ -36,13 +36,20 @@ const GAME_HREFS: Record<ValidGameId, string> = {
     'adam-asmaca': '/games/adam-asmaca',
     boggle: '/games/boggle',
     'kelime-arama': '/games/kelime-arama',
+    'kelime-merdiveni': '/games/kelime-merdiveni',
 };
 
 export function generateStaticParams() {
-    const pseoFilters = getWordlePseoFilters();
-    return pseoFilters.map((filter) => ({
+    const wordleFilters = getWordlePseoFilters();
+    const wordleSlugs = wordleFilters.map((filter) => ({
         slug: generateSlug(filter),
     }));
+
+    const ladderSlugs = getWordLadderPseoSlugs().map((slug: string) => ({
+        slug,
+    }));
+
+    return [...wordleSlugs, ...ladderSlugs];
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
@@ -88,8 +95,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function KelimelerPseoPage({ params }: PageProps) {
     const { slug } = await params;
-    const gameId = DEFAULT_GAME_ID;
-    const parsed = parseSlug(slug, gameId);
+    const parsed = parseSlug(slug, DEFAULT_GAME_ID);
+    const gameId = parsed.gameId as ValidGameId;
 
     if (!parsed.isValid) {
         notFound();
@@ -138,7 +145,6 @@ export default async function KelimelerPseoPage({ params }: PageProps) {
     return (
         <main className="min-h-screen bg-bg hero-glow">
             <JsonLd data={schemas} />
-            <Navbar />
             <PseoHero
                 gameName={gameName}
                 gameHref={gameHref}

@@ -198,6 +198,54 @@ const SLUG_RULES: SlugRule[] = [
             && !filter.excludeLetters?.length,
         build: (filter) => `${filter.length}-harfli-kelimeler`,
     },
+    {
+        id: 'merdiveni-length',
+        parse: (slug) => {
+            const match = slug.match(/^(\d+)-harfli-(kelime|sozcuk)-merdiveni-ornekleri$/);
+            if (!match) return null;
+
+            const length = Number.parseInt(match[1], 10);
+            const type = match[2] === 'sozcuk' ? 'Sözcük' : 'Kelime';
+            if (Number.isNaN(length)) return null;
+
+            return {
+                filter: { length },
+                displayTitle: `${length} Harfli ${type} Merdiveni Örnekleri`,
+            };
+        },
+        match: () => false, // build icin ozel bir durum yok, manuel slug uretiyoruz
+        build: (filter) => `${filter.length}-harfli-kelime-merdiveni-ornekleri`,
+    },
+    {
+        id: 'merdiveni-solutions',
+        parse: (slug) => {
+            const match = slug.match(/^(kelime|sozcuk)-merdiveni-(cozumleri|ornekleri-ve-cozumleri)$/);
+            if (!match) return null;
+
+            const type = match[1] === 'sozcuk' ? 'Sözcük' : 'Kelime';
+            return {
+                filter: { length: 4 }, // Varsayilan 4 harfli
+                displayTitle: `${type} Merdiveni Çözümleri ve Örnekleri`,
+            };
+        },
+        match: () => false,
+        build: () => `kelime-merdiveni-cozumleri`,
+    },
+    {
+        id: 'merdiveni-how-to',
+        parse: (slug) => {
+            const match = slug.match(/^(kelime|sozcuk)-merdiveni-nasil-oynanir$/);
+            if (!match) return null;
+
+            const type = match[1] === 'sozcuk' ? 'Sözcük' : 'Kelime';
+            return {
+                filter: { length: 4 }, // Varsayilan 4 harfli
+                displayTitle: `${type} Merdiveni Nasıl Oynanır?`,
+            };
+        },
+        match: () => false,
+        build: () => `kelime-merdiveni-nasil-oynanir`,
+    },
 ];
 
 export function parseSlugWithRules(slug: string): SlugParseResult | null {

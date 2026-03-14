@@ -45,9 +45,9 @@ export function WordListTable({ words, maxDisplay }: WordListTableProps) {
                                 </td>
                                 <td className="px-4 py-3 hidden md:table-cell">
                                     <div className="flex flex-wrap gap-1">
-                                        {word.kategoriler.slice(0, 2).map((cat) => (
+                                        {word.kategoriler.slice(0, 2).map((cat, i) => (
                                             <span
-                                                key={cat}
+                                                key={`${cat}-${i}`}
                                                 className="inline-block px-2 py-0.5 text-xs font-bold rounded-full bg-primary/10 text-primary"
                                             >
                                                 {cat}

@@ -38,6 +38,7 @@ export interface UseGameOptions {
 }
 
 import { GAME_NAME } from '@/constants/wordleConstants';
+import { storage } from '@/lib/storage';
 
 export function useGame(options: UseGameOptions = {}) {
     const {
@@ -48,21 +49,26 @@ export function useGame(options: UseGameOptions = {}) {
     } = options;
 
     const { difficulty } = useGameSettings();
-    const [status, setStatus] = useState<GameStatus>('idle');
-    const [targetWord, setTargetWord] = useState<Word | null>(null);
-    const [guesses, setGuesses] = useState<GuessResult[]>([]);
+
+    // LocalStorage'dan senkron başlangıç durumu al
+    const localSaved = storage.getGameState<PersistedGameState>(GAME_NAME);
+    const hasLocalSaved = localSaved && localSaved.status === 'playing';
+
+    const [status, setStatus] = useState<GameStatus>(hasLocalSaved ? 'playing' : 'idle');
+    const [targetWord, setTargetWord] = useState<Word | null>(hasLocalSaved ? localSaved.targetWord : null);
+    const [guesses, setGuesses] = useState<GuessResult[]>(hasLocalSaved ? localSaved.guesses : []);
     const [currentGuess, setCurrentGuess] = useState<string>('');
-    const [keyboardState, setKeyboardState] = useState<Record<string, LetterState>>({});
+    const [keyboardState, setKeyboardState] = useState<Record<string, LetterState>>(hasLocalSaved ? localSaved.keyboardState : {});
     const [error, setError] = useState<string | null>(null);
     const [wordLength, setWordLength] = useState(initialWordLength);
     const [maxGuesses, setMaxGuesses] = useState(initialMaxGuesses);
-    const [joker, setJoker] = useState<JokerState>({ used: false, count: 0, max: 1 });
+    const [joker, setJoker] = useState<JokerState>(hasLocalSaved ? localSaved.joker : { used: false, count: 0, max: 1 });
     const [score, setScore] = useState<number>(0);
     const [isChallengeMode, setIsChallengeMode] = useState(false);
     const [activeChallengeId, setActiveChallengeId] = useState<string | null>(null);
     const [isCustomWord, setIsCustomWord] = useState(false);
 
-    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused);
+    const { elapsedTime, resetTimer, setElapsedTime } = useTimer(status === 'playing', isPaused, hasLocalSaved ? localSaved.elapsedTime : 0);
     const { playKeyPress, playDelete, playEnter, playError, playWin, playLose, isSoundEnabled, toggleSound } = useSound();
     const isProcessingRef = useRef(false);
 
@@ -338,5 +344,6 @@ export function useGame(options: UseGameOptions = {}) {
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
+        clearLocal,
     };
 }

@@ -34,18 +34,24 @@ export interface UseBoggleOptions {
 }
 
 import { GAME_NAME, GRID_SIZE, GAME_DURATION, MIN_WORD_LENGTH } from '@/constants/boggleConstants';
+import { storage } from '@/lib/storage';
 import { generateGrid, getNeighbors } from '@/utils/boggleUtils';
 
 export function useBoggle(options: UseBoggleOptions = {}) {
     const { isPaused = false } = options;
 
     const { difficulty } = useGameSettings();
-    const [status, setStatus] = useState<BoggleStatus>('idle');
-    const [grid, setGrid] = useState<string[]>([]);
+
+    // LocalStorage'dan senkron başlangıç durumu al
+    const localSaved = storage.getGameState<PersistedBoggleState>(GAME_NAME);
+    const hasLocalSaved = localSaved && localSaved.status === 'playing' && localSaved.remainingTime > 0;
+
+    const [status, setStatus] = useState<BoggleStatus>(hasLocalSaved ? 'playing' : 'idle');
+    const [grid, setGrid] = useState<string[]>(hasLocalSaved ? localSaved.grid : []);
     const [selectedPath, setSelectedPathState] = useState<number[]>([]);
     const selectedPathRef = useRef<number[]>([]); // Anlık path takibi (batching sorunu çözümü)
-    const [foundWords, setFoundWords] = useState<FoundWord[]>([]);
-    const [remainingTime, setRemainingTime] = useState(GAME_DURATION);
+    const [foundWords, setFoundWords] = useState<FoundWord[]>(hasLocalSaved ? localSaved.foundWords : []);
+    const [remainingTime, setRemainingTime] = useState(hasLocalSaved ? localSaved.remainingTime : GAME_DURATION);
     const [error, setError] = useState<string | null>(null);
     const [lastWordResult, setLastWordResult] = useState<'valid' | 'invalid' | null>(null);
     const [score, setScore] = useState(0);
@@ -321,5 +327,6 @@ export function useBoggle(options: UseBoggleOptions = {}) {
         saveGameToCloud,
         loadGameFromCloud,
         deleteCloudSave,
+        clearLocal,
     };
 }

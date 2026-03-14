@@ -116,3 +116,26 @@ export function getFiveLetterWordsSummary(): {
         byLetter,
     };
 }
+
+export function getWordLadderPseoFilters(): WordFilter[] {
+    return [
+        { length: 3 },
+        { length: 4 },
+        { length: 5 },
+    ];
+}
+
+export function getWordLadderPseoSlugs(): string[] {
+    return [
+        '3-harfli-kelime-merdiveni-ornekleri',
+        '4-harfli-kelime-merdiveni-ornekleri',
+        '5-harfli-kelime-merdiveni-ornekleri',
+        'kelime-merdiveni-cozumleri',
+        'kelime-merdiveni-nasil-oynanir',
+        '3-harfli-sozcuk-merdiveni-ornekleri',
+        '4-harfli-sozcuk-merdiveni-ornekleri',
+        '5-harfli-sozcuk-merdiveni-ornekleri',
+        'sozcuk-merdiveni-ornekleri-ve-cozumleri',
+        'sozcuk-merdiveni-nasil-oynanir',
+    ];
+}

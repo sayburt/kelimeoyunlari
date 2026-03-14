@@ -8,7 +8,7 @@ export interface ParsedSlug {
     isValid: boolean;
 }
 
-const VALID_GAME_IDS = ['wordle', 'adam-asmaca', 'boggle', 'kelime-arama'] as const;
+const VALID_GAME_IDS = ['wordle', 'adam-asmaca', 'boggle', 'kelime-arama', 'kelime-merdiveni'] as const;
 export type ValidGameId = typeof VALID_GAME_IDS[number];
 
 export function isValidGameId(id: string): id is ValidGameId {
@@ -30,10 +30,16 @@ export function parseSlug(slug: string, gameId: string): ParsedSlug {
     const parsed = parseSlugWithRules(slug);
     if (!parsed) return invalid;
 
+    // Slug icerigine gore gameId belirle
+    let detectedGameId = gameId;
+    if (slug.includes('merdiveni')) {
+        detectedGameId = 'kelime-merdiveni';
+    }
+
     return {
         filter: parsed.filter,
         displayTitle: parsed.displayTitle,
-        gameId,
+        gameId: detectedGameId,
         isValid: true,
     };
 }

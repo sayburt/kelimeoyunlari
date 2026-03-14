@@ -12,6 +12,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { formatTime } from '@/utils/timeUtils';
 import { shareContent } from '@/utils/shareUtils';
 import { useGameSettings } from '@/context/GameSettingsContext';
+import { ResumeGameModal } from '@/components/game/ResumeGameModal';
 import { HangmanDrawing } from '@/components/game/HangmanDrawing';
 import { HangmanKeyboard } from '@/components/game/HangmanKeyboard';
 import { HangmanWordDisplay } from '@/components/game/HangmanWordDisplay';
@@ -38,12 +39,13 @@ function AdamAsmacaPageContent() {
     const [toastMessage, setToastMessage] = React.useState<string | null>(null);
     const [showChallengeModal, setShowChallengeModal] = React.useState(false);
     const [showSaveConfirmationModal, setShowSaveConfirmationModal] = React.useState(false);
+    const [showResumeModal, setShowResumeModal] = React.useState(false);
 
     const { isAuthenticated } = useAuth();
     const router = useRouter();
     const { category, difficulty } = useGameSettings();
 
-    const isPaused = baseIsPaused || showChallengeModal || showSaveConfirmationModal;
+    const isPaused = baseIsPaused || showChallengeModal || showSaveConfirmationModal || showResumeModal;
 
     const {
         status,
@@ -61,6 +63,7 @@ function AdamAsmacaPageContent() {
         handleGuess,
         useJoker,
         saveGameToCloud,
+        clearLocal,
     } = useHangman({
 
         isPaused,
@@ -69,8 +72,18 @@ function AdamAsmacaPageContent() {
 
     const hasStartedRef = useRef(false);
 
+    // Yerel kayıt kontrolü
     useEffect(() => {
-        if (!hasStartedRef.current && status === 'idle') {
+        if (status === 'playing' && !hasStartedRef.current && guessedLetters.size > 0) {
+            // setState'i mikro-görev olarak zamanla → senkron effect setState lint hatasını önler
+            Promise.resolve().then(() => {
+                setShowResumeModal(true);
+            });
+        }
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+        if (!hasStartedRef.current && (status === 'idle' || status === 'loading')) {
             hasStartedRef.current = true;
             startNewGame();
         }
@@ -126,6 +139,16 @@ function AdamAsmacaPageContent() {
     const handleSaveCancel = () => {
         setShowSaveConfirmationModal(false);
         setToastMessage(null);
+    };
+
+    const handleResumeGame = () => {
+        setShowResumeModal(false);
+    };
+
+    const handleNewGameFromModal = () => {
+        setShowResumeModal(false);
+        clearLocal();
+        startNewGame();
     };
 
     const handleShare = async () => {
@@ -289,6 +312,14 @@ function AdamAsmacaPageContent() {
                 isOpen={showSaveConfirmationModal}
                 onConfirm={handleSaveConfirm}
                 onCancel={handleSaveCancel}
+            />
+
+            <ResumeGameModal
+                isOpen={showResumeModal}
+                elapsedTime={elapsedTime}
+                guessesCount={guessedLetters.size}
+                onResume={handleResumeGame}
+                onNewGame={handleNewGameFromModal}
             />
 
             {showInfoModal && <InfoModal onClose={() => setShowInfoModal(false)} />}
