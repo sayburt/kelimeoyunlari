@@ -98,6 +98,26 @@ export default function WordleLayout({
 }
 ```
 
+### 1.1. Rehber Sayfaları Metadata (`nasil-oynanir/[id]/layout.tsx`)
+
+Oyun rehber sayfaları hem bilgilendirici hem de SEO odaklı olmalıdır:
+
+- **Title Yapısı:** `[Oyun Adı] Nasıl Oynanır? Kurallar ve Taktikler | Kelime Oyunları`
+- **Description:** Oyunun temel mantığını ve oyuncuya sağlayacağı faydayı/eğlenceyi özetleyen, anahtar kelime odaklı bir metin.
+- **Canonical:** `https://www.kelimeoyunlari.tr/nasil-oynanir/[id]`
+
+```typescript
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Wordle Nasıl Oynanır? Kurallar ve Taktikler",
+  description: "Wordle oyununun kuralları, ipuçları ve kazanma stratejileri. Türkçe Wordle rehberi.",
+  alternates: {
+    canonical: "https://www.kelimeoyunlari.tr/nasil-oynanir/wordle",
+  },
+};
+```
+
 ## 2. Sosyal Medya OG ve Kart Görselleri
 - Ana sayfa veya genel paylaşım için `1200x630` px ölçülerinde bir `og-image.png` kullanılmalıdır.
 - Oyun sayfaları için (`wordle`, `anagram` vb.) standart oyun kartı görselimiz (`/games/[oyun-adi]/card.webp` vb.) OG görseli olarak kullanılabilir. Aksi belirtilmemişse oyun dizinindeki görseli kullanın.
@@ -131,6 +151,11 @@ Arama motorlarının siteyi doğru tarayabilmesi için `src/app/sitemap.ts` ve `
 
 ## 8. İç Bağlantılar (Internal Linking)
 Tüm oyun sayfalarında, sayfanın alt kısmında bulunan "Nasıl Oynanır" (GameInstructions) bölümünün altında, ilgili oyunun detaylı anlatım sayfasına (`/nasil-oynanir/[oyun-id]`) giden bir "Detaylı Bilgi İçin Tıkla" butonu/linki bulunmalıdır. Bu, kullanıcı deneyimini iyileştirmek ve SEO açısından sayfalar arası otorite aktarımı sağlamak için zorunludur.
+
+## 9. Sayfa İçi Hiyerarşi ve Görsel SEO
+- **H1 Kullanımı:** Her sayfada sadece tek bir `H1` bulunmalı ve sayfanın ana konusunu içermelidir (Örn: "WORDLE NASIL OYNANIR?").
+- **H2 Vurgusu:** Sayfa içindeki alt başlıklar (`H2`) merkezi vurgu çizgisi veya yuvarlak gibi görsel öğelerle desteklenerek okunabilirlik artırılmalıdır.
+- **Resim Alt Etiketleri:** Tüm görseller (`img` veya `Image`) anlamlı `alt` metinlerine sahip olmalıdır.
 
 ## 9. Yetenek (Skill) Koordinasyonu
 SEO kuralları uygulanırken aşağıdaki belgeler de dikkate alınmalıdır:

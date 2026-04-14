@@ -27,7 +27,6 @@ Refactoring işlemine başlamadan önce:
 
 ## 4. Kayıt ve Temizlik
 - [ ] Gereksiz yorum satırlarını ve "dead code" (kullanılmayan kod) parçalarını temizle.
-- [ ] `TASKS.md` üzerindeki refactor görevini güncelle.
 - [ ] Eğer dökümantasyonda bir değişiklik gerekiyorsa dökümanları güncelle.
 
 ---

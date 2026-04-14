@@ -13,28 +13,34 @@ export function AvatarMenu() {
     const pathname = usePathname();
     const [isOpen, setIsOpen] = useState(false);
     const [avatar, setAvatar] = useState<string | null>(null);
+    const [dbUsername, setDbUsername] = useState<string | null>(null);
 
-    // Get username from metadata, fallback to email prefix if not available
-    const username = user?.user_metadata?.username || user?.email?.split("@")[0] || "Kullanıcı";
-    const initial = username.charAt(0).toUpperCase();
+    // Get username from db, fallback to metadata or email suffix
+    const displayName = dbUsername || user?.user_metadata?.username || user?.email?.split("@")[0] || "Kullanıcı";
+    const initial = displayName.charAt(0).toUpperCase();
 
-    // Supabase profiles tablosundan avatar bilgisini çek
+    // Supabase profiles tablosundan avatar ve username bilgisini çek
     useEffect(() => {
         if (!user?.id) return;
 
-        const fetchAvatar = async () => {
+        const fetchProfile = async () => {
             const { data } = await supabase
                 .from("profiles")
-                .select("avatar")
+                .select("avatar, username")
                 .eq("id", user.id)
                 .single();
 
-            if (data?.avatar) {
-                setAvatar(data.avatar);
-            }
+            if (data?.avatar) setAvatar(data.avatar);
+            if (data?.username) setDbUsername(data.username);
         };
 
-        fetchAvatar();
+        fetchProfile();
+
+        // Listen for profile changes from other components (like SettingsPage)
+        const handleProfileUpdate = () => fetchProfile();
+        window.addEventListener("profileUpdated", handleProfileUpdate);
+
+        return () => window.removeEventListener("profileUpdated", handleProfileUpdate);
     }, [user?.id]);
 
     const closeMenu = () => setIsOpen(false);
@@ -65,7 +71,7 @@ export function AvatarMenu() {
                                 <p className="text-xs text-text-main/50 font-medium uppercase tracking-wider mb-1">Oturum Açık</p>
                                 <p className="text-sm font-semibold text-text-main truncate flex items-center gap-2">
                                     {avatar && <span className="text-lg leading-none">{avatar}</span>}
-                                    {username}
+                                    {displayName}
                                 </p>
                             </div>
 

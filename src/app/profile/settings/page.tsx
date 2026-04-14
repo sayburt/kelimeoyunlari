@@ -30,6 +30,8 @@ export default function SettingsPage() {
     const [deleteSuccess, setDeleteSuccess] = useState(false);
     const [deleteError, setDeleteError] = useState(null as string | null);
 
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
     const loading = authLoading || (user && !profile);
 
     useEffect(() => {
@@ -49,16 +51,24 @@ export default function SettingsPage() {
             });
     }, [user, authLoading, profile]);
 
-    const handleSave = async () => {
-        if (!user?.id || saving || !editUsername.trim()) return;
+    const handleSave = async (type: 'profile' | 'avatar') => {
+        if (!user?.id || saving) return;
+        if (type === 'profile' && !editUsername.trim()) return;
+
         setSaving(true);
-        const success = await profileService.updateProfile(user.id, {
-            username: editUsername,
-            avatar: editAvatar
-        });
+        const updates = type === 'profile' 
+            ? { username: editUsername } 
+            : { avatar: editAvatar };
+
+        const success = await profileService.updateProfile(user.id, updates);
         if (success) {
-            setProfile(prev => prev ? { ...prev, username: editUsername, avatar: editAvatar } : null);
-            // Optional: Show success toast
+            setProfile(prev => prev ? { ...prev, ...updates } : null);
+            setToastMessage(type === 'avatar' ? 'Avatar değişti' : 'Profil güncellendi');
+            window.dispatchEvent(new Event('profileUpdated'));
+            setTimeout(() => setToastMessage(null), 3000);
+        } else {
+            setToastMessage('Bir hata oluştu');
+            setTimeout(() => setToastMessage(null), 3000);
         }
         setSaving(false);
     };
@@ -101,6 +111,21 @@ export default function SettingsPage() {
 
     return (
         <div className="min-h-screen bg-bg hero-glow px-4 py-10 sm:py-16">
+            <AnimatePresence>
+                {toastMessage && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.2 }}
+                        className="fixed top-20 left-1/2 -translate-x-1/2 z-50 bg-[var(--theme-card-glass)] backdrop-blur-xl border border-primary text-text-main px-6 py-3 rounded-xl text-sm font-bold shadow-[0_8px_24px_rgba(34,211,238,0.2)] pointer-events-none flex items-center gap-2"
+                    >
+                        <Check size={18} className="text-primary" />
+                        {toastMessage}
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             <div className="max-w-xl mx-auto">
                 <div className="mb-8 flex items-center justify-between">
                     <Link href="/profile/stats" className="flex items-center gap-2 text-text-secondary hover:text-primary transition-colors font-bold text-sm">
@@ -165,8 +190,8 @@ export default function SettingsPage() {
                                     </div>
 
                                     <button
-                                        onClick={handleSave}
-                                        disabled={saving || !editUsername.trim() || (profile?.username === editUsername && profile?.avatar === editAvatar)}
+                                        onClick={() => handleSave('profile')}
+                                        disabled={saving || !editUsername.trim() || profile?.username === editUsername}
                                         className="w-full bg-primary text-bg font-black py-4 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex justify-center items-center shadow-[0_8px_20px_rgba(34,211,238,0.25)]"
                                     >
                                         {saving ? (
@@ -203,8 +228,8 @@ export default function SettingsPage() {
                                         ))}
                                     </div>
                                     <button
-                                        onClick={handleSave}
-                                        disabled={saving || (profile?.username === editUsername && profile?.avatar === editAvatar)}
+                                        onClick={() => handleSave('avatar')}
+                                        disabled={saving || profile?.avatar === editAvatar}
                                         className="w-full bg-primary text-bg font-black py-4 rounded-2xl hover:scale-[1.02] active:scale-95 transition-all disabled:opacity-50 flex justify-center items-center shadow-[0_8px_20px_rgba(34,211,238,0.25)]"
                                     >
                                         {saving ? (

@@ -16,7 +16,9 @@ Yeni bir oyun eklerken, oyun deneyiminin kesintisiz olması en önemli kuraldır
     *   Sayfaya genel bir scroll (kaydırma) yeteneği verebilmek için en üst sarmalayıcı (wrapper) eleman `overflow-y-auto` kullanmalıdır. İçerisinde oyun modülü bağımsız bir blok (`min-h-[100dvh] shrink-0` gibi), SEO metinleri alt blok olarak yer alabilir.
 
 ## 2. SEO ve Meta Veriler (Teknik)
-Oyun sayfalarının SEO yapılandırması (Metadata API, JSON-LD Schema Markup, OG Görselleri) için `seo-uzmani` skill'indeki kurallara **kesinlikle** uyulmalıdır. Hangi meta verilerin nasıl ekleneceği ve görsel standartları orada detaylandırılmıştır. (Özetle: Her oyuna bir layout.tsx ve metadata, ayrıca JSON-LD `VideoGame` schemaları eklenmelidir).
+Oyun sayfalarının ve rehber sayfalarının SEO yapılandırması (Metadata API, JSON-LD, OG Görselleri) için **ana kaynak** olan `seo-uzmani` skill'indeki kurallara **kesinlikle** uyulmalıdır. Hangi meta verilerin nasıl ekleneceği ve görsel standartları orada detaylandırılmıştır.
+- **Oyun Sayfaları:** `seo-uzmani` içindeki "Oyun Sayfası Metadata" yönergelerini izleyin.
+- **Rehber (Nasıl Oynanır) Sayfaları:** `seo-uzmani` içindeki "Rehber Sayfaları Metadata" yönergelerini izleyin.
 
 ## 3. Oyun Bilgi Kartları (GameCard)
 Ana sayfadaki grid sisteminde sergilenmek üzere her oyunun standart görselleri ve verileri bulunmalıdır.
@@ -61,8 +63,8 @@ Oyun rehber sayfaları (`src/app/nasil-oynanir/[id]/page.tsx`), hem eğitici hem
     *   Oyunun `thumbnail` görseli arka planda blur (`blur-sm`) ve opaklığı azaltılmış (`opacity-20`) şekilde kullanılmalıdır.
     *   Başlık (`H1`) büyük ve kalın (`font-black`) olmalı, oyun ismi tamamen büyük harf ile yazılmalıdır.
 *   **SEO Standartları:**
-    *   Metadata `title` yapısı: "[Oyun Adı] Nasıl Oynanır? Kurallar ve Taktikler | Kelime Oyunları" formatında olmalıdır.
-    *   Sayfa içindeki başlıklar (`H2`) merkezi vurgu çizgisi (vurgu renginde yuvarlak/çizgi) ile desteklenmelidir.
+    *   Sayfa metadata yapılandırması için `seo-uzmani` yeteneğindeki **Rehber Sayfaları Metadata** kurallarını uygulayın.
+    *   Sayfa içindeki başlıklar (`H2`), `seo-uzmani` yeteneğindeki **Görsel SEO** kurallarına uygun olarak görsel vurgularla desteklenmelidir.
 
 ## 8. Yetenek (Skill) Koordinasyonu
 Bu belge oyunların UI/UX standartlarını belirler. Oyun bazlı diğer teknik detaylar için:

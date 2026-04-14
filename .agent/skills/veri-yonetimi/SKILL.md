@@ -17,12 +17,14 @@ description: Kelime verisi ve kullanıcı verisi (Supabase/LocalStorage) yöneti
 - **Haftalık Puan:** `game_score_events` tablosundaki o hafta içindeki tüm skorların toplamıdır.
 - **En Yüksek Puan (High Score):** `game_stats.high_score` kolonu her oyun için en yüksek tekil skoru tutar.
 
-## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
-- **Tüm Supabase işlemleri (yeni tablo oluşturma, RLS politikaları yazma, Auth ayarları, kolon ekleme vb.) YALNIZCA AI (Asistan) tarafından Supabase MCP aracı kullanılarak yapılmalıdır.**
-- **Migration Takibi:** Yapılan her veritabanı değişikliği (DDL) için `supabase/migrations` klasörü altında anlamlı bir isimlendirme ile (örn: `0001_create_new_feature_table.sql`) bir dosya oluşturulmalıdır.
-- **Uygulama:** AI, önce SQL dosyasını oluşturur, ardından bu SQL içeriğini `apply_migration` aracı ile doğrudan projeye uygular.
-- **Branch Yönetimi:** Eğer bir branch silinecekse, o branch ile gelen migrasyon dosyalarındaki işlemlerin tersi (DROP) SQL ile uygulanmalı ve veritabanı eski haline getirilmelidir.
-- **ASLA** kullanıcıya manuel SQL çalıştırma veya dashboard üzerinde işlem yapma talimatı verilemez.
+## 3. Supabase Yönetimi ve Migration Standardı (⚠️ KESİN KURAL)
+- **Araç:** Tüm veritabanı ve Edge Function işlemleri için **Supabase CLI** kullanılır.
+- **Migration Takibi:** Yapılan her veritabanı değişikliği (DDL) için `supabase migration new <isim>` komutu ile yeni bir dosya oluşturulmalıdır.
+- **Sync (Eşitleme):** Uzak veritabanındaki değişiklikleri yerele çekmek için `supabase db pull` kullanılır.
+- **Uygulama:** Lokaldeki değişiklikler `supabase db push` veya `supabase migration up` ile uzak projeye uygulanır.
+- **Edge Functions:** Yeni fonksiyonlar `supabase functions new <ad>` ile oluşturulur ve `supabase functions deploy <ad>` ile canlıya alınır.
+- **AI Rolü:** AI, gerekli SQL kodlarını hazırlar ve hangi CLI komutlarının çalıştırılması gerektiği konusunda kullanıcıyı yönlendirir. Gereksiz token harcayan MCP araçları kullanılmaz.
+- **ASLA** dashboard üzerinden manuel, kontrolsüz DDL işlemi yapılmaz; her şey migration dosyalarında iz bırakmalıdır.
 
 ## 4. RLS Kuralları
 Supabase tarafında her tabloda RLS aktif olmalı; kullanıcılar sadece kendi verilerine (`auth.uid() = user_id`) erişebilmelidir. AI bu politikaları tablo oluştururken otomatik uygular.

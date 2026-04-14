@@ -6,7 +6,10 @@ Kelime Oyunları, Türkçe kelime oyunlarını bir arada sunan web ve mobil plat
 
 Projenin teknik detayları, mimarisi ve kuralları aşağıdaki ana belgelerde tanımlanmıştır:
 - [Teknik Referans Belgesi (PRD)](prd.md)
-- [Geliştirme Görevleri (TASKS)](TASKS.md)
+
+## Durum: Bakım ve Yeni Oyun Fazı
+
+Bu proje ana geliştirme aşamalarını tamamlamıştır. Şu an yeni oyun eklemeleri ve sistem bakımı yürütülmektedir. Veritabanı ve Edge Functions yönetimi için **Supabase CLI** kullanılmaktadır.
 
 ## Başlangıç
 

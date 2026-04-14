@@ -1,11 +1,11 @@
 # Kelime Oyunları — Teknik Referans Belgesi
-> v1.1 — Şubat 2026
+> v1.2 — Nisan 2026 (Bakım ve Yeni Oyun Fazı)
 
 ---
 
 ## 1. Proje
 
-Kelime Oyunları, Türkçe kelime oyunlarını bir arada sunan web ve mobil platformdur. Kullanıcılar giriş yapmadan misafir olarak veya hesap oluşturarak oyun oynayabilir. Platform yalnızca Türkçe içerik sunar. Gelir modeli Google Ads üzerine kuruludur. Proje https://www.kelimeoyunlari.tr web sitesinde canlıya alınacaktır.
+Kelime Oyunları, Türkçe kelime oyunlarını bir arada sunan web ve mobil platformdur. Proje ana geliştirme fazlarını tamamlamış olup, şu an bakım ve yeni oyun ekleme aşamasındadır. Kullanıcılar giriş yapmadan misafir olarak veya hesap oluşturarak oyun oynayabilir. Platform yalnızca Türkçe içerik sunar. Gelir modeli Google Ads üzerine kuruludur. Proje https://www.kelimeoyunlari.tr web sitesinde canlıdadır.
 
 ### Temel Kurallar
 
@@ -15,6 +15,7 @@ Kelime Oyunları, Türkçe kelime oyunlarını bir arada sunan web ve mobil plat
 - Tüm veri okuma/yazma işlemleri `services/` katmanı üzerinden yapılır, doğrudan component'e yazılmaz.
 - Kelime karşılaştırmalarında `toLocaleUpperCase('tr-TR')` kullanılır.
 - Oyun içi UI custom Tailwind ile yazılır. Shadcn yalnızca genel UI bileşenlerinde kullanılır.
+- Veritabanı ve serverless fonksiyon yönetimi **Supabase CLI** üzerinden gerçekleştirilir.
 
 ---
 

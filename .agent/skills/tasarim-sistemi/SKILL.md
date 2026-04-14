@@ -5,14 +5,15 @@ description: Kelime Oyunları projesi renk, tipografi ve UI bileşen kuralları.
 
 # Kelime Oyunları — Tasarım Sistemi
 
-## 1. Tema ve Renkler
+## 1. Tema, Renkler ve Atmosfer
 Kullanıcı tercihine veya sistem ayarına bağlı olarak **Light** ve **Dark** modları desteklenir.
-- **Arka Plan:** (Dark) Koyu lacivert `#0E1628` / (Light) Açık gri `#F7F9FC`
+- **Arka Plan (Dark):** Koyu lacivert `#0E1628` üzerine hafif `.hero-glow` radial gradient uygulanarak sinematik bir his verilir.
+- **Arka Plan (Light):** Açık gri `#F7F9FC` üzerine editorial boşluklar ve net hiyerarşi uygulanır.
 - **Kart Yüzeyleri:** (Dark) Koyu gri-mavi `#1E293B` / (Light) Beyaz `#FFFFFF`
 - **Footer Arka Plan:** (Dark) `#070B14` / (Light) `#F1F5F9`
 - **Ana Metin:** (Dark) Açık gri `#E5E7EB` / (Light) Koyu lacivert `#0F172A`
 - **İkincil Metin:** (Dark) Gri `#94A3B8` / (Light) Gri-mavi `#475569`
-- **Ana Vurgu (CTA):** Canlı turkuaz `#22D3EE` (Light mod için daha koyu `#0284C7`)
+- **Ana Vurgu (CTA):** Canlı turkuaz `#22D3EE` (Light mod için daha koyu `#0284C7`), kritik ikonlarda ve CTA butonlarında kullanılır.
 - **Başarı / Doğru:** Yeşil `#22C55E`
 - **Hata / Yanlış:** Kırmızı `#EF4444`
 

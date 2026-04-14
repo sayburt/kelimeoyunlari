@@ -15,8 +15,10 @@ description: Kelime Oyunları projesi temel mimari ve akış kuralları. Her tü
 - **Web:** Next.js (App Router) + TypeScript + TailwindCSS + Framer Motion.
 - **Mobil:** React Native + Expo + NativeWind + Reanimated.
 
-## 3. Supabase Kurulum ve Yönetim Kuralı (⚠️ KESİN KURAL)
-- Supabase işlemleri ve MCP kuralları hakkında detaylı bilgi için `veri-yonetimi` skill'ine başvurunuz. (Tüm Supabase işlemleri sadece AI tarafından MCP ile yapılır).
+## 3. Supabase Yönetimi (⚠️ KESİN KURAL)
+- Supabase işlemleri (migration, schema changes, functions) için **Supabase CLI** kullanılmalıdır.
+- AI (Asistan) doğrudan veritabanı manipülasyonu yerine, yerelde migration dosyaları oluşturup CLI üzerinden işlem yapılmasına rehberlik eder.
+- Detaylar için `veri-yonetimi` skill'ine başvurunuz.
 
 ## 4. Dosya Yapısı (Web)
 ```
